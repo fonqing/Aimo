@@ -1,2 +1,5 @@
 /ext
 /config.json
+/.temp
+/compile.log
+/compile-errors.log
