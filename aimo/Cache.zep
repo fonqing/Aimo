@@ -1,7 +1,7 @@
 namespace Aimo;
 class Cache {
 	/**
-	 * @var Cinso\Cache\CacheInterface;
+	 * @var Aimo\Cache\CacheInterface;
 	 */
 	protected static _instance;
 
@@ -10,13 +10,13 @@ class Cache {
 	 *
 	 * @param string driver
 	 * @param mixed config
-	 * @return Cinso\Cache\CacheInterface
+	 * @return Aimo\Cache\CacheInterface
 	 */
 	public static function init(string driver,config)
 	{
 		if self::_instance === null {
 			string klass;
-			let klass = "Cinso\\Cache\\".driver;
+			let klass = "Aimo\\Cache\\".driver;
 			let self::_instance = new {klass}(config);
 		}
 		return self::_instance;

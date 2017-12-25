@@ -4,8 +4,8 @@ namespace Aimo;
  *
  * 包含模板语法与编译，视图模板缓存
  *
- * @package Cinso
- * @use Cinso\Config;
+ * @package Aimo
+ * @use Aimo\Config;
  * @author Eric,<wangyinglei@yeah.net>
  */
 class View {
@@ -31,7 +31,7 @@ class View {
      * @param array config 视图配置
      *
      * <code>
-     * \Cinso\View::init([
+     * \Aimo\View::init([
      *      'view_path'=>'./_view/',
      *      'view_cache_path'=>'./_cache/',
      *      'view_file_ext'=>'.html'
@@ -74,8 +74,8 @@ class View {
      * @return string
 
      * <code>
-     * \Cinso\View::load('news/view');//默认module/controller/action
-     * \Cinso\View::load('admin/news/view');//module/controller/action
+     * \Aimo\View::load('news/view');//默认module/controller/action
+     * \Aimo\View::load('admin/news/view');//module/controller/action
      * </code>
      */
     public static function load(string mca) -> string
@@ -180,7 +180,7 @@ class View {
      * @return void
      *
      * <code>
-     * \Cinso\View::assign('name','eric');
+     * \Aimo\View::assign('name','eric');
      * </code>
      */
     public static function assign(string key, value) -> void
@@ -199,7 +199,7 @@ class View {
      * @return void
      
      * <code>
-     * \Cinso\View::render('news/list',[
+     * \Aimo\View::render('news/list',[
      *      'news' => [['title'=>'title','content'=>'content']]
      * ]);
      * </code>
