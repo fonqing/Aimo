@@ -1,7 +1,7 @@
 namespace Aimo;
 
 class Controller {
-	public static function success(string msg,string url,int wait = 3)->void
+    public static function success(string msg,string url,int wait = 3)->void
     {
 
     }
