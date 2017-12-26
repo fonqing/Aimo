@@ -37,7 +37,8 @@ class Cache {
     /**
      * Generate GUID string 
      *
-     * 
+     * @param array
+     * @return string
      */
     private static function guid(array param)->string
     {
