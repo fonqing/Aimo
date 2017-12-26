@@ -1,13 +1,44 @@
 namespace Aimo;
-
+/**
+ * Application class
+ *
+ * Bootstrap class
+ * @package Aimo
+ * @copyright Aimosoft Studio 2017
+ * @author <Eric,fonqing@gmail.com>
+ */
 class Application {
     
+    /**
+     * @var <\Aimo\Application> 
+     */
     protected static _instance;
+    
+    /**
+     * @var array Request params
+     */
     public params = [] {set,get};
+    
+    /**
+     * @var string Module name
+     */
     public moduleName = "index" {set,get};
+    
+    /**
+     * @var string Controller name
+     */
     public controllerName = "index" {set,get};
+    
+    /**
+     * @var string Action name
+     */
     public actionName = "index" {set,get};
 
+    /**
+     * Initilize Application Instance
+     *
+     * @return <Application>
+     */
     public static function init()-><Application>
     {
         if self::_instance === null {
@@ -15,8 +46,13 @@ class Application {
         }
         return self::_instance;
     }
-
-    public function run(boolean multipleModule = false)
+    /**
+     * Bootstrap method 
+     *
+     * @param bool multipleModule
+     * @return void
+     */
+    public function run(boolean multipleModule = false)->void
     {
         var pathinfo,tmp,key;
         array params   = [];
