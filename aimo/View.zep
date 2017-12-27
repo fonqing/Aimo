@@ -12,7 +12,7 @@ class View {
     /**
      * @var array 配置
      */
-    private static _config;
+    private static _config = [];
 
     /**
      * @var string Taglib namespace
@@ -22,7 +22,7 @@ class View {
     /**
      * @var array 待解析变量
      */
-    private static _data;
+    private static _data = [];
 
     /**
      * 引擎初始化
@@ -38,8 +38,12 @@ class View {
      * ]);
      * </code>
      */
-    public static function init(array config) -> void
+    public static function init(array! config) -> void
     {
+        var_dump(config);
+        if typeof config != "array" {
+            throw "View::init invalid params";
+        }
         let self::_config = config;
     }
 
@@ -85,10 +89,10 @@ class View {
         int c;
         var defaultModule;
 
-        let viewPath  = rtrim(self::_config["view_path"], "/\\");
-        let cachePath = rtrim(self::_config["view_cache_path"], "/\\");
-        let viewExt   = trim( self::_config["view_file_ext"], '.');
-        let defaultModule = Config::get("default_module");
+        let viewPath  = isset self::_config["view_path"] ? rtrim(self::_config["view_path"], "/\\") : "";
+        let cachePath = isset self::_config["view_cache_path"] ? rtrim(self::_config["view_cache_path"], "/\\") : "";
+        let viewExt   = isset self::_config["view_file_ext"] ? trim( self::_config["view_file_ext"], '.') : "html";
+        let defaultModule = isset self::_config["default_module"] ? self::_config["default_module"] : "index";
         let mca = trim(mca,"\\/");
 
         
@@ -101,7 +105,7 @@ class View {
             let tmp = defaultModule."_".implode("_", tmpa);
             let tplfile   = viewPath ."/".defaultModule."/". mca . "." . viewExt;
         } else{
-            throw new \Exception("Error template params", 1);
+            throw "Error template params";
         }
         let compiledtplfile = cachePath."/".tmp.".php";
         
@@ -110,7 +114,7 @@ class View {
         }
         
         if !file_exists(tplfile) {
-            throw new \Exception("View file ".htmlspecialchars(tplfile)." dose't exists", 1);
+            throw "View file ".htmlspecialchars(tplfile)." dose't exists";
         }
 
         let content = file_get_contents(tplfile);
@@ -207,7 +211,7 @@ class View {
     public static function render(string tplPath, array data = []) -> void
     {
         var k,v;
-        if !empty(data) {
+        if !empty data {
             for k,v in data {
                 let self::_data[k]=v;
             }
@@ -293,7 +297,7 @@ class View {
             return "";
         }
 
-        let str.= " $".op."_tag = \\Cinso\\Tags::get('" . op . "'); ";
+        let str.= " $".op."_tag = \\Aimo\\Tags::get('" . op . "'); ";
         let str.= " if (method_exists($" . op . "_tag, '" . action . "')) {";
         let str.= " $" . name . " = $" . op . "_tag->" . action . "(" . self::arr_to_html ( datas ) . ");";
 

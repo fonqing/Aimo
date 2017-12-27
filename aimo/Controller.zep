@@ -1,6 +1,9 @@
 namespace Aimo;
 
 class Controller {
+    public function __construct()
+    {
+    }
     public static function success(string msg,string url,int wait = 3)->void
     {
 

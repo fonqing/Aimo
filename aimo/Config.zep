@@ -13,6 +13,14 @@ class Config {
      */
     private static _data;
 
+    public static function init(array! config)->void
+    {
+        var k,v;
+        for k,v in config {
+            self::set(k, v);
+        }
+    }
+
     /**
      * 存储设置
      *
@@ -26,7 +34,7 @@ class Config {
      * Config::set('debug',true);
      * </code>
      */
-    public static function set(String name, value)->void
+    public static function set(string! name, value)->void
     {
         let self::_data[name]=value;
     }
@@ -37,7 +45,7 @@ class Config {
      * @param string name 设置项名称
      * @return mixed
      */
-    public static function get(String name)
+    public static function get(string! name)
     {
         if isset self::_data[name] {
             return self::_data[name];
@@ -50,7 +58,7 @@ class Config {
      *
      * @param string name 设置项名称
      */
-    public static function delete(String name)->void
+    public static function delete(string! name)->void
     {
         unset(self::_data[name]);
     }

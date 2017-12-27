@@ -15,7 +15,7 @@ class Request {
         let this->isPost   = strtoupper(_SERVER["REQUEST_METHOD"]) === "POST";
         let this->isPut    = strtoupper(_SERVER["REQUEST_METHOD"]) === "PUT";
         let this->isDelete = strtoupper(_SERVER["REQUEST_METHOD"]) === "DELETE";
-        let this->isAjax   = strtoupper(_SERVER["HTTP_X_REQUESTED_WITH"]) === "XMLHTTPREQUEST";
+        let this->isAjax   = strtoupper(isset _SERVER["HTTP_X_REQUESTED_WITH"] ? _SERVER["HTTP_X_REQUESTED_WITH"] : "") === "XMLHTTPREQUEST";
         let this->isMobile = !!preg_match("/android|iphone/i", _SERVER["HTTP_USER_AGENT"]);
     }
 

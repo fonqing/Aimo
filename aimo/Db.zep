@@ -1,6 +1,7 @@
 namespace Aimo;
-
-final class Db {
+use \PDO;
+use \PDOException;
+class Db {
 	public static function init()
 	{
 

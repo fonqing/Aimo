@@ -1,21 +1,36 @@
 namespace Aimo\Cache;
-class Memcache implements CacheInterface {
+use Aimo\Cache;
+class Memcache extends Cache implements CacheInterface {
     private memcache;
-    
-    public function __construct(<CacheInterface> memcache) {
-        let this->memcache = memcache;
-    }
-    
-    public function load(string key) {
-        var ret;
-        let ret = this->memcache->get("orm.".key);
-        if ret === false {
-            return null;
+    protected connected = false;
+    public function __construct(array config){
+        if !extension_loaded("Memcache") {
+            throw "Memcache extension required";
         }
-        return ret;
+        let this->memcache = new \Memcache();
+        let this->connected = this->memcache->connect(config["host"], config["port"]);
     }
-    
-    public function save(string key, data) {
-        this->memcache->set("orm.".key, data);
+
+    public function isConnected()
+    {
+        return this->connected;
     }
+
+    public function get(string! name){
+        return this->memcache->get(name);
+    }
+
+    public function set(string! name, data, ttl = null){
+         return this->memcache->set(name, data, 0, ttl);
+    }
+
+    public function delete(string! name){
+        return this->memcache->delete(name);
+    }
+
+    public function clear()
+    {
+        return this->memcache->flush();
+    }
+
 }
