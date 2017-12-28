@@ -74,6 +74,9 @@ class Loader
     {
         var vendor,vendorDir,filePath;
         let vendor = substr(klass, 0, strpos(klass, "\\")); // 顶级命名空间
+        if !isset self::vendorMap[vendor] {
+            throw "Namespace ".vendor." not found";
+        }
         let vendorDir = self::vendorMap[vendor]; // 文件基目录
         let filePath = substr(klass, strlen(vendor)) . ".php"; // 文件相对路径
         return strtr(vendorDir . filePath, "\\", DIRECTORY_SEPARATOR); // 文件标准路径
