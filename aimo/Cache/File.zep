@@ -54,6 +54,11 @@ class File extends Cache implements CacheInterface {
     
     /**
      * 是否已连接
+     *
+     * <code>
+     * var_dump($fileCache->isConnected());
+     * </code>
+     *
      * @return boolean
      */
     public function isConnected()->boolean
@@ -63,7 +68,8 @@ class File extends Cache implements CacheInterface {
     
     /**
      * 取缓存存储文件
-     * @param unknown_type name
+     *
+     * @param string name
      * @return string
      */
     private function filename(string! name)->string
@@ -93,9 +99,14 @@ class File extends Cache implements CacheInterface {
     }
     
     /**
-     * 读取缓存
-     * @param unknown_type name
-     * @return boolean|mixed
+     * 从缓存读取数据
+     *
+     * <code>
+     * var_dump($fileCache->get('data'));
+     * </code>
+     *
+     * @param string name
+     * @return mixed
      */
     public function get(string! name)
     {
@@ -138,11 +149,15 @@ class File extends Cache implements CacheInterface {
     }
     
     /**
-     * 写缓存
-     * @param str name
-     * @param str|array value
-     * @param int expire
-     * @return boolean
+     * 向缓存写入数据
+     *
+     * <code>
+     * $fileCache->set('data',$data,1800);
+     * </code>
+     *
+     * @param string name
+     * @param mixed value
+     * @param expire ttl 
      */
     public function set(string! name, value, expire = null)->boolean
     {
@@ -171,8 +186,12 @@ class File extends Cache implements CacheInterface {
     /**
      * 删除缓存
      *
+     * <code>
+     * $fileCache->delete('data');
+     * </code>
+     *
      * 删除文件缓存
-     * @param str name
+     * @param string name
      * @return boolean
      */
     public function delete(string! name)->boolean

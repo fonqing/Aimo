@@ -9,6 +9,22 @@ class Request {
     public isDelete = false;
     public isMobile = false;
 
+    /**
+     * 实例化Request对象
+     *
+     * <code>
+     * $request = Request::instance();
+     * var_dump($request->isGet);
+     * var_dump($request->isPost);
+     * var_dump($request->isPut);
+     * var_dump($request->isDelete);
+     * var_dump($request->isAjax);
+     * var_dump($request->isMobile);
+     * </code>
+     *
+     * @param boolean adv 是否进行高级模式获取（有可能被伪装）
+     * @return string | long
+     */
     public function __construct()
     {
         let this->isGet    = strtoupper(_SERVER["REQUEST_METHOD"]) === "GET";
@@ -19,6 +35,16 @@ class Request {
         let this->isMobile = !!preg_match("/android|iphone/i", _SERVER["HTTP_USER_AGENT"]);
     }
 
+    /**
+     * 单例模式
+     *
+     * <code>
+     * $request = Request::instance();
+     * var_dump($request);
+     * </code>
+     *
+     * @return Aimo\Request
+     */
     public static function instance() -> <Request>
     {
         if self::instance === null {
@@ -29,6 +55,12 @@ class Request {
 
     /**
      * 获取客户端IP地址
+     *
+     * <code>
+     * $ip = Request::instance()->ip();
+     * var_dump($ip);
+     * </code>
+     *
      * @param boolean adv 是否进行高级模式获取（有可能被伪装）
      * @return string | long
      */

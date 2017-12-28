@@ -17,15 +17,12 @@ class Application {
     protected _config  = [];
 
     protected _routers = [];
-
-    protected _namespaces = [];
-
-    protected _dirs = [];
-    
     /**
      * @var array
      */
     public params = [] {set,get};
+
+    public multipleModule = false;
     
     /**
      * @var string
@@ -60,6 +57,9 @@ class Application {
     {
         let config["app_path"] = rtrim(config["app_path"],"\\/")."/";
         let this->_config = config;
+        if isset this->_config["multipleModule"] && this->_config["multipleModule"]===true {
+            let this->multipleModule = true;
+        } 
         return this;
     }
 
@@ -69,89 +69,41 @@ class Application {
         return this;
     }
 
-    public function registerNamespaces(array! namespaces)-><Application>
-    {
-        let this->_namespaces = namespaces;
-        return this;
-    }
-
-    public function registerDir(array dirs= [])-><Application>
-    {
-        var dir;
-        for dir in dirs {
-            if is_dir(dir) {
-                let this->_dirs[]=dir;
-            }
-        }
-        return this;
-    }
-
-    public function autoload(klassName)
-    {
-        var klassFile = str_replace("\\","/", trim(klassName,"\\/"));
-        let klassFile.=".php";
-        if file_exists(klassFile) {
-            require klassFile;
-            return true;
-        }
-        var dir;
-        for dir in this->_dirs {
-            let dir = rtrim(dir,"\\/")."/";
-            let klassFile = dir.klassFile;
-            if file_exists(klassFile) {
-                require klassFile;
-                return true;
-            }
-        }
-        /**
-         * app\\controller => APP_PATH."controller"
-         */
-        var prefix,path,len;
-        for prefix,path in this->_namespaces {
-            let len = strlen(prefix);
-            let path = rtrim(path,"\\/")."\\";
-            if substr(klassName,0,len) == prefix {
-                let klassFile = path.trim(substr(klassFile,len),"\\/").".php";
-                if file_exists(klassFile) {
-                    require klassFile;
-                    return true;
-                }
-            }
-        }
-        throw "Can't locate class:".klassName;
-    }
-
     public function route(string name="default")
     {
+        var pathinfo,url_suffix,len;
+        let url_suffix = isset this->_config["url_suffix"] ? this->_config["url_suffix"] : "";
+        let len = strlen(url_suffix);
+        let pathinfo   = isset _SERVER["PATH_INFO"] ? _SERVER["PATH_INFO"] : "";
+        if empty pathinfo {
+            let pathinfo = isset _GET["_url_"] ? _GET["_url_"] : "";
+        }
+        if !empty url_suffix && substr(pathinfo, 0-len) == url_suffix {
+            let pathinfo = substr(pathinfo, 0, 0-len);
+        }
         if name == "default" {
-            var pathinfo,tmp,key;
+            var tmp,key;
             array params   = [];
-            var moduleName = "index",
-                controllerName ="index",
-                actionName = "index";
-            let pathinfo   = trim(isset _SERVER["PATH_INFO"] ? _SERVER["PATH_INFO"] : "", "\\/");
-            if empty pathinfo {
-                let pathinfo = isset _GET["_url_"] ? _GET["_url_"] : "";
-            }
+            let pathinfo = trim(pathinfo, "\\/");
             if !empty pathinfo {
-                let tmp    = explode("/", pathinfo);
+                let tmp    = explode('/', pathinfo);
                 int offset = 3,t;
-                if this->_config["multipleModule"] {
+                if this->multipleModule {
                     if isset(tmp[0]) {
-                        let moduleName = preg_replace("/[^0-9a-z_\-\.]+/i","",tmp[0]);
+                        let this->moduleName = preg_replace("/[^0-9a-z_\-\.]+/i","",tmp[0]);
                     }
                     if isset(tmp[1]) {
-                        let controllerName = preg_replace("/[^0-9a-z_\-\.]+/i","",tmp[1]);
+                        let this->controllerName = preg_replace("/[^0-9a-z_\-\.]+/i","",tmp[1]);
                     }
                     if isset(tmp[2]) {
-                        let actionName = preg_replace("/[^0-9a-z_\-\.]+/i","",tmp[2]);
+                        let this->actionName = preg_replace("/[^0-9a-z_\-\.]+/i","",tmp[2]);
                     }
                 } else {
                     if isset(tmp[0]) {
-                        let controllerName = preg_replace("/[^0-9a-z_\-\.]+/i","",tmp[0]);
+                        let this->controllerName = preg_replace("/[^0-9a-z_\-\.]+/i","",tmp[0]);
                     }
                     if isset(tmp[1]) {
-                        let actionName = preg_replace("/[^0-9a-z_\-\.]+/i","",tmp[1]);
+                        let this->actionName = preg_replace("/[^0-9a-z_\-\.]+/i","",tmp[1]);
                     }
                     let offset = 2;
                 }
@@ -164,16 +116,10 @@ class Application {
                     let params[key] = htmlspecialchars(tmp[t]);
                     let offset = offset + 2;
                 }
+                let this->params = params;
             }
-            return [
-                "moduleName":moduleName,
-                "controllerName":controllerName,
-                "actionName":actionName,
-                "params":params
-            ];
-
+            
         } else {
-
             if !isset this->_routers[name] {
                 throw "Router dose not exists";
             }
@@ -181,7 +127,7 @@ class Application {
                 throw "Router is invalid";
             }
             var res;
-            let res = call_user_func(this->_routers[name]);
+            let res = call_user_func(this->_routers[name],pathinfo);
             if typeof res != "array" {
                 throw "Router must return an array";
             }
@@ -189,12 +135,66 @@ class Application {
                 isset res["controllerName"] && 
                 isset res["actionName"] && 
                 isset res["params"] {
-                return res;
+                let this->moduleName = preg_replace("/[^0-9a-z_\-\.]+/i","",res["moduleName"]);
+                let this->controllerName = preg_replace("/[^0-9a-z_\-\.]+/i","",res["controllerName"]);
+                let this->actionName = preg_replace("/[^0-9a-z_\-\.]+/i","",res["actionName"]);
+                let this->params = res["params"];
             }else{
                 throw "Router must return an array";
             }
         }
 
+    }
+
+    private function dispacher()
+    {
+        var klass,ctl,action;
+        let klass = this->getController(this->controllerName);
+        if class_exists(klass) {
+            let ctl = new {klass}();
+            let action = this->actionName."Action";
+            if method_exists(ctl, action) && is_callable([ctl,action]) {
+                call_user_func([ctl,action]);
+            } else {
+                let action = "_empty";
+                if method_exists(ctl, action) && is_callable([ctl,action]) {
+                    call_user_func([ctl,action]);
+                }else{
+                    Controller::notFound();
+                }
+            }
+        } else {
+            let klass = this->getController("Error");
+            if class_exists(klass) {
+                let ctl = new {klass}();
+                let action = this->actionName."Action";
+                if method_exists(ctl, action) && is_callable([ctl,action]) {
+                    call_user_func([ctl,action]);
+                } else {
+                    let action = "_empty";
+                    if method_exists(ctl, action) && is_callable([ctl,action]) {
+                        call_user_func([ctl,action]);
+                    }else{
+                        Controller::notFound();
+                    }
+                }
+            } else {
+                Controller::notFound();
+            }
+        }
+    }
+
+    private function getController(string! ctl)
+    {
+        var controllerName,klass,name;
+        let name = this->_config["namespace"];
+        let controllerName = ctl."Controller";
+        if this->multipleModule {
+            let klass = name."\\controller\\".this->moduleName."\\".controllerName;
+        } else {
+            let klass = name."\\controller\\".controllerName;
+        }
+        return klass;
     }
     /**
      * Bootstrap method 
@@ -203,66 +203,20 @@ class Application {
      */
     public function run()->void
     {
-        //spl_autoload_register([this,"autoload"]);
-        var routerResult;
-        let routerResult = this->route();
-        if typeof routerResult != "array" {
-            throw "Router dispacher Error";
-        }
-        if isset routerResult["moduleName"] {
-            let this->moduleName = routerResult["moduleName"];
-        }
-        if isset routerResult["controllerName"] {
-            let this->controllerName = routerResult["controllerName"];
-        }
-        if isset routerResult["actionName"] {
-            let this->actionName = routerResult["actionName"];
-        }
-        if isset routerResult["params"] {
-            let this->params = routerResult["params"];
-        }
-        var controllerPath,controller,controllerName,controllerClass,actionMethod;
-        let controllerName = ucfirst(this->controllerName)."Controller";
-        if this->_config["multipleModule"] {
-            let controllerPath = this->_config["app_path"].strtolower(this->moduleName)."/controller/";
+        var timezone;
+        let timezone = isset this->_config["timezone"] ? this->_config["timezone"] : "Asia/Shanghai";
+        date_default_timezone_set(timezone);
+        if isset this->_config["debug"] && this->_config["debug"] === true {
+            error_reporting(E_ALL);
+            ini_set("display_errors","On");
         }else{
-            let controllerPath = this->_config["app_path"]."controller/";
+            error_reporting(0);
+            ini_set("display_errors","off");
         }
-        let controllerClass = controllerPath.controllerName.".php";
-        let actionMethod = this->actionName."Action";
-        if file_exists (controllerClass) {
-            require controllerClass;
-            let controller = new {controllerName}();
-            if method_exists(controller,"setup") {
-                call_user_func([controller,"setup"]);
-            }
-            if method_exists(controller,"init") {
-                call_user_func([controller,"init"]);
-            }
-            if method_exists(controller,actionMethod) {
-                call_user_func([controller,actionMethod]);
-            } elseif (method_exists(controller,"_empty")) {
-                call_user_func([controller,"_empty"]);
-            } else {
-                die("404");
-            }
-        } else {
-            let controllerClass = controllerPath."ErrorController.php";
-            let controllerName = "ErrorController";
-            if file_exists (controllerClass) {
-                require controllerClass;
-                let controller = new {controllerName}();
-                if method_exists(controller,actionMethod) {
-                    call_user_func([controller,actionMethod]);
-                } elseif (method_exists(controller,"_empty")) {
-                    call_user_func([controller,"_empty"]);
-                } else {
-                    die("404");
-                }
-            }
-        }
-        
+        Loader::addNamespaces(Config::get("namespaces"));
+        spl_autoload_register("Aimo\\Loader::autoload");
+        this->route();
+        this->dispacher();
         Request::instance()->setParams(array_merge(this->params, _REQUEST));
-        View::init(Config::get("view"));
     }
 }

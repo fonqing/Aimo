@@ -1,4 +1,9 @@
 namespace Aimo\Cache;
+/**
+ * Aimo\Cache\CacheInterface
+ *
+ * interface for cache 
+ */
 interface CacheInterface {
     /** 
      * Check if Cache ready

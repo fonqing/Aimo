@@ -14,7 +14,23 @@ abstract class Cache {
     protected static _instance = [];
 
 	/**
-	 * Factory
+	 * 缓存工厂
+     *
+     * <code>
+     * Cache::init('Memcache', [
+     *     'host' => '127.0.0.1',
+     *     'port' => '11211',
+     * ]);
+     * //or
+     * Cache::init('File', [
+     *     'cache_path' => './runtime/',
+     *     'cache_ttl' => 1800,         //默认缓存时间
+     *     'cache_path_level' => 3,     //缓存目录深度
+     *     'cache_subdir' => true,      //启用子目录
+     *     'cache_check' => false,      //是否开启数据校检，开启后影响性能，默认关闭
+     *     'cache_compress' => false,   //是否开启数据压缩，开启后影响性能，默认关闭
+     * ]);
+     * </code>
 	 *
 	 * @param string driver
 	 * @param mixed config

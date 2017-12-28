@@ -5,8 +5,7 @@ namespace Aimo;
  * 包含模板语法与编译，视图模板缓存
  *
  * @package Aimo
- * @use Aimo\Config;
- * @author Eric,<wangyinglei@yeah.net>
+ * @author Eric,<fonqing@gmail.com>
  */
 class View {
     /**
@@ -27,8 +26,7 @@ class View {
     /**
      * 引擎初始化
      *
-     * @access public
-     * @param array config 视图配置
+     * 初始化模板引擎
      *
      * <code>
      * \Aimo\View::init([
@@ -37,10 +35,12 @@ class View {
      *      'view_file_ext'=>'.html'
      * ]);
      * </code>
+     *
+     * @access public
+     * @param array config 视图配置
      */
     public static function init(array! config) -> void
     {
-        var_dump(config);
         if typeof config != "array" {
             throw "View::init invalid params";
         }
@@ -71,16 +71,14 @@ class View {
     /**
      * 载入视图文件
      *
-     * 载入视图后编译缓存，返回缓存文件路径
-     *
-     * @access public
-     * @param string mca 视图描述
-     * @return string
-
      * <code>
      * \Aimo\View::load('news/view');//默认module/controller/action
      * \Aimo\View::load('admin/news/view');//module/controller/action
      * </code>
+     *
+     * @access public
+     * @param string mca 视图描述
+     * @return string
      */
     public static function load(string mca) -> string
     {
@@ -176,16 +174,14 @@ class View {
     /**
      * 注册数据变量到视图作用域
      *
-     * 注册数据变量到视图作用域
+     * <code>
+     * \Aimo\View::assign('name','eric');
+     * </code>
      *
      * @access public
      * @param string key 数据键名
      * @param mixed value 数据
      * @return void
-     *
-     * <code>
-     * \Aimo\View::assign('name','eric');
-     * </code>
      */
     public static function assign(string key, value) -> void
     {
@@ -195,22 +191,24 @@ class View {
     /**
      * 渲染视图
      *
-     * 渲染视图
-     *
-     * @access public
-     * @param string tplPath 模板名
-     * @param array data 数据
-     * @return void
-     
      * <code>
      * \Aimo\View::render('news/list',[
      *      'news' => [['title'=>'title','content'=>'content']]
      * ]);
      * </code>
+     *
+     * @access public
+     * @param string tplPath 模板名
+     * @param array data 数据
+     * @param callable func
+     * @return void
      */
     public static function render(string tplPath, array data = []) -> void
     {
-        var k,v;
+        //if func != null {
+        //    ob_start(func);
+        //}
+        var k,v;//,content;
         if !empty data {
             for k,v in data {
                 let self::_data[k]=v;
@@ -218,13 +216,16 @@ class View {
         }
         extract(self::_data);
         require self::load(tplPath);
+        //if func != null {
+        //    ob_get_flush();
+        //}
     }
 
     /**
      * 转义 // 为 /
      *
-     * @param array $m
-     * @return 转义后的字符
+     * @param array m
+     * @return string 转义后的字符
      */
     public static function addquote(array m) -> string
     {
@@ -246,7 +247,7 @@ class View {
     
     /**
      * 解析function标签
-     * @param array $m 语法元素
+     * @param array m 语法元素
      */
      
     public static function fixfunction(array m) -> string
@@ -261,7 +262,7 @@ class View {
     /**
      * 解析标签Taglib
      *
-     * @param array $m 语法元素
+     * @param array m 语法元素
      * @return string
      */
     public static function tag(array m) -> string
@@ -314,6 +315,7 @@ class View {
     
     /**
      * 转换数据为HTML代码
+     *
      * @param array data 数组
      */
     private static function arr_to_html(array data)->string
