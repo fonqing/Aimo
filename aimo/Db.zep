@@ -48,9 +48,7 @@ class Db
     protected _group_by = [];
     protected _having_conditions = [];
     protected _data = [];
-    protected _dirty_fields = [];
     protected _expr_fields = [];
-    protected _is_new = false;
     protected _instance_id_column = null;
     /**
      * "Private" constructor; shouldn"t be called directly.
@@ -520,23 +518,6 @@ class Db
     }
 
     /**
-     * Create a new, empty instance of the class. Used
-     * to add a new row to your database. May optionally
-     * be passed an associative array of data to populate
-     * the instance. If so, all fields will be flagged as
-     * dirty so all will be saved to the database when
-     * save() is called.
-     */
-    public function create(data = null) 
-    {
-        let this->_is_new = true;
-        if (typeof data != "null") {
-            return this->data(data)->forceAllDirty();
-        }
-        return this;
-    }
-
-    /**
      * 获取一条记录并返回数组
      * 
      * <code>
@@ -665,14 +646,14 @@ class Db
         let result = this->find();
         let this->_result_columns = result_columns;
         if result !== false {
-            let v = result->get(alias);
+            let v = result[alias];
             if !empty v {
-                if !is_numeric(result->get(alias)) {
+                if !is_numeric(v) {
                     let return_value = result->{alias};
-                }elseif (int) result->get(alias) == (float) result->get(alias) {
-                    let return_value = (int) result->get(alias);
+                }elseif (int) v == (float) v {
+                    let return_value = (int) v;
                 } else {
-                    let return_value = (float) result->get(alias);
+                    let return_value = (float) v;
                 }
             }
         }
@@ -688,16 +669,6 @@ class Db
     public function data(data=[]) 
     {
         let this->_data = data;
-        return this;
-    }
-
-    /**
-     * Force the ORM to flag all the fields in the $data array
-     * as "dirty" and therefore update them when save() is called.
-     */
-    public function forceAllDirty() 
-    {
-        let this->_dirty_fields = this->_data;
         return this;
     }
 
@@ -751,19 +722,6 @@ class Db
             let this->_result_columns[] = expr;
         }
         return this;
-    }
-
-    /**
-     * Counts the number of columns that belong to the primary
-     * key and their value is null.
-     */
-    public function countNullIdColumns() 
-    {
-        if is_array(this->_get_id_column_name()) {
-            return count(array_filter(this->id(), "is_null"));
-        } else {
-            return is_null(this->id()) ? 1 : 0;
-        }
     }
 
     /**
@@ -1126,7 +1084,7 @@ class Db
         for key,val in multiple {
             if count(this->_join_sources) > 0 && strpos(key, ".") === false {
                 let table = this->_table_name;
-                if !is_null(this->_table_alias) {
+                if ( typeof this->_table_alias != "null") {
                     let table = this->_table_alias;
                 }
                 let key = table.".".key;
@@ -1147,7 +1105,7 @@ class Db
         var key,value;
         if !empty fields {
             for key,value in fields {
-                if array_key_exists(key, this->_expr_fields) {
+                if isset this->_expr_fields[key] {
                     let db_fields[] = value;
                 } else {
                     let db_fields[] = "?";
@@ -2031,27 +1989,6 @@ class Db
     }
 
     /**
-     * Return the value of a property of this object (database row)
-     * or null if not present.
-     *
-     * If a column-names array is passed, it will return a associative array
-     * with the value of each column or null if it is not present.
-     */
-    public function get(key) 
-    {
-        array result = [];
-        var column;
-        if typeof key == "array" {
-            for column in key {
-                let result[column] = isset this->_data[column] ? this->_data[column] : null;
-            }
-            return result;
-        } else {
-            return isset this->_data[key] ? this->_data[key] : null;
-        }
-    }
-
-    /**
      * Return the name of the column in the database table which contains
      * the primary key ID of the row.
      */
@@ -2067,212 +2004,44 @@ class Db
     }
 
     /**
-     * Get the primary key ID of this object.
-     */
-    public function id(disallow_null = false) 
-    {
-        var id,id_part;
-        let id = this->get(this->_get_id_column_name());
-        if disallow_null {
-            if (typeof id == "array") {
-                for id_part in id {
-                    if id_part === null {
-                        throw "Primary key ID contains null value(s)";
-                    }
-                }
-                
-            } elseif id === null {
-                throw "Primary key ID missing from row or is null";
-            }
-        }
-        return id;
-    }
-
-    /**
-     * Set a property to a particular value on this object.
-     * To set multiple properties at once, pass an associative array
-     * as the first parameter and leave out the second parameter.
-     * Flags the properties as "dirty" so they will be saved to the
-     * database when save() is called.
-     */
-    public function set(key, value = null) 
-    {
-        return this->_set_orm_property(key, value);
-    }
-
-    /**
-     * Set a property to a particular value on this object.
-     * To set multiple properties at once, pass an associative array
-     * as the first parameter and leave out the second parameter.
-     * Flags the properties as "dirty" so they will be saved to the
-     * database when save() is called. 
-     * @param string|array $key
-     * @param string|null $value
-     */
-    public function setExpr(key, value = null) 
-    {
-        return this->_set_orm_property(key, value, true);
-    }
-
-    /**
-     * Set a property on the ORM object.
-     * @param string|array $key
-     * @param string|null $value
-     * @param bool $raw Whether this value should be treated as raw or not
-     */
-    protected function _set_orm_property(key, value = null, expr = false)-><Query>
-    {
-        var field,val;
-        if typeof key != "array" {
-            let key = [key : value];
-        }
-        for field,val in key {
-            let this->_data[field] = val;
-            let this->_dirty_fields[field] = val;
-            if false === expr && isset this->_expr_fields[field] {
-                unset this->_expr_fields[field];
-            } elseif true === expr {
-                let this->_expr_fields[field] = true;
-            }
-        }
-        return this;
-    }
-
-    /**
-     * Check whether the given field has been changed since this
-     * object was saved.
-     */
-    public function isDirty(key) 
-    {
-        return array_key_exists(key, this->_dirty_fields);
-    }
-
-    /**
-     * Check whether the model was the result of a call to create() or not
-     * @return bool
-     */
-    public function isNew() 
-    {
-        return this->_is_new;
-    }
-
-    /**
-     * Save any fields which have been modified on this object
-     * to the database.
-     */
-    public function save() 
-    {
-        var values,id,query,success,cac,keys,c,db,row,key,value,column;
-        string func = "fetch";
-        let query = [];
-        let keys = array_diff_key(this->_dirty_fields, this->_expr_fields);
-        let values = (typeof keys == "array") ? array_values(keys) : [];
-
-        if ! this->_is_new {
-            if empty values && empty this->_expr_fields {
-                return true;
-            }
-            let query = this->_build_update();
-            let id = this->id(true);
-            if (typeof id == "array") {
-                let values = array_merge(values, array_values(id));
-            } else {
-                let values[]= id;
-            }
-        } else { // INSERT
-            let query = this->_build_insert();
-        }
-
-        let success = self::_execute(query, values, this->_name);
-        let cac = self::_config[this->_name]["caching_auto_clear"];
-        if cac {
-            self::clearCache(this->_table_name, this->_name);
-        }
-        // If we"ve just inserted a new record, set the ID of this object
-        if this->_is_new {
-            let this->_is_new = false;
-            let c = this->countNullIdColumns();
-            if  c != 0 {
-                let db = self::getDb(this->_name);
-                if db->getAttribute(\PDO::ATTR_DRIVER_NAME) == "pgsql" {
-                    let row = self::getLastStatement()->{func}(\PDO::FETCH_ASSOC);
-                    for key,value in row {
-                        let this->_data[key] = value;
-                    }
-                } else {
-                    let column = this->_get_id_column_name();
-                    // if the primary key is compound, assign the last inserted id
-                    // to the first column
-                    if (typeof column == "array") {
-                        let column = reset(column);
-                    }
-                    let this->_data[column] = db->lastInsertId();
-                }
-            }
-        }
-
-        let this->_dirty_fields = [];
-        let this->_expr_fields = [];
-        return success;
-    }
-
-    /**
-     * Add a WHERE clause for every column that belongs to the primary key
-     */
-    protected function _add_id_column_conditions(query) 
-    {
-        var keys,key,pk;
-        boolean first = true;
-        let query[] = "WHERE";
-        let pk   = this->_get_id_column_name();
-        let keys = (typeof pk == "array") ? this->_get_id_column_name() : [ this->_get_id_column_name() ];
-        for key in keys {
-            if first {
-                let first = false;
-            }else {
-                let query[] = "AND";
-            }
-            let query[] = this->_quote_identifier(key);
-            let query[] = "= ?";
-        }
-        return query;
-    }
-
-    /**
      * Build an UPDATE query
      */
-    protected function _build_update() 
+    protected function _build_update(array! data) 
     {
         array query = [];
-        var table,key,value;
+        var table,key,value,where;
         array field_list = [];
         let table = this->_quote_identifier(this->_table_name);
         let query[] = "UPDATE ".table." SET";
-        for key,value in this->_dirty_fields {
-            if !array_key_exists(key, this->_expr_fields) {
+        for key,value in data {
+            if !isset this->_expr_fields[key] {
                 let value = "?";
             }
             let key = this->_quote_identifier(key);
             let field_list[] = key." = ".value;
         }
         let query[] = implode(", ", field_list);
-        let query = this->_add_id_column_conditions(query);
+        let where = this->_build_where();
+        if empty where {
+            throw "Update on NO WHERE conditions";
+        }
+        let query[]= "WHERE ".where;
         return implode(" ", query);
     }
 
     /**
      * Build an INSERT query
      */
-    protected function _build_insert() 
+    protected function _build_insert(array! data) 
     {
         array query;
         var field_list,placeholders;
         let query[] = "INSERT INTO";
         let query[] = this->_quote_identifier(this->_table_name);
-        let field_list = array_map([this, "_quote_identifier"], array_keys(this->_dirty_fields));
+        let field_list = array_map([this, "_quote_identifier"], array_keys(data));
         let query[] = "(" . implode(", ", field_list) . ")";
         let query[] = "VALUES";
-        let placeholders = this->_create_placeholders(this->_dirty_fields);
+        let placeholders = this->_create_placeholders(data);
         let query[] = "(".placeholders.")";
         if self::getDb(this->_name)->getAttribute(\PDO::ATTR_DRIVER_NAME) == "pgsql" {
             let query[] = "RETURNING " . this->_quote_identifier(this->_get_id_column_name());
@@ -2280,28 +2049,43 @@ class Db
         return implode(" ", query);
     }
 
-    /**
-     * Delete this record from the database
-     */
-    public function delete() 
+    public function insert(array! data)
     {
-        var query,ids;
-        let query = [
-            "DELETE FROM",
-            this->_quote_identifier(this->_table_name)
-        ];
-        let query = this->_add_id_column_conditions(query);
-        let ids = this->id(true);
-        return self::_execute(implode(" ", query), (typeof ids == "array") ? array_values(ids) : [ids], this->_name);
+        if empty data {
+            throw "Data can't empty";
+        }
+        var sql;
+        let sql =  this->_build_insert(data);
+        return self::_execute(sql, array_values(data), this->_name);
+    }
+
+    public function insertGetId(array! data)
+    {
+        var sql,result,db;
+        if empty data {
+            throw "Data can't empty";
+        }
+        let sql =  this->_build_insert(data);
+        let result = self::_execute(sql, array_values(data), this->_name);
+        let db = self::getDb(this->_name);
+        return result ? db->lastInsertId() : false;
+    }
+
+    public function update(array! data)
+    {
+        if empty data {
+            throw "Data can't empty";
+        }
+        var sql;
+        let sql =  this->_build_update(data);
+        return self::_execute(sql, array_values(data), this->_name);
     }
 
     /**
      * Delete many records from the database
      */
-    public function delete_many() 
+    public function delete() 
     {
-        // Build and return the full DELETE statement by concatenating
-        // the results of calling each separate builder method.
         var query;
         let query = this->_join_if_not_empty(" ", [
             "DELETE FROM",
@@ -2309,62 +2093,5 @@ class Db
             this->_build_where()
         ]);
         return self::_execute(query, this->_values, this->_name);
-    }
-
-    public function deleteAll()
-    {
-        return this->delete_many();
-    }
-
-    // --------------------- //
-    // ---  ArrayAccess  --- //
-    // --------------------- //
-
-    public function offsetExists(key) 
-    {
-        return array_key_exists(key, this->_data);
-    }
-
-    public function offsetGet(key) 
-    {
-        return this->get(key);
-    }
-
-    public function offsetSet(key, value) 
-    {
-        if is_null(key) {
-            throw "You must specify a key/array index.";
-        }
-        this->set(key, value);
-    }
-
-    public function offsetUnset(key) 
-    {
-        unset this->_data[key];
-        unset this->_dirty_fields[key];
-    }
-
-    // --------------------- //
-    // --- MAGIC METHODS --- //
-    // --------------------- //
-    public function __get(key) 
-    {
-        return this->offsetGet(key);
-    }
-
-    public function __set(key, value) 
-    {
-        this->offsetSet(key, value);
-    }
-
-    public function __unset(key) 
-    {
-        this->offsetUnset(key);
-    }
-
-
-    public function __isset(key) 
-    {
-        return this->offsetExists(key);
     }
 }
