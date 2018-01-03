@@ -14,6 +14,7 @@ class Db
         "username" : null,
         "password" : null,
         "options" : null,
+        "prefix" : "",
         "identifier_quote_character" : null,
         "limit_clause_style" : null,
         "logging" : false,
@@ -113,7 +114,7 @@ class Db
         self::_setup_db_config(name);
         var k,v;
         for k,v in config {
-            if isset self::_default_config[k] {
+            if isset self::_config[name][k] {
                 self::config(k, v, name);
             }
         }
@@ -185,7 +186,7 @@ class Db
     {
         var prefix;
         self::_setup_db(name);
-        let prefix = self::getConfig("prefix");
+        let prefix = self::getConfig("prefix",name);
         return new self(prefix.table_name, [], name);
     }
 
@@ -218,7 +219,7 @@ class Db
     protected static function _setup_db_config(string! name) -> void
     {
         if !isset self::_config[name] {
-            let self::_config[name] = [];
+            let self::_config[name] = self::_default_config;
         }
     }
 
@@ -1864,7 +1865,7 @@ class Db
      * part of an identifier, using the identifier quote
      * character specified in the config (or autodetected).
      */
-    protected function _quote_identifier_part(part)->string 
+    public function _quote_identifier_part(part)->string 
     {
         var quote_character;
         if part === "*" {
