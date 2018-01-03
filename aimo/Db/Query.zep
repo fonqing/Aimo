@@ -399,6 +399,11 @@ class Query implements \ArrayAccess {
         return self::_last_statement;
     }
 
+    public function getLastSql()
+    {
+        return self::getLastQuery();
+    }
+
    /**
     * Internal helper method for executing statments. Logs queries, and
     * stores statement object in ::_last_statment, accessible publicly
@@ -410,7 +415,7 @@ class Query implements \ArrayAccess {
     */
     protected static function _execute(query, parameters = [], connection_name = self::DEFAULT_CONNECTION) 
     {
-        var statement,time,key,param,type,result;
+        var statement,time,key,param,type,result,k;
         let statement = self::getDb(connection_name)->prepare(query);
         let self::_last_statement = statement;
         let time = microtime(true);
@@ -425,11 +430,14 @@ class Query implements \ArrayAccess {
                 let type = \PDO::PARAM_STR;
             }
             if is_int(key) {
-                let key = key + 1;
+                let k = key + 1;
+                statement->bindValue(k, param, type);
+            }else{
+                statement->bindValue(key, param, type);
             }
-            statement->bindParam(key, param, type);
         }
         let result = statement->execute();
+        //statement->debugDumpParams();
         self::_log_query(query, parameters, connection_name, (microtime(true)-time));
         return result;
     }
@@ -729,7 +737,7 @@ class Query implements \ArrayAccess {
      */
     protected function _call_aggregate_db_function(sql_function, column) 
     {
-        var alias,result_columns,result,return_value = 0;
+        var alias,result_columns,result,v,return_value = 0;
         let alias = strtolower(sql_function);
         let sql_function = strtoupper(sql_function);
         if "*" != column {
@@ -740,13 +748,16 @@ class Query implements \ArrayAccess {
         this->fieldExpr(sql_function."(".column.")", alias);
         let result = this->find();
         let this->_result_columns = result_columns;
-        if result !== false && isset result->{alias} {
-            if !is_numeric(result->{alias}) {
-                let return_value = result->{alias};
-            }elseif (int) result->{alias} == (float) result->{alias} {
-                let return_value = (int) result->{alias};
-            } else {
-                let return_value = (float) result->{alias};
+        if result !== false {
+            let v = result->get(alias);
+            if !empty v {
+                if !is_numeric(result->get(alias)) {
+                    let return_value = result->{alias};
+                }elseif (int) result->get(alias) == (float) result->get(alias) {
+                    let return_value = (int) result->get(alias);
+                } else {
+                    let return_value = (float) result->get(alias);
+                }
             }
         }
         return return_value;
@@ -758,7 +769,8 @@ class Query implements \ArrayAccess {
      * This will usually be called only from inside the class,
      * but it"s public in case you need to call it directly.
      */
-    public function hydrate(data=[]) {
+    public function hydrate(data=[]) 
+    {
         let this->_data = data;
         return this;
     }
@@ -767,7 +779,8 @@ class Query implements \ArrayAccess {
      * Force the ORM to flag all the fields in the $data array
      * as "dirty" and therefore update them when save() is called.
      */
-    public function force_all_dirty() {
+    public function force_all_dirty() 
+    {
         let this->_dirty_fields = this->_data;
         return this;
     }
@@ -1103,19 +1116,18 @@ class Query implements \ArrayAccess {
      */
     public function _add_having_placeholder(column_name, separator, values) 
     {
-        var data,result,key,val,column,placeholders;
+        var data,key,val,column,placeholders;
         if (typeof column_name != "array") {
             let data = [column_name : values];
         } else {
             let data = column_name;
         }
-        let result = this;
         for key,val in data {
-            let column = result->_quote_identifier(key);
-            let placeholders = result->_create_placeholders(val);
-            let result = result->_add_having(column." ".separator." (".placeholders.")", val);    
+            let column = this->_quote_identifier(key);
+            let placeholders = this->_create_placeholders(val);
+            this->_add_having(column." ".separator." (".placeholders.")", val);    
         }
-        return result;
+        return this;
     }
 
     /**
@@ -1123,14 +1135,13 @@ class Query implements \ArrayAccess {
      */
     public function _add_having_no_value(column_name, operator) 
     {
-        var conditions,result,column;
+        var conditions,column;
         let conditions = (typeof column_name=="array") ? column_name : [column_name];
-        let result = this;
         for column in conditions {
             let column = this->_quote_identifier(column);
-            let result = result->_add_having(column." ".operator);
+            this->_add_having(column." ".operator);
         }
-        return result;
+        return this;
     }
 
     /**
@@ -1154,19 +1165,18 @@ class Query implements \ArrayAccess {
      */
     protected function _add_where_placeholder(column_name, separator, values)
     {
-        var data,key,val,placeholders,result,column;
+        var data,key,val,placeholders,column;
         if (typeof column_name != "array") {
             let data = [column_name:values];
         } else {
             let data = column_name;
         }
-        let result = this;
         for key,val in data {
-            let column = result->_quote_identifier(key);
-            let placeholders = result->_create_placeholders(val);
-            let result = result->_add_where(column." ".separator." (".placeholders.")", val);    
+            let column = this->_quote_identifier(key);
+            let placeholders = this->_create_placeholders(val);
+            this->_add_where(column." ".separator." (".placeholders.")", val);    
         }
-        return result;
+        return this;
     }
 
     /**
@@ -1174,14 +1184,13 @@ class Query implements \ArrayAccess {
      */
     protected function _add_where_no_value(column_name, operator)
     {
-        var conditions,result,column;
+        var conditions,column;
         let conditions = (typeof column_name=="array") ? column_name : [column_name];
-        let result = this;
         for column in conditions {
             let column = this->_quote_identifier(column);
-            let result = result->_add_where(column." ".operator);
+            this->_add_where(column." ".operator);
         }
-        return result;
+        return this;
     }
 
     /**
@@ -1189,15 +1198,27 @@ class Query implements \ArrayAccess {
      */
     protected function _add_condition(type, fragment, values=[]) 
     {
-        string conditions_class_property_name;
-        let conditions_class_property_name = "_".type."_conditions";
-        if (typeof values != "array")  {
-            let values = [values];
+        var temp;
+        if type == "where" {
+            print_r(values);
+            print_r(this->_where_conditions);
+            if (typeof values != "array")  {
+                let temp = [values];
+            }
+            let this->_where_conditions[]=[
+                self::CONDITION_FRAGMENT : fragment,
+                self::CONDITION_VALUES : temp
+            ];
+            print_r(this->_where_conditions);
+        } elseif type == "having" {
+            if (typeof values != "array")  {
+                let temp = [values];
+            }
+            let this->_having_conditions[]=[
+                self::CONDITION_FRAGMENT : fragment,
+                self::CONDITION_VALUES : temp
+            ];
         }
-        array_push(this->{conditions_class_property_name}, [
-            self::CONDITION_FRAGMENT : fragment,
-            self::CONDITION_VALUES : values
-        ]);
         return this;
     }
 
@@ -1212,22 +1233,20 @@ class Query implements \ArrayAccess {
     protected function _add_simple_condition(type, column_name, separator, value) 
     {
         array multiple;
-        var result,key,val,table;
+        var key,val,table;
         let multiple = (typeof column_name == "array") ? column_name : [column_name : value];
-        let result   = this;
         for key,val in multiple {
-            if count(result->_join_sources) > 0 && strpos(key, ".") === false {
-                let table = result->_table_name;
-                if !is_null(result->_table_alias) {
-                    let table = result->_table_alias;
+            if count(this->_join_sources) > 0 && strpos(key, ".") === false {
+                let table = this->_table_name;
+                if !is_null(this->_table_alias) {
+                    let table = this->_table_alias;
                 }
-
                 let key = table.".".key;
             }
-            let key = result->_quote_identifier(key);
-            let result = result->_add_condition(type, key." ".separator." ?", val);
+            let key = this->_quote_identifier(key);
+            this->_add_condition(type, key." ".separator." ?", val);
         }
-        return result;
+        return this;
     } 
 
     /**
@@ -1295,8 +1314,6 @@ class Query implements \ArrayAccess {
      * Query::table('user')->where('uid=?',[3])->find();
      * //>,<,!=,<>,>=,<=
      * Query::table('user')->where('uid','=',3)->find();
-     * //IS NULL
-     * Query::table('user')->where('lastlogin',NULL)->find();
      * //Default login is AND
      * Query::table('user')->where([
      *     'groupid' => 2,
@@ -1305,51 +1322,47 @@ class Query implements \ArrayAccess {
      * ])->select();
      * </code>
      */
-    public function where() 
+    public function where(a,b=null,c=null) 
     {
-        var params,count,k,v,result;
+        var k,v;
         string operators;
-        let params = func_get_args();
-        let count = count(params);
-        if count === 1 {
-            if (typeof params[0]=="string" ) {
-                return this->whereRaw(params[0]);
-            } elseif (typeof params[0]=="array") {
-                let result = this;
-                for k,v in params[0] {
+        if a!=null && b==null && c==null {
+            if (typeof a=="string" ) {
+                return this->whereRaw(a);
+            } elseif (typeof a == "array") {
+                for k,v in a {
                     if !is_numeric(k) {
                         if (typeof v=="array") {
                             if count(v) === 2 {
-                                let result = result->where(k,v[0],v[1]);
+                                this->_add_simple_where(k,v[0],v[1]);
                             }
                         } else {
-                            let result = result->whereEqual(k,v);
+                            this->whereEqual(k,v);
                         }
                     }
                 }
-                return result;
+                return this;
             }
-        } elseif count === 2 {
-            if (typeof params[0] == "array"){
+        } elseif a!=null && b!=null && c==null {
+            if (typeof a == "array"){
                 throw "Not support conditon defination";
-            } elseif (typeof params[0] == "string") {
-                if params[1] === null {
-                    return this->whereIsNull(params[0]);
-                }
-                if (typeof params[1] == "array") {
-                    return this->whereRaw(params[0],params[1]);
+            } elseif (typeof a == "string") {
+                if (typeof b == "array") {
+                    return this->whereRaw(a,b);
+                }elseif is_int(b) || is_float(b) || (typeof b == "string") {
+                    return this->whereEqual(a,b);
                 }
             }
-        } elseif count === 3 {
+        } elseif a!=null && b!=null && c!=null {
             let operators = "_=_!=_>_<>_<_>=_<=_LIKE_NOT LIKE_like_not like_";
-            if operators->index("_".params[1]."_") {
-                return this->_add_simple_where(params[0], params[1], params[2]);
+            if operators->index("_".b."_") {
+                return this->_add_simple_where(a, b, c);
             }
-            if strcasecmp(params[1],"in") === 0 {
-                return this->_add_where_placeholder(params[0], "IN", params[2]);
+            if strcasecmp(b,"in") === 0 {
+                return this->_add_where_placeholder(a, "IN", c);
             }
-            if strcasecmp(params[1],"not in") === 0 {
-                return this->_add_where_placeholder(params[0], "NOT IN", params[2]);
+            if strcasecmp(b,"not in") === 0 {
+                return this->_add_where_placeholder(a, "NOT IN", c);
             }
         }
         trigger_error("where method execute failed", E_USER_NOTICE);
@@ -1360,7 +1373,7 @@ class Query implements \ArrayAccess {
      * More explicitly named version of for the where() method.
      * Can be used if preferred.
      */
-    protected function whereEqual(column_name, value=null) 
+    public function whereEqual(column_name, value=null) 
     {
         return this->_add_simple_where(column_name, "=", value);
     }
@@ -1429,8 +1442,13 @@ class Query implements \ArrayAccess {
      *
      * If primary key is compound, only the columns that
      * belong to they key will be used for the query
+     *
+     * <code>
+     * $data = Query::table('table')->whereIdIn(['uid'=>3,'tagid'=>5]);
+     * </code>
      */
-    public function whereIdIn(ids) {
+    public function whereIdIn(ids) 
+    {
         return is_array(this->_get_id_column_name()) ?
             this->whereAnyIs(this->_get_compound_id_column_values_array(ids)) :
             this->whereIn(this->_get_id_column_name(), ids);
@@ -1438,41 +1456,70 @@ class Query implements \ArrayAccess {
 
     /**
      * Add a WHERE ... LIKE clause to your query.
+     *
+     * <code>
+     * $data = Query::table('table')->whereLike('name','keyword%');
+     * </code>
      */
-    public function whereLike(column_name, value=null) {
+    public function whereLike(column_name, value=null) 
+    {
         return this->_add_simple_where(column_name, "LIKE", value);
     }
 
     /**
      * Add where WHERE ... NOT LIKE clause to your query.
+     *
+     * <code>
+     * $data = Query::table('table')->whereNotLike('name','keyword%');
+     * </code>
      */
-    public function whereNotLike(column_name, value=null) {
+    public function whereNotLike(column_name, value=null) 
+    {
         return this->_add_simple_where(column_name, "NOT LIKE", value);
     }
 
     /**
      * Add a WHERE ... > clause to your query
+     *
+     * <code>
+     * $data = Query::table('table')->whereGt('score',60);
+     * </code>
      */
-    public function whereGt(column_name, value=null) {
+    public function whereGt(column_name, value=null) 
+    {
         return this->_add_simple_where(column_name, ">", value);
     }
 
     /**
      * Add a WHERE ... < clause to your query
+     *
+     **<code>
+     * $data = Query::table('table')->whereLt('score',60);
+     * </code>
      */
-    public function whereLt(column_name, value=null) {
+    public function whereLt(column_name, value=null) 
+    {
         return this->_add_simple_where(column_name, "<", value);
     }
 
     /**
      * Add a WHERE ... >= clause to your query
+     *
+     * <code>
+     * $data = Query::table('table')->whereGte('score',60);
+     * </code>
      */
-    public function whereGte(column_name, value=null) {
+    public function whereGte(column_name, value=null) 
+    {
         return this->_add_simple_where(column_name, ">=", value);
     }
 
     /**
      * Add a WHERE ... <= clause to your query
+     *
+     * <code>
+     * $data = Query::table('table')->whereLte('score',60);
+     * </code>
      */
     public function whereLte(column_name, value=null) {
         return this->_add_simple_where(column_name, "<=", value);
@@ -1480,29 +1527,49 @@ class Query implements \ArrayAccess {
 
     /**
      * Add a WHERE ... IN clause to your query
+     *
+     * <code>
+     * $data = Query::table('table')->whereIn('field',['a','b','c']);
+     * </code>
      */
-    public function whereIn(column_name, values) {
+    public function whereIn(column_name, values) 
+    {
         return this->_add_where_placeholder(column_name, "IN", values);
     }
 
     /**
      * Add a WHERE ... NOT IN clause to your query
+     *
+     * <code>
+     * $data = Query::table('table')->whereNotIn('field',['a','b','c']);
+     * </code>
      */
-    public function whereNotIn(column_name, values) {
+    public function whereNotIn(column_name, values) 
+    {
         return this->_add_where_placeholder(column_name, "NOT IN", values);
     }
 
     /**
      * Add a WHERE column IS NULL clause to your query
+     *
+     * <code>
+     * $data = Query::table('table')->whereIsNull('field');
+     * </code>
      */
-    public function whereIsNull(column_name) {
+    public function whereIsNull(column_name) 
+    {
         return this->_add_where_no_value(column_name, "IS NULL");
     }
 
     /**
      * Add a WHERE column IS NOT NULL clause to your query
+     *
+     * <code>
+     * $data = Query::table('table')->whereNotNull('field');
+     * </code>
      */
-    public function whereNotNull(column_name) {
+    public function whereNotNull(column_name) 
+    {
         return this->_add_where_no_value(column_name, "IS NOT NULL");
     }
 
@@ -1510,8 +1577,13 @@ class Query implements \ArrayAccess {
      * Add a raw WHERE clause to the query. The clause should
      * contain question mark placeholders, which will be bound
      * to the parameters supplied in the second argument.
+     *
+     * <code>
+     * $data = Query::table('table')->whereRaw('field1 = ? and field2 <> ?',['value1','value2']);
+     * </code>
      */
-    public function whereRaw(clause, parameters=[]) {
+    public function whereRaw(clause, parameters=[]) 
+    {
         return this->_add_where(clause, parameters);
     }
 
@@ -1550,7 +1622,7 @@ class Query implements \ArrayAccess {
     /**
      * Add an ORDER BY column DESC clause
      */
-    public function order_by_desc(column_name) 
+    public function orderByDesc(column_name) 
     {
         return this->_add_order_by(column_name, "DESC");
     }
@@ -1558,7 +1630,7 @@ class Query implements \ArrayAccess {
     /**
      * Add an ORDER BY column ASC clause
      */
-    public function order_by_asc(column_name) 
+    public function orderByAsc(column_name) 
     {
         return this->_add_order_by(column_name, "ASC");
     }
@@ -1566,7 +1638,7 @@ class Query implements \ArrayAccess {
     /**
      * Add an unquoted expression as an ORDER BY clause
      */
-    public function order_by_expr(clause) 
+    public function orderByExpr(clause) 
     {
         let this->_order_by[] = clause;
         return this;
@@ -1575,7 +1647,7 @@ class Query implements \ArrayAccess {
     /**
      * Add a column to the list of columns to GROUP BY
      */
-    public function group_by(column_name) 
+    public function groupBy(column_name) 
     {
         let column_name = this->_quote_identifier(column_name);
         let this->_group_by[] = column_name;
@@ -1585,7 +1657,7 @@ class Query implements \ArrayAccess {
     /**
      * Add an unquoted expression to the list of columns to GROUP BY 
      */
-    public function group_by_expr(expr) 
+    public function groupByExpr(expr) 
     {
         let this->_group_by[] = expr;
         return this;
@@ -1646,7 +1718,8 @@ class Query implements \ArrayAccess {
     /**
      * Add where HAVING ... NOT LIKE clause to your query.
      */
-    public function having_not_like(column_name, value=null) {
+    public function having_not_like(column_name, value=null) 
+    {
         return this->_add_simple_having(column_name, "NOT LIKE", value);
     }
 
@@ -1747,7 +1820,7 @@ class Query implements \ArrayAccess {
     protected function _build_select_start() 
     {
         var fragment = "SELECT ",result_columns;
-        let result_columns = join(", ", this->_result_columns);
+        let result_columns = implode(", ", this->_result_columns);
 
         if !is_null(this->_limit) &&
             self::_config[this->_connection_name]["limit_clause_style"] === Query::LIMIT_STYLE_TOP_N {
@@ -1809,18 +1882,28 @@ class Query implements \ArrayAccess {
      */
     protected function _build_conditions(type)->string 
     {
-        string name;
         var condition;
         array conditions = [];
-        let name = "_".type."_conditions";
-        if count(this->{name}) === 0 {
-            return "";
+        if type == "where" {
+            if count(this->_where_conditions) === 0 {
+                return "";
+            }
+            for condition in this->_where_conditions {
+                let conditions[] = condition[self::CONDITION_FRAGMENT];
+                let this->_values = array_merge(this->_values, condition[self::CONDITION_VALUES]);
+            }
+            return strtoupper(type) . " " . implode(" AND ", conditions);
+        } elseif type == "having" {
+            if count(this->_having_conditions) === 0 {
+                return "";
+            }
+            for condition in this->_having_conditions {
+                let conditions[] = condition[self::CONDITION_FRAGMENT];
+                let this->_values = array_merge(this->_values, condition[self::CONDITION_VALUES]);
+            }
+            return strtoupper(type) . " " . implode(" AND ", conditions);
         }
-        for condition in this->{name} {
-            let conditions[] = condition[self::CONDITION_FRAGMENT];
-            let this->_values = array_merge(this->_values, condition[self::CONDITION_VALUES]);
-        }
-        return strtoupper(type) . " " . implode(" AND ", conditions);
+        return "";
     }
 
     /**
@@ -1891,7 +1974,8 @@ class Query implements \ArrayAccess {
      * (table names, column names etc). This method can
      * also deal with dot-separated identifiers eg table.column
      */
-    protected function _quote_one_identifier(identifier) {
+    protected function _quote_one_identifier(identifier) 
+    {
         var parts;
         let parts = explode(".", identifier);
         let parts = array_map([this, "_quote_identifier_part"], parts);
@@ -1904,7 +1988,8 @@ class Query implements \ArrayAccess {
      * multiple identifiers. This method can also deal with
      * dot-separated identifiers eg table.column
      */
-    protected function _quote_identifier(identifier) {
+    protected function _quote_identifier(identifier) 
+    {
         var result;
         if (typeof identifier == "array")  {
             let result = array_map([this, "_quote_one_identifier"], identifier);
@@ -2005,7 +2090,6 @@ class Query implements \ArrayAccess {
                 return cached_result;
             }
         }
-
         self::_execute(query, this->_values, this->_connection_name);
         let statement = self::getLastStatement();
         let rows = [];
@@ -2230,7 +2314,7 @@ class Query implements \ArrayAccess {
     /**
      * Add a WHERE clause for every column that belongs to the primary key
      */
-    public function _add_id_column_conditions(query) 
+    protected function _add_id_column_conditions(query) 
     {
         var keys,key,pk;
         boolean first = true;
@@ -2296,7 +2380,7 @@ class Query implements \ArrayAccess {
      */
     public function delete() 
     {
-        var query,ids;;
+        var query,ids;
         let query = [
             "DELETE FROM",
             this->_quote_identifier(this->_table_name)
@@ -2320,6 +2404,11 @@ class Query implements \ArrayAccess {
             this->_build_where()
         ]);
         return self::_execute(query, this->_values, this->_connection_name);
+    }
+
+    public function deleteAll()
+    {
+        return this->delete_many();
     }
 
     // --------------------- //
@@ -2353,20 +2442,24 @@ class Query implements \ArrayAccess {
     // --------------------- //
     // --- MAGIC METHODS --- //
     // --------------------- //
-    public function __get(key) {
+    public function __get(key) 
+    {
         return this->offsetGet(key);
     }
 
-    public function __set(key, value) {
+    public function __set(key, value) 
+    {
         this->offsetSet(key, value);
     }
 
-    public function __unset(key) {
+    public function __unset(key) 
+    {
         this->offsetUnset(key);
     }
 
 
-    public function __isset(key) {
+    public function __isset(key) 
+    {
         return this->offsetExists(key);
     }
 
