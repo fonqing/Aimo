@@ -659,6 +659,11 @@ class Query implements \ArrayAccess {
         return array_map([this, "_create_instance_from_row"], rows);
     }
 
+    public function toArray()
+    {
+        return this->_run();
+    }
+
     /**
      * Tell the ORM that you are expecting multiple results
      * from your query, and execute it. Will return a result set object
