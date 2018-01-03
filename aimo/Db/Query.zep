@@ -1200,8 +1200,6 @@ class Query implements \ArrayAccess {
     {
         var temp;
         if type == "where" {
-            print_r(values);
-            print_r(this->_where_conditions);
             if (typeof values != "array")  {
                 let temp = [values];
             }
@@ -1209,7 +1207,6 @@ class Query implements \ArrayAccess {
                 self::CONDITION_FRAGMENT : fragment,
                 self::CONDITION_VALUES : temp
             ];
-            print_r(this->_where_conditions);
         } elseif type == "having" {
             if (typeof values != "array")  {
                 let temp = [values];
