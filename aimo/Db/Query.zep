@@ -590,7 +590,8 @@ class Query implements \ArrayAccess {
      * Create an ORM instance from the given row (an associative
      * array of data fetched from the database)
      */
-    protected function _create_instance_from_row(row) {
+    protected function _create_instance_from_row(row) 
+    {
         var instance;
         let instance = self::table(this->_table_name, this->_connection_name);
         instance->use_id_column(this->_instance_id_column);
@@ -611,7 +612,7 @@ class Query implements \ArrayAccess {
     {
         var rows;
         if !is_null(id) {
-            this->where_id_is(id);
+            this->whereIdIs(id);
         }
         this->limit(1);
         let rows = this->_run();
@@ -626,7 +627,7 @@ class Query implements \ArrayAccess {
      * from your query, and execute it. Will return an array
      * of instances of the ORM class, or an empty array if
      * no rows were returned.
-     * @return array|\IdiormResultSet
+     * @return array| ResultSet
      */
     public function select() 
     {
@@ -654,7 +655,7 @@ class Query implements \ArrayAccess {
      * Tell the ORM that you are expecting multiple results
      * from your query, and execute it. Will return a result set object
      * containing instances of the ORM class.
-     * @return \IdiormResultSet
+     * @return ResultSet
      */
     public function find_result_set() 
     {
@@ -665,9 +666,15 @@ class Query implements \ArrayAccess {
      * Tell the ORM that you are expecting multiple results
      * from your query, and execute it. Will return an array,
      * or an empty array if no rows were returned.
+     *
+     * <code>
+     * $info = Query::table('table')->fields('id,name')->getArray();
+     * var_dump($info);
+     * </code>
+     *
      * @return array
      */
-    public function find_array() 
+    public function getArray() 
     {
         return this->_run(); 
     }
@@ -720,7 +727,8 @@ class Query implements \ArrayAccess {
      * @param string $column The column to execute the aggregate query against
      * @return int
      */
-    protected function _call_aggregate_db_function(sql_function, column) {
+    protected function _call_aggregate_db_function(sql_function, column) 
+    {
         var alias,result_columns,result,return_value = 0;
         let alias = strtolower(sql_function);
         let sql_function = strtoupper(sql_function);
@@ -833,12 +841,8 @@ class Query implements \ArrayAccess {
      * Add a column to the list of columns returned by the SELECT
      * query. This defaults to "*". The second optional argument is
      * the alias to return the column as.
-     *
-     * <code>
-     * Query::table('user')->field('username','uname')->...
-     * </code>
      */
-    public function field(column, alias=null)
+    protected function field(column, alias=null)
     {
         let column = this->_quote_identifier(column);
         return this->_add_result_column(column, alias);
@@ -848,15 +852,15 @@ class Query implements \ArrayAccess {
      * Add an unquoted expression to the list of columns returned
      * by the SELECT query. The second optional argument is
      * the alias to return the column as.
-     *
-     * <code>
-     * Query::table('user')->fieldExpr('COUNT(DISTINCT `gid`)','c')->...
-     * </code>
-     *
      */
-    public function fieldExpr(expr, alias=null)
+    protected function fieldExpr(expr, alias=null)
     {
         return this->_add_result_column(expr, alias);
+    }
+
+    protected function trimField(string! field)
+    {
+        return trim(field," \t\n\r\0\x0B`'\"[]");
     }
 
     /**
@@ -868,53 +872,63 @@ class Query implements \ArrayAccess {
      * numeric alias then prepend it with some alpha chars. eg. a1
      * 
      * <code> 
-     * Query::table('users')->fields(["alias" => "column", "column2", "alias2" => "column3"], "column4", "column5");
-     * Query::table('users')->fields("column", "column2", "column3");
-     * Query::table('users')->fields(["column", "column2", "column3"], "column4", "column5");
-     * 
+     * //Right example
+     * Query::table('user')->fields('uid,username,password')->...;
+     * Query::table('user')->fields('uid,username,password as hash')->...;
+     * Query::table('logs')->fields('uid,COUNT(*) as count')->...;
+     * Query::table('user')->fields('uid,username',['amount'=>'SUM(`fee`)'])->...;
+     * //Wrong example
+     * //When due to use SQL Function may be contain "," syntax will be cause sql error;
+     * Query::table('user')->field('uid,CONCAT(roleid,"_",departmentid) as rel');
+     * </code>
      * @return <Query>
      */
     public function fields() -> <Query>
     {
-        var columns,alias,column;
+        var columns,alias,column,fields,aliass,field,parts;
         let columns = func_get_args();
         if !empty columns {
-            let columns = this->_normalise_select_many_columns(columns);
+            //let columns = this->_normalise_select_many_columns(columns);
             for alias,column in columns {
-                if is_numeric(alias) {
-                    let alias = null;
+                if (typeof column == "string") {
+                    if strpos(column, ",")!== false {
+                        let fields = explode(",", column);
+                        for field in fields {
+                            if stripos(field," as ") !== false {
+                                let parts  = explode(" AS ", str_ireplace(" as ", " AS ", field));
+                                let field  = this->trimField(parts[0]);
+                                let aliass = this->trimField(parts[1]);
+                                if strpos(field,"(") !== false {
+                                    this->fieldExpr(field, aliass);
+                                } else {
+                                    this->field(field, aliass);
+                                }
+                            }else{
+                                let field = this->trimField(field);
+                                this->field(field); 
+                            }
+                        }
+                    }else{
+                        let column = this->trimField(column);
+                        this->field(column);
+                    }
+                } elseif (typeof column == "array"){
+                    for alias,field in column {
+                        if strpos(field,"(") !== false {
+                            if is_numeric(alias) {
+                                this->fieldExpr(field);
+                            } else {
+                                this->fieldExpr(field,alias);
+                            }
+                        } else {
+                            if is_numeric(alias) {
+                                this->field(field);
+                            } else {
+                                this->field(field,alias);
+                            }
+                        }
+                    }
                 }
-                this->field(column, alias);
-            }
-        }
-        return this;
-    }
-
-    /**
-     * Add an unquoted expression to the list of columns returned
-     * by the SELECT query. Many columns can be supplied as either 
-     * an array or as a list of parameters to the method.
-     * 
-     * Note that the alias must not be numeric - if you want a
-     * numeric alias then prepend it with some alpha chars. eg. a1
-     * 
-     * @example select_many_expr(array("alias" => "column", "column2", "alias2" => "column3"), "column4", "column5")
-     * @example select_many_expr("column", "column2", "column3")
-     * @example select_many_expr(array("column", "column2", "column3"), "column4", "column5")
-     * 
-     * @return \ORM
-     */
-    public function fieldsExpr()-><Query> 
-    {
-        var columns,alias,column;
-        let columns = func_get_args();
-        if !empty columns {
-            let columns = this->_normalise_select_many_columns(columns);
-            for alias,column in columns {
-                if is_numeric(alias) {
-                    let alias = null;
-                }
-                this->fieldExpr(column, alias);
             }
         }
         return this;
@@ -1007,7 +1021,7 @@ class Query implements \ArrayAccess {
     /**
      * Add a RAW JOIN source to the query
      */
-    public function raw_join(table, constraint, table_alias = null, parameters = []) 
+    public function rawJoin(table, constraint, table_alias = null, parameters = []) 
     {
         var first_column,operator,second_column;
         if table_alias != null {
@@ -1039,7 +1053,7 @@ class Query implements \ArrayAccess {
     /**
      * Add an INNER JOIN souce to the query
      */
-    public function inner_join(table, constraint, table_alias=null) 
+    public function innerJoin(table, constraint, table_alias=null) 
     {
         return this->_add_join_source("INNER", table, constraint, table_alias);
     }
@@ -1047,7 +1061,7 @@ class Query implements \ArrayAccess {
     /**
      * Add a LEFT OUTER JOIN souce to the query
      */
-    public function left_outer_join(table, constraint, table_alias=null) 
+    public function leftOuterJoin(table, constraint, table_alias=null) 
     {
         return this->_add_join_source("LEFT OUTER", table, constraint, table_alias);
     }
@@ -1055,7 +1069,7 @@ class Query implements \ArrayAccess {
     /**
      * Add an RIGHT OUTER JOIN souce to the query
      */
-    public function right_outer_join(table, constraint, table_alias=null) 
+    public function rightOuterJoin(table, constraint, table_alias=null) 
     {
         return this->_add_join_source("RIGHT OUTER", table, constraint, table_alias);
     }
@@ -1063,7 +1077,7 @@ class Query implements \ArrayAccess {
     /**
      * Add an FULL OUTER JOIN souce to the query
      */
-    public function full_outer_join(table, constraint, table_alias=null) 
+    public function fullOuterJoin(table, constraint, table_alias=null) 
     {
         return this->_add_join_source("FULL OUTER", table, constraint, table_alias);
     }
@@ -1087,7 +1101,8 @@ class Query implements \ArrayAccess {
     /**
      * Internal method to add a HAVING clause with multiple values (like IN and NOT IN)
      */
-    public function _add_having_placeholder(column_name, separator, values) {
+    public function _add_having_placeholder(column_name, separator, values) 
+    {
         var data,result,key,val,column,placeholders;
         if (typeof column_name != "array") {
             let data = [column_name : values];
@@ -1137,7 +1152,7 @@ class Query implements \ArrayAccess {
     /**
      * Add a WHERE clause with multiple values (like IN and NOT IN)
      */
-    public function _add_where_placeholder(column_name, separator, values)
+    protected function _add_where_placeholder(column_name, separator, values)
     {
         var data,key,val,placeholders,result,column;
         if (typeof column_name != "array") {
@@ -1157,7 +1172,7 @@ class Query implements \ArrayAccess {
     /**
      * Add a WHERE clause with no parameters(like IS NULL and IS NOT NULL)
      */
-    public function _add_where_no_value(column_name, operator)
+    protected function _add_where_no_value(column_name, operator)
     {
         var conditions,result,column;
         let conditions = (typeof column_name=="array") ? column_name : [column_name];
@@ -1274,17 +1289,78 @@ class Query implements \ArrayAccess {
      *
      * If you use an array in $column_name, a new clause will be
      * added for each element. In this case, $value is ignored.
+     *
+     * <code>
+     * Query::table('user')->where('uid=3')->find();
+     * Query::table('user')->where('uid=?',[3])->find();
+     * //>,<,!=,<>,>=,<=
+     * Query::table('user')->where('uid','=',3)->find();
+     * //IS NULL
+     * Query::table('user')->where('lastlogin',NULL)->find();
+     * //Default login is AND
+     * Query::table('user')->where([
+     *     'groupid' => 2,
+     *     'role' => ['<>','editor'],
+     *     'name' => ['LIKE', 'test%'],
+     * ])->select();
+     * </code>
      */
-    public function where(column_name, value=null) 
+    public function where() 
     {
-        return this->where_equal(column_name, value);
+        var params,count,k,v,result;
+        string operators;
+        let params = func_get_args();
+        let count = count(params);
+        if count === 1 {
+            if (typeof params[0]=="string" ) {
+                return this->whereRaw(params[0]);
+            } elseif (typeof params[0]=="array") {
+                let result = this;
+                for k,v in params[0] {
+                    if !is_numeric(k) {
+                        if (typeof v=="array") {
+                            if count(v) === 2 {
+                                let result = result->where(k,v[0],v[1]);
+                            }
+                        } else {
+                            let result = result->whereEqual(k,v);
+                        }
+                    }
+                }
+                return result;
+            }
+        } elseif count === 2 {
+            if (typeof params[0] == "array"){
+                throw "Not support conditon defination";
+            } elseif (typeof params[0] == "string") {
+                if params[1] === null {
+                    return this->whereIsNull(params[0]);
+                }
+                if (typeof params[1] == "array") {
+                    return this->whereRaw(params[0],params[1]);
+                }
+            }
+        } elseif count === 3 {
+            let operators = "_=_!=_>_<>_<_>=_<=_LIKE_NOT LIKE_like_not like_";
+            if operators->index("_".params[1]."_") {
+                return this->_add_simple_where(params[0], params[1], params[2]);
+            }
+            if strcasecmp(params[1],"in") === 0 {
+                return this->_add_where_placeholder(params[0], "IN", params[2]);
+            }
+            if strcasecmp(params[1],"not in") === 0 {
+                return this->_add_where_placeholder(params[0], "NOT IN", params[2]);
+            }
+        }
+        trigger_error("where method execute failed", E_USER_NOTICE);
+        return this;
     }
 
     /**
      * More explicitly named version of for the where() method.
      * Can be used if preferred.
      */
-    public function where_equal(column_name, value=null) 
+    protected function whereEqual(column_name, value=null) 
     {
         return this->_add_simple_where(column_name, "=", value);
     }
@@ -1292,7 +1368,7 @@ class Query implements \ArrayAccess {
     /**
      * Add a WHERE column != value clause to your query.
      */
-    public function where_not_equal(column_name, value=null) 
+    public function whereNotEqual(column_name, value=null) 
     {
         return this->_add_simple_where(column_name, "!=", value);
     }
@@ -1303,7 +1379,7 @@ class Query implements \ArrayAccess {
      * If primary key is compound, only the columns that
      * belong to they key will be used for the query
      */
-    public function where_id_is(id) {
+    public function whereIdIs(id) {
         return is_array(this->_get_id_column_name()) ?
             this->where(this->_get_compound_id_column_values(id), null) :
             this->where(this->_get_id_column_name(), id);
@@ -1319,7 +1395,7 @@ class Query implements \ArrayAccess {
      *
      * Each condition will be ORed together when added to the final query.
      */        
-    public function where_any_is(values, operator="=") 
+    public function whereAnyIs(values, operator="=") 
     {
         array data = [];
         array query = ["(("];
@@ -1345,7 +1421,7 @@ class Query implements \ArrayAccess {
             }
         }
         let query[] = "))";
-        return this->where_raw(query->join(" "), data);
+        return this->whereRaw(query->join(" "), data);
     }
 
     /**
@@ -1354,79 +1430,79 @@ class Query implements \ArrayAccess {
      * If primary key is compound, only the columns that
      * belong to they key will be used for the query
      */
-    public function where_id_in(ids) {
+    public function whereIdIn(ids) {
         return is_array(this->_get_id_column_name()) ?
-            this->where_any_is(this->_get_compound_id_column_values_array(ids)) :
-            this->where_in(this->_get_id_column_name(), ids);
+            this->whereAnyIs(this->_get_compound_id_column_values_array(ids)) :
+            this->whereIn(this->_get_id_column_name(), ids);
     }
 
     /**
      * Add a WHERE ... LIKE clause to your query.
      */
-    public function where_like(column_name, value=null) {
+    public function whereLike(column_name, value=null) {
         return this->_add_simple_where(column_name, "LIKE", value);
     }
 
     /**
      * Add where WHERE ... NOT LIKE clause to your query.
      */
-    public function where_not_like(column_name, value=null) {
+    public function whereNotLike(column_name, value=null) {
         return this->_add_simple_where(column_name, "NOT LIKE", value);
     }
 
     /**
      * Add a WHERE ... > clause to your query
      */
-    public function where_gt(column_name, value=null) {
+    public function whereGt(column_name, value=null) {
         return this->_add_simple_where(column_name, ">", value);
     }
 
     /**
      * Add a WHERE ... < clause to your query
      */
-    public function where_lt(column_name, value=null) {
+    public function whereLt(column_name, value=null) {
         return this->_add_simple_where(column_name, "<", value);
     }
 
     /**
      * Add a WHERE ... >= clause to your query
      */
-    public function where_gte(column_name, value=null) {
+    public function whereGte(column_name, value=null) {
         return this->_add_simple_where(column_name, ">=", value);
     }
 
     /**
      * Add a WHERE ... <= clause to your query
      */
-    public function where_lte(column_name, value=null) {
+    public function whereLte(column_name, value=null) {
         return this->_add_simple_where(column_name, "<=", value);
     }
 
     /**
      * Add a WHERE ... IN clause to your query
      */
-    public function where_in(column_name, values) {
+    public function whereIn(column_name, values) {
         return this->_add_where_placeholder(column_name, "IN", values);
     }
 
     /**
      * Add a WHERE ... NOT IN clause to your query
      */
-    public function where_not_in(column_name, values) {
+    public function whereNotIn(column_name, values) {
         return this->_add_where_placeholder(column_name, "NOT IN", values);
     }
 
     /**
      * Add a WHERE column IS NULL clause to your query
      */
-    public function where_null(column_name) {
+    public function whereIsNull(column_name) {
         return this->_add_where_no_value(column_name, "IS NULL");
     }
 
     /**
      * Add a WHERE column IS NOT NULL clause to your query
      */
-    public function where_not_null(column_name) {
+    public function whereNotNull(column_name) {
         return this->_add_where_no_value(column_name, "IS NOT NULL");
     }
 
@@ -1435,7 +1511,7 @@ class Query implements \ArrayAccess {
      * contain question mark placeholders, which will be bound
      * to the parameters supplied in the second argument.
      */
-    public function where_raw(clause, parameters=[]) {
+    public function whereRaw(clause, parameters=[]) {
         return this->_add_where(clause, parameters);
     }
 
@@ -1990,7 +2066,8 @@ class Query implements \ArrayAccess {
      * Return the name of the column in the database table which contains
      * the primary key ID of the row.
      */
-    protected function _get_id_column_name() {
+    protected function _get_id_column_name() 
+    {
         if !is_null(this->_instance_id_column) {
             return this->_instance_id_column;
         }
