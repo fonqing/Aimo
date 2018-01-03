@@ -127,7 +127,7 @@ class Query implements \ArrayAccess {
      * is omitted and the key is a string, the setting is
      * assumed to be the DSN string used by PDO to connect
      * to the database (often, this will be the only configuration
-     * required to use Idiorm). If you have more than one setting
+     * required to use ORM). If you have more than one setting
      * you wish to configure, another shortcut is to pass an array
      * of settings (and omit the second argument).
      * <code>
@@ -259,7 +259,7 @@ class Query implements \ArrayAccess {
     }
 
     /**
-     * Set the PDO object used by Idiorm to communicate with the database.
+     * Set the PDO object used by ORM to communicate with the database.
      * This is public in case the ORM should use a ready-instantiated
      * PDO object as its database connection. Accepts an optional string key
      * to identify the connection if multiple connections are used.
@@ -364,13 +364,13 @@ class Query implements \ArrayAccess {
      */
     public static function getDb(connection_name = self::DEFAULT_CONNECTION) 
     {
-        self::_setup_db(connection_name); // required in case this is called before Idiorm is instantiated
+        self::_setup_db(connection_name); // required in case this is called before ORM is instantiated
         return self::_db[connection_name];
     }
 
     /**
      * Executes a raw query as a wrapper for PDOStatement::execute.
-     * Useful for queries that can"t be accomplished through Idiorm,
+     * Useful for queries that can"t be accomplished through ORM,
      * particularly those using engine-specific features.
      *
      * <code>
@@ -559,7 +559,6 @@ class Query implements \ArrayAccess {
     {
         let this->_table_name = table_name;
         let this->_data = data;
-
         let this->_connection_name = connection_name;
         self::_setup_db_config(connection_name);
     }
@@ -572,10 +571,11 @@ class Query implements \ArrayAccess {
      * dirty so all will be saved to the database when
      * save() is called.
      */
-    public function create(data = null) {
+    public function create(data = null) 
+    {
         let this->_is_new = true;
         if !is_null(data) {
-            return this->hydrate(data)->force_all_dirty();
+            return this->data(data)->forceAllDirty();
         }
         return this;
     }
@@ -584,11 +584,11 @@ class Query implements \ArrayAccess {
      * Specify the ID column to use for this instance or array of instances only.
      * This overrides the id_column and id_column_overrides settings.
      *
-     * This is mostly useful for libraries built on top of Idiorm, and will
+     * This is mostly useful for libraries built on top of ORM, and will
      * not normally be used in manually built queries. If you don"t know why
      * you would want to use this, you should probably just ignore it.
      */
-    public function use_id_column(id_column)
+    public function useIdColumn(id_column)
     {
         let this->_instance_id_column = id_column;
         return this;
@@ -602,8 +602,8 @@ class Query implements \ArrayAccess {
     {
         var instance;
         let instance = self::table(this->_table_name, this->_connection_name);
-        instance->use_id_column(this->_instance_id_column);
-        instance->hydrate(row);
+        instance->useIdColumn(this->_instance_id_column);
+        instance->data(row);
         return instance;
     }
 
@@ -640,7 +640,7 @@ class Query implements \ArrayAccess {
     public function select() 
     {
         if(self::_config[this->_connection_name]["return_result_sets"]) {
-            return this->find_result_set();
+            return this->findResultSet();
         }
         return this->_find_many();
     }
@@ -670,7 +670,7 @@ class Query implements \ArrayAccess {
      * containing instances of the ORM class.
      * @return ResultSet
      */
-    public function find_result_set() 
+    public function findResultSet() 
     {
         return new ResultSet(this->_find_many());
     }
@@ -706,7 +706,8 @@ class Query implements \ArrayAccess {
      * Tell the ORM that you wish to execute a MAX query.
      * Will return the max value of the choosen column.
      */
-    public function max(column)  {
+    public function max(column)
+    {
         return this->_call_aggregate_db_function("MAX", column);
     }
 
@@ -714,7 +715,8 @@ class Query implements \ArrayAccess {
      * Tell the ORM that you wish to execute a MIN query.
      * Will return the min value of the choosen column.
      */
-    public function min(column)  {
+    public function min(column)
+    {
         return this->_call_aggregate_db_function("MIN", column);
     }
 
@@ -722,7 +724,8 @@ class Query implements \ArrayAccess {
      * Tell the ORM that you wish to execute a AVG query.
      * Will return the average value of the choosen column.
      */
-    public function avg(column)  {
+    public function avg(column) 
+    {
         return this->_call_aggregate_db_function("AVG", column);
     }
 
@@ -730,7 +733,8 @@ class Query implements \ArrayAccess {
      * Tell the ORM that you wish to execute a SUM query.
      * Will return the sum of the choosen column.
      */
-    public function sum(column)  {
+    public function sum(column)
+    {
         return this->_call_aggregate_db_function("SUM", column);
     }
 
@@ -774,7 +778,7 @@ class Query implements \ArrayAccess {
      * This will usually be called only from inside the class,
      * but it"s public in case you need to call it directly.
      */
-    public function hydrate(data=[]) 
+    public function data(data=[]) 
     {
         let this->_data = data;
         return this;
@@ -784,7 +788,7 @@ class Query implements \ArrayAccess {
      * Force the ORM to flag all the fields in the $data array
      * as "dirty" and therefore update them when save() is called.
      */
-    public function force_all_dirty() 
+    public function forceAllDirty() 
     {
         let this->_dirty_fields = this->_data;
         return this;
@@ -846,7 +850,7 @@ class Query implements \ArrayAccess {
      * Counts the number of columns that belong to the primary
      * key and their value is null.
      */
-    public function count_null_id_columns() 
+    public function countNullIdColumns() 
     {
         if is_array(this->_get_id_column_name()) {
             return count(array_filter(this->id(), "is_null"));
@@ -1065,7 +1069,7 @@ class Query implements \ArrayAccess {
      */
     public function join(table, constraint, table_alias=null) 
     {
-        return this->_add_join_source("LEFT JOIN", table, constraint, table_alias);
+        return this->_add_join_source("LEFT", table, constraint, table_alias);
     }
 
     /**
@@ -1119,7 +1123,7 @@ class Query implements \ArrayAccess {
     /**
      * Internal method to add a HAVING clause with multiple values (like IN and NOT IN)
      */
-    public function _add_having_placeholder(column_name, separator, values) 
+    protected function _add_having_placeholder(column_name, separator, values) 
     {
         var data,key,val,column,placeholders;
         if (typeof column_name != "array") {
@@ -1138,7 +1142,7 @@ class Query implements \ArrayAccess {
     /**
      * Internal method to add a HAVING clause with no parameters(like IS NULL and IS NOT NULL)
      */
-    public function _add_having_no_value(column_name, operator) 
+    protected function _add_having_no_value(column_name, operator) 
     {
         var conditions,column;
         let conditions = (typeof column_name=="array") ? column_name : [column_name];
@@ -1676,14 +1680,14 @@ class Query implements \ArrayAccess {
      */
     public function having(column_name, value=null) 
     {
-        return this->having_equal(column_name, value);
+        return this->havingEqual(column_name, value);
     }
 
     /**
      * More explicitly named version of for the having() method.
      * Can be used if preferred.
      */
-    public function having_equal(column_name, value=null) 
+    public function havingEqual(column_name, value=null) 
     {
         return this->_add_simple_having(column_name, "=", value);
     }
@@ -1691,7 +1695,7 @@ class Query implements \ArrayAccess {
     /**
      * Add a HAVING column != value clause to your query.
      */
-    public function having_not_equal(column_name, value=null) 
+    public function havingNotEqual(column_name, value=null) 
     {
         return this->_add_simple_having(column_name, "!=", value);
     }
@@ -1702,7 +1706,7 @@ class Query implements \ArrayAccess {
      * If primary key is compound, only the columns that
      * belong to they key will be used for the query
      */
-    public function having_id_is(id) 
+    public function havingIdIs(id) 
     {
         return is_array(this->_get_id_column_name()) ?
             this->having(this->_get_compound_id_column_values(id), null) :
@@ -1712,7 +1716,7 @@ class Query implements \ArrayAccess {
     /**
      * Add a HAVING ... LIKE clause to your query.
      */
-    public function having_like(column_name, value=null) 
+    public function havingLike(column_name, value=null) 
     {
         return this->_add_simple_having(column_name, "LIKE", value);
     }
@@ -1720,7 +1724,7 @@ class Query implements \ArrayAccess {
     /**
      * Add where HAVING ... NOT LIKE clause to your query.
      */
-    public function having_not_like(column_name, value=null) 
+    public function havingNotLike(column_name, value=null) 
     {
         return this->_add_simple_having(column_name, "NOT LIKE", value);
     }
@@ -1728,56 +1732,64 @@ class Query implements \ArrayAccess {
     /**
      * Add a HAVING ... > clause to your query
      */
-    public function having_gt(column_name, value=null) {
+    public function havingGt(column_name, value=null) 
+    {
         return this->_add_simple_having(column_name, ">", value);
     }
 
     /**
      * Add a HAVING ... < clause to your query
      */
-    public function having_lt(column_name, value=null) {
+    public function havingLt(column_name, value=null)
+    {
         return this->_add_simple_having(column_name, "<", value);
     }
 
     /**
      * Add a HAVING ... >= clause to your query
      */
-    public function having_gte(column_name, value=null) {
+    public function havingGte(column_name, value=null)
+    {
         return this->_add_simple_having(column_name, ">=", value);
     }
 
     /**
      * Add a HAVING ... <= clause to your query
      */
-    public function having_lte(column_name, value=null) {
+    public function havingLte(column_name, value=null)
+    {
         return this->_add_simple_having(column_name, "<=", value);
     }
 
     /**
      * Add a HAVING ... IN clause to your query
      */
-    public function having_in(column_name, values=null) {
+    public function havingIn(column_name, values=null) 
+    {
         return this->_add_having_placeholder(column_name, "IN", values);
     }
 
     /**
      * Add a HAVING ... NOT IN clause to your query
      */
-    public function having_not_in(column_name, values=null) {
+    public function havingNotIn(column_name, values=null)
+    {
         return this->_add_having_placeholder(column_name, "NOT IN", values);
     }
 
     /**
      * Add a HAVING column IS NULL clause to your query
      */
-    public function having_null(column_name) {
+    public function havingNull(column_name) 
+    {
         return this->_add_having_no_value(column_name, "IS NULL");
     }
 
     /**
      * Add a HAVING column IS NOT NULL clause to your query
      */
-    public function having_not_null(column_name) {
+    public function havingNotNull(column_name) 
+    {
         return this->_add_having_no_value(column_name, "IS NOT NULL");
     }
 
@@ -1786,7 +1798,8 @@ class Query implements \ArrayAccess {
      * contain question mark placeholders, which will be bound
      * to the parameters supplied in the second argument.
      */
-    public function having_raw(clause, parameters=[]) {
+    public function havingRaw(clause, parameters=[]) 
+    {
         return this->_add_having(clause, parameters);
     }
 
@@ -1794,7 +1807,8 @@ class Query implements \ArrayAccess {
      * Build a SELECT statement based on the clauses that have
      * been passed to this instance by chaining method calls.
      */
-    protected function _build_select() {
+    protected function _build_select() 
+    {
         // If the query is raw, just set the $this->_values to be
         // the raw query parameters and return the raw query
         if !empty this->_is_raw_query {
@@ -1856,21 +1870,24 @@ class Query implements \ArrayAccess {
     /**
      * Build the WHERE clause(s)
      */
-    protected function _build_where() {
+    protected function _build_where() 
+    {
         return this->_build_conditions("where");
     }
 
     /**
      * Build the HAVING clause(s)
      */
-    protected function _build_having() {
+    protected function _build_having() 
+    {
         return this->_build_conditions("having");
     }
 
     /**
      * Build GROUP BY
      */
-    protected function _build_group_by() {
+    protected function _build_group_by() 
+    {
         if count(this->_group_by) === 0 {
             return "";
         }
@@ -2024,7 +2041,8 @@ class Query implements \ArrayAccess {
     /**
      * Create a cache key for the given query and parameters.
      */
-    protected static function _create_cache_key(query, parameters, table_name = null, connection_name = self::DEFAULT_CONNECTION) {
+    protected static function _create_cache_key(query, parameters, table_name = null, connection_name = self::DEFAULT_CONNECTION) 
+    {
         var parameter_string,key;
         if isset self::_config[connection_name]["create_cache_key"] && 
             is_callable(self::_config[connection_name]["create_cache_key"]) {
@@ -2039,7 +2057,8 @@ class Query implements \ArrayAccess {
      * Check the query cache for the given cache key. If a value
      * is cached for the key, return the value. Otherwise, return false.
      */
-    protected static function _check_query_cache(cache_key, table_name = null, connection_name = self::DEFAULT_CONNECTION) {
+    protected static function _check_query_cache(cache_key, table_name = null, connection_name = self::DEFAULT_CONNECTION) 
+    {
         if isset self::_config[connection_name]["check_query_cache"] && 
             is_callable(self::_config[connection_name]["check_query_cache"]) {
             return call_user_func_array(self::_config[connection_name]["check_query_cache"], [cache_key, table_name, connection_name]);
@@ -2052,7 +2071,8 @@ class Query implements \ArrayAccess {
     /**
      * Clear the query cache
      */
-    public static function clear_cache(table_name = null, connection_name = self::DEFAULT_CONNECTION) {
+    public static function clearCache(table_name = null, connection_name = self::DEFAULT_CONNECTION) 
+    {
         let self::_query_cache = [];
         if isset self::_config[connection_name]["clear_cache"] && 
         is_callable(self::_config[connection_name]["clear_cache"]) {
@@ -2105,7 +2125,7 @@ class Query implements \ArrayAccess {
         if caching_enabled {
             self::_cache_query_result(cache_key, rows, this->_table_name, this->_connection_name);
         }
-        // reset Idiorm after executing the query
+        // reset ORM after executing the query
         let this->_values = [];
         let this->_result_columns = ["*"];
         let this->_using_default_result_columns = true;
@@ -2206,7 +2226,7 @@ class Query implements \ArrayAccess {
      * @param string|array $key
      * @param string|null $value
      */
-    public function set_expr(key, value = null) 
+    public function setExpr(key, value = null) 
     {
         return this->_set_orm_property(key, value, true);
     }
@@ -2283,12 +2303,12 @@ class Query implements \ArrayAccess {
         let success = self::_execute(query, values, this->_connection_name);
         let cac = self::_config[this->_connection_name]["caching_auto_clear"];
         if cac {
-            self::clear_cache(this->_table_name, this->_connection_name);
+            self::clearCache(this->_table_name, this->_connection_name);
         }
         // If we"ve just inserted a new record, set the ID of this object
         if this->_is_new {
             let this->_is_new = false;
-            let c = this->count_null_id_columns();
+            let c = this->countNullIdColumns();
             if  c != 0 {
                 let db = self::getDb(this->_connection_name);
                 if db->getAttribute(\PDO::ATTR_DRIVER_NAME) == "pgsql" {
@@ -2463,47 +2483,5 @@ class Query implements \ArrayAccess {
     public function __isset(key) 
     {
         return this->offsetExists(key);
-    }
-
-    /**
-     * Magic method to capture calls to undefined class methods.
-     * In this case we are attempting to convert camel case formatted 
-     * methods into underscore formatted methods.
-     *
-     * This allows us to call ORM methods using camel case and remain 
-     * backwards compatible.
-     * 
-     * @param  string   $name
-     * @param  array    $arguments
-     * @return ORM
-     */
-    public function __call(name, arguments)
-    {
-        var method;
-        let method = strtolower(preg_replace("/([a-z])([A-Z])/", "$1_$2", name));
-        if method_exists(this, method) {
-            return call_user_func_array([this, method], arguments);
-        } else {
-            throw "Method ".method."() does not exist in class " . get_class(this);
-        }
-    }
-
-    /**
-     * Magic method to capture calls to undefined static class methods. 
-     * In this case we are attempting to convert camel case formatted 
-     * methods into underscore formatted methods.
-     *
-     * This allows us to call ORM methods using camel case and remain 
-     * backwards compatible.
-     * 
-     * @param  string   $name
-     * @param  array    $arguments
-     * @return ORM
-     */
-    public static function __callStatic(name, arguments)
-    {
-        var method;
-        let method = strtolower(preg_replace("/([a-z])([A-Z])/", "$1_$2", name));
-        return call_user_func_array(["Query", method], arguments);
     }
 }
