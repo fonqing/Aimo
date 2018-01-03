@@ -56,7 +56,7 @@
     "name": "Aimo PHP Framework",
     "description": "An PHP framework written in Zephir",
     "author": "Eric,<fonqing@gmail.com>",
-    "version": "0.5.0",
+    "version": "0.6.0",
     "verbose": false,
     "requires": {
         "extensions": []
