@@ -10,13 +10,13 @@ class Query implements \ArrayAccess {
     const LIMIT_STYLE_LIMIT = "limit";
 
     protected static _default_config = [
-        "connection_string" : "sqlite::memory:",
+        "dsn" : "sqlite::memory:",
         "id_column" : "id",
         "id_column_overrides" : [],
         "error_mode" : \PDO::ERRMODE_EXCEPTION,
         "username" : null,
         "password" : null,
-        "driver_options" : null,
+        "options" : null,
         "identifier_quote_character" : null,
         "limit_clause_style" : null,
         "logging" : false,
@@ -121,14 +121,21 @@ class Query implements \ArrayAccess {
     // ---------------------- //
 
     /**
-     * Pass configuration settings to the class in the form of
-     * key/value pairs. As a shortcut, if the second argument
+     * Pass configuration settings to the class
+     *
+     * As a shortcut, if the second argument
      * is omitted and the key is a string, the setting is
      * assumed to be the DSN string used by PDO to connect
      * to the database (often, this will be the only configuration
      * required to use Idiorm). If you have more than one setting
      * you wish to configure, another shortcut is to pass an array
      * of settings (and omit the second argument).
+     * <code>
+     * Query::configure('mysql:host=localhost;dbname=dbname');
+     * Query::configure('username','username');
+     * Query::configure('password','password');
+     * Query::configure('options',[\PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8']);
+     * </code>
      * @param string $key
      * @param mixed $value
      * @param string $connection_name Which connection to use
@@ -148,7 +155,7 @@ class Query implements \ArrayAccess {
                 // Shortcut: If only one string argument is passed, 
                 // assume it"s a connection string
                 let value = key;
-                let key = "connection_string";
+                let key = "dsn";
             }
             let self::_config[connection_name][key] = value;
         }
@@ -159,11 +166,19 @@ class Query implements \ArrayAccess {
         self::configure("mysql:host=localhost;dbname=my_database");
         self::configure("username", "username");
         self::configure("password", "password");
-        //self::configure("driver_options", array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8"));
+        //self::configure("options", array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8"));
     }
 
     /**
      * Retrieve configuration options by key, or as whole array.
+     *
+     * <code>
+     * //value
+     * Query::getConfig('username');
+     * //array
+     * Query::getConfig('username');
+     * </code>
+     *
      * @param string $key
      * @param string $connection_name Which connection to use
      */
@@ -178,6 +193,10 @@ class Query implements \ArrayAccess {
 
     /**
      * Delete all configs in _config array.
+     *
+     * <code>
+     * Query::resetConfig();
+     * </code>
      */
     public static function resetConfig()
     {
@@ -187,12 +206,16 @@ class Query implements \ArrayAccess {
     /**
      * Despite its slightly odd name, this is actually the factory
      * method used to acquire instances of the class. It is named
-     * this way for the sake of a readable interface, ie
-     * ORM::table("table_name")->find()-> etc. As such,
+     * this way for the sake of a readable interface, As such,
      * this will normally be the first method called in a chain.
+     *
+     * <code>
+     * Query::table('user')->find();
+     * </code>
+     *
      * @param string $table_name
      * @param string $connection_name Which connection to use
-     * @return ORM
+     * @return Query
      */
     public static function table(string! table_name, connection_name = self::DEFAULT_CONNECTION) 
     {
@@ -202,6 +225,7 @@ class Query implements \ArrayAccess {
 
     /**
      * Set up the database connection used by the class
+     *
      * @param string $connection_name Which connection to use
      */
     protected static function _setup_db(connection_name = self::DEFAULT_CONNECTION) 
@@ -211,10 +235,10 @@ class Query implements \ArrayAccess {
             self::_setup_db_config(connection_name);
             var db;
             let db = new \PDO(
-                self::_config[connection_name]["connection_string"],
+                self::_config[connection_name]["dsn"],
                 self::_config[connection_name]["username"],
                 self::_config[connection_name]["password"],
-                self::_config[connection_name]["driver_options"]
+                self::_config[connection_name]["options"]
             );
 
             db->setAttribute(\PDO::ATTR_ERRMODE, self::_config[connection_name]["error_mode"]);
@@ -242,7 +266,7 @@ class Query implements \ArrayAccess {
      * @param PDO $db
      * @param string $connection_name Which connection to use
      */
-    public static function setDb(db, connection_name = self::DEFAULT_CONNECTION) 
+    public static function setDb(<\PDO> db, connection_name = self::DEFAULT_CONNECTION) 
     {
         self::_setup_db_config(connection_name);
         let self::_db[connection_name] = db;
@@ -292,6 +316,7 @@ class Query implements \ArrayAccess {
     /**
      * Return the correct character used to quote identifiers (table
      * names, column names etc) by looking at the driver being used by PDO.
+     *
      * @param string $connection_name Which connection to use
      * @return string
      */
@@ -316,6 +341,7 @@ class Query implements \ArrayAccess {
     /**
      * Returns a constant after determining the appropriate limit clause
      * style
+     *
      * @param string $connection_name Which connection to use
      * @return string Limit clause style keyword/constant
      */
@@ -332,6 +358,7 @@ class Query implements \ArrayAccess {
      * the database. This can be called if any low-level DB access is
      * required outside the class. If multiple connections are used,
      * accepts an optional key name for the connection.
+     *
      * @param string $connection_name Which connection to use
      * @return PDO
      */
@@ -345,8 +372,12 @@ class Query implements \ArrayAccess {
      * Executes a raw query as a wrapper for PDOStatement::execute.
      * Useful for queries that can"t be accomplished through Idiorm,
      * particularly those using engine-specific features.
-     * @example query("SELECT `name`, AVG(`order`) FROM `customer` GROUP BY `name` HAVING AVG(`order`) > 10")
-     * @example query("INSERT OR REPLACE INTO `widget` (`id`, `name`) SELECT `id`, `name` FROM `other_table`")
+     *
+     * <code>
+     * Query::query("SELECT `name`, AVG(`order`) FROM `customer` GROUP BY `name` HAVING AVG(`order`) > 10")
+     * Query::query("INSERT OR REPLACE INTO `widget` (`id`, `name`) SELECT `id`, `name` FROM `other_table`")
+     * </code>
+     *
      * @param string $query The raw SQL query
      * @param array  $parameters Optional bound parameters
      * @param string $connection_name Which connection to use
@@ -739,8 +770,13 @@ class Query implements \ArrayAccess {
      * used, the parameters should be an array of values which will
      * be bound to the placeholders in the query. If this method
      * is called, all other query building methods will be ignored.
+     *
+     * <code>
+     * Query::table('users')->sql('SELECT * `users` WHERE `uid` = ?',[3])->select();
+     * </code>
      */
-    public function raw_query(query, parameters = []) {
+    public function sql(query, parameters = []) 
+    {
         let this->_is_raw_query = true;
         let this->_raw_query = query;
         let this->_raw_parameters = parameters;
@@ -749,8 +785,13 @@ class Query implements \ArrayAccess {
 
     /**
      * Add an alias for the main table to be used in SELECT queries
+     *
+     * <code>
+     * Query::table('user')->alias('u')->where('u.uid',3)->find();
+     * </code>
      */
-    public function table_alias(alias) {
+    public function alias(string! alias) -> <Query>
+    {
         let this->_table_alias = alias;
         return this;
     }
@@ -760,7 +801,8 @@ class Query implements \ArrayAccess {
      * of columns returned by the SELECT query. The second optional
      * argument is the alias to return the expression as.
      */
-    protected function _add_result_column(expr, alias=null) {
+    protected function _add_result_column(expr, alias=null) 
+    {
         if !is_null(alias) {
             let expr .= " AS " . this->_quote_identifier(alias);
         }
@@ -778,7 +820,8 @@ class Query implements \ArrayAccess {
      * Counts the number of columns that belong to the primary
      * key and their value is null.
      */
-    public function count_null_id_columns() {
+    public function count_null_id_columns() 
+    {
         if is_array(this->_get_id_column_name()) {
             return count(array_filter(this->id(), "is_null"));
         } else {
@@ -790,6 +833,10 @@ class Query implements \ArrayAccess {
      * Add a column to the list of columns returned by the SELECT
      * query. This defaults to "*". The second optional argument is
      * the alias to return the column as.
+     *
+     * <code>
+     * Query::table('user')->field('username','uname')->...
+     * </code>
      */
     public function field(column, alias=null)
     {
@@ -801,6 +848,11 @@ class Query implements \ArrayAccess {
      * Add an unquoted expression to the list of columns returned
      * by the SELECT query. The second optional argument is
      * the alias to return the column as.
+     *
+     * <code>
+     * Query::table('user')->fieldExpr('COUNT(DISTINCT `gid`)','c')->...
+     * </code>
+     *
      */
     public function fieldExpr(expr, alias=null)
     {
@@ -815,13 +867,14 @@ class Query implements \ArrayAccess {
      * Note that the alias must not be numeric - if you want a
      * numeric alias then prepend it with some alpha chars. eg. a1
      * 
-     * @example select_many(array("alias" => "column", "column2", "alias2" => "column3"), "column4", "column5");
-     * @example select_many("column", "column2", "column3");
-     * @example select_many(array("column", "column2", "column3"), "column4", "column5");
+     * <code> 
+     * Query::table('users')->fields(["alias" => "column", "column2", "alias2" => "column3"], "column4", "column5");
+     * Query::table('users')->fields("column", "column2", "column3");
+     * Query::table('users')->fields(["column", "column2", "column3"], "column4", "column5");
      * 
-     * @return \ORM
+     * @return <Query>
      */
-    public function fields() 
+    public function fields() -> <Query>
     {
         var columns,alias,column;
         let columns = func_get_args();
