@@ -16,44 +16,44 @@ class Model
     protected _validateRules = [];
     protected _error = [];
 
-	/**
-	 * Aimo\Model
-	 *
-	 * 模型基类
-	 *
-	 *<code>
-	 * use Aimo\Model;
-	 * class User extends Model {
-	 *     protected $table = 'user';
-	 *     protected $primary = ['uid'];
-	 *     protected $fields  = [
-	 *         'uid','username','password',
-	 *         'groupid','regtime'
-	 *     ];
-	 *     protected $validateRules = [
-	 *     ];
-	 *     
-	 *     protected function setPassword($value)
-	 *     {
-	 *         return md5($value);	
-	 *     }
-	 *     protected function getRegtime($value)
-	 *     {
-	 *	        return date('Y-m-d H:i:s',$value);
-	 *     }
-	 * }
-	 * $user = new User();
-	 * $user->username = 'eric';
-	 * $user->password = '123456';
-	 * $user->save();
-	 *</code>
-	 */
+    /**
+     * Aimo\Model
+     *
+     * 模型基类
+     *
+     *<code>
+     * use Aimo\Model;
+     * class User extends Model {
+     *     protected $table = 'user';
+     *     protected $primary = ['uid'];
+     *     protected $fields  = [
+     *         'uid','username','password',
+     *         'groupid','regtime'
+     *     ];
+     *     protected $validateRules = [
+     *     ];
+     *     
+     *     protected function setPassword($value)
+     *     {
+     *         return md5($value);    
+     *     }
+     *     protected function getRegtime($value)
+     *     {
+     *            return date('Y-m-d H:i:s',$value);
+     *     }
+     * }
+     * $user = new User();
+     * $user->username = 'eric';
+     * $user->password = '123456';
+     * $user->save();
+     *</code>
+     */
     public function __construct()
     {}
 
     public function __set(string! name, value) -> void
     {
-    	var method;
+        var method;
         if !property_exists(this,name) {
             let method = "set".ucfirst(name);
             if method_exists(this, method) {
@@ -66,7 +66,7 @@ class Model
 
     public function __get(string! name)
     {
-    	var method;
+        var method;
         if !property_exists(this, name){
             let method = "get".ucfirst(name);
             if method_exists(this, method) {
@@ -95,13 +95,13 @@ class Model
 
     public function validate()
     {
-    	var messages,operate,key,value,validateFields,field;
-    	var ruleString,rules,rule,v,c,kk;
+        var messages,operate,key,value,validateFields,field;
+        var ruleString,rules,rule,v,c,kk;
         array cond;
         let messages = this->_validateRules["msg"];
         let operate  = "update";
         for key in this->primary {
-        	let value = this->_data[key];
+            let value = this->_data[key];
             if empty value {
                 let operate = "create";
                 break;
@@ -119,7 +119,7 @@ class Model
         }
 
         for field in validateFields {
-        	let ruleString = this->_validateRules["rules"][field];
+            let ruleString = this->_validateRules["rules"][field];
             let rules      = explode("|", ruleString);
             let v          = this->_data[field];
             for rule in rules {
@@ -180,10 +180,10 @@ class Model
                             }
 
                         }elseif operate == "update" {
-                        	
+                            
                             let cond = [field:v];
                             for kk in this->primary {
-                            	let cond[kk]=["<>",this->{kk}];
+                                let cond[kk]=["<>",this->{kk}];
                             }
                             let c = self::where(cond)->count();
                             if c>0 {
@@ -196,8 +196,8 @@ class Model
 
                 }else{
 
-                	var ruleName,params,temp,length,minlength,maxlength,valid,begin,end;
-                	let temp = explode(":", rule);
+                    var ruleName,params,temp,length,minlength,maxlength,valid,begin,end;
+                    let temp = explode(":", rule);
                     let ruleName = temp[0];
                     let params = explode(",", temp[1]);
                     switch ruleName
@@ -301,7 +301,7 @@ class Model
                             }elseif operate == "update" {
                                 let cond = [field:v];
                                 for kk in this->primary{
-                                	let cond[kk]=["<>",this->{kk}];
+                                    let cond[kk]=["<>",this->{kk}];
                                 }
                                 let c = self::where(cond)->count();
                                 if c>0 {
@@ -332,14 +332,13 @@ class Model
      * User::where("status",1)->orderByDesc('sort')->groupBy('guid')->select();
      * </code>
      */
-
     public static function where(a,b=null,c=null)
     {
-    	var model;
-    	let model = get_called_class();
-    	if strpos(model, "\\") !== false {
-    		let model = substr(strrpos(model, "\\"), 1);
-    	}
-    	return Db::name(model)->where(a,b,c);
+        var model;
+        let model = get_called_class();
+        if strpos(model, "\\") !== false {
+            let model = substr(strrpos(model, "\\"), 1);
+        }
+        return Db::name(model)->where(a,b,c);
     }
 }
