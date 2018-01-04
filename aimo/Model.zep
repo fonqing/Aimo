@@ -1,4 +1,36 @@
 namespace Aimo;
+/**
+ * Aimo\Model
+ *
+ * 模型基类
+ *
+ *<code>
+ * use Aimo\Model;
+ * class User extends Model {
+ *     protected $table = 'user';
+ *     protected $primary = ['uid'];
+ *     protected $fields  = [
+ *         'uid','username','password',
+ *         'groupid','regtime'
+ *     ];
+ *     protected $validateRules = [
+ *     ];
+ *     
+ *     protected function setPassword($value)
+ *     {
+ *         return md5($value);	
+ *     }
+ *     protected function getRegtime($value)
+ *     {
+ *	        return date('Y-m-d H:i:s',$value);
+ *     }
+ * }
+ * $user = new User();
+ * $user->username = 'eric';
+ * $user->password = '123456';
+ * $user->save();
+ *</code>
+ */
 class Model
 {
     protected table   = "";
@@ -11,6 +43,38 @@ class Model
     protected _validateRules = [];
     protected _error = [];
 
+	/**
+	 * Aimo\Model
+	 *
+	 * 模型基类
+	 *
+	 *<code>
+	 * use Aimo\Model;
+	 * class User extends Model {
+	 *     protected $table = 'user';
+	 *     protected $primary = ['uid'];
+	 *     protected $fields  = [
+	 *         'uid','username','password',
+	 *         'groupid','regtime'
+	 *     ];
+	 *     protected $validateRules = [
+	 *     ];
+	 *     
+	 *     protected function setPassword($value)
+	 *     {
+	 *         return md5($value);	
+	 *     }
+	 *     protected function getRegtime($value)
+	 *     {
+	 *	        return date('Y-m-d H:i:s',$value);
+	 *     }
+	 * }
+	 * $user = new User();
+	 * $user->username = 'eric';
+	 * $user->password = '123456';
+	 * $user->save();
+	 *</code>
+	 */
     public function __construct()
     {}
 
@@ -284,7 +348,7 @@ class Model
     /**
      * 模型查询入口
      *
-     * <code>
+     * <code php>
      * User::where("uid=1");
      * User::where("uid",1);
      * User::where("uid=?",[1]);
