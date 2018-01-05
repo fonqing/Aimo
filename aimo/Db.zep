@@ -52,8 +52,7 @@ class Db
     protected _expr_fields = [];
     protected _instance_id_column = null;
     /**
-     * "Private" constructor; shouldn"t be called directly.
-     * Use the ORM::for_table factory method instead.
+     * 避免DB被直接实例化
      */
     protected function __construct(string! table_name, data = [], name = "default")
     {
@@ -74,6 +73,7 @@ class Db
      * Db::config('options',[\PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8']);
      * </code>
      *
+     * @access public
      * @param string $key
      * @param mixed $value
      * @param string $name 那个链接
@@ -100,6 +100,7 @@ class Db
      * ]);
      * </code>
      *
+     * @access public
      * @param array config 配置数组
      * @return void;
      */
@@ -130,6 +131,7 @@ class Db
      * Db::getConfig('username');
      * </code>
      *
+     * @access public
      * @param string $key
      * @param string $name Which connection to use
      */
@@ -148,6 +150,8 @@ class Db
      * <code>
      * Db::resetConfig();
      * </code>
+     *
+     * @access public
      */
     public static function resetConfig() -> void
     {
@@ -161,6 +165,7 @@ class Db
      * Db::table('user')->find();
      * </code>
      *
+     * @access public
      * @param string $table_name 表的全名
      * @param string $name Which connection to use
      * @return Db
@@ -178,6 +183,7 @@ class Db
      * Db::name('user')->find();
      * </code>
      *
+     * @access public
      * @param string $table_name 不含前缀的表名 （前提是在config中设置了prefix参数）
      * @param string $name Which connection to use
      * @return Db
@@ -191,8 +197,9 @@ class Db
     }
 
     /**
-     * Set up the database connection used by the class
+     * 使用配置链接到数据库
      *
+     * @access protected
      * @param string $name Which connection to use
      */
     protected static function _setup_db(string! name = "default") -> void
@@ -213,7 +220,9 @@ class Db
     }
 
    /**
-    * Ensures configuration (multiple connections) is at least set to default.
+    * 初始化配置
+    *
+    * @access protected
     * @param string $name Which connection to use
     */
     protected static function _setup_db_config(string! name) -> void
@@ -224,10 +233,9 @@ class Db
     }
 
     /**
-     * Set the PDO object used by ORM to communicate with the database.
-     * This is public in case the ORM should use a ready-instantiated
-     * PDO object as its database connection. Accepts an optional string key
-     * to identify the connection if multiple connections are used.
+     * 设置PDO链接
+     *
+     * @access public
      * @param PDO $db
      * @param string $name Which connection to use
      */
@@ -242,7 +250,9 @@ class Db
     }
 
     /**
-     * Delete all registered PDO objects in _db array.
+     * 删除已注册的PDO链接对象
+     *
+     * @access public
      */
     public static function resetDb() -> void
     {
@@ -250,10 +260,9 @@ class Db
     }
 
     /**
-     * Detect and initialise the character used to quote identifiers
-     * (table names, column names etc). If this has been specified
-     * manually using ORM::configure("identifier_quote_character", "some-char"),
-     * this will do nothing.
+     * 设置字段和表名的转移字符
+     *
+     * @access protected
      * @param string $name Which connection to use
      */
     protected static function _setup_identifier_quote_character(string! name) -> void
@@ -265,9 +274,10 @@ class Db
     }
 
     /**
-     * Detect and initialise the limit clause style ("SELECT TOP 5" /
-     * "... LIMIT 5"). If this has been specified manually using 
-     * ORM::configure("limit_clause_style", "top"), this will do nothing.
+     * 设置查询条数限制(Limit in mysql,TOP in MSSql)
+     * 如果通过 Db::config("limit_clause_style", "top"),进行了设置，那么本函数将不起作用
+     *
+     * @access public
      * @param string $name Which connection to use
      */
     protected static function _setup_limit_clause_style(string! name) -> void
@@ -279,9 +289,9 @@ class Db
     }
 
     /**
-     * Return the correct character used to quote identifiers (table
-     * names, column names etc) by looking at the driver being used by PDO.
+     * 探测转义符号
      *
+     * @access protected
      * @param string $name Which connection to use
      * @return string
      */
@@ -304,9 +314,9 @@ class Db
     }
 
     /**
-     * Returns a constant after determining the appropriate limit clause
-     * style
+     * 返回LIMIT形式
      *
+     * @access protected
      * @param string $name Which connection to use
      * @return string Limit clause style keyword/constant
      */
@@ -319,11 +329,9 @@ class Db
     }
 
     /**
-     * Returns the PDO instance used by the the ORM to communicate with
-     * the database. This can be called if any low-level DB access is
-     * required outside the class. If multiple connections are used,
-     * accepts an optional key name for the connection.
+     * 获取PDO实例
      *
+     * @access public
      * @param string $name Which connection to use
      * @return PDO
      */
@@ -334,19 +342,18 @@ class Db
     }
 
     /**
-     * Executes a raw query as a wrapper for PDOStatement::execute.
-     * Useful for queries that can"t be accomplished through ORM,
-     * particularly those using engine-specific features.
+     * 执行原生查询
      *
      * <code>
      * Db::query("SELECT `name`, AVG(`order`) FROM `customer` GROUP BY `name` HAVING AVG(`order`) > 10")
      * Db::query("INSERT OR REPLACE INTO `widget` (`id`, `name`) SELECT `id`, `name` FROM `other_table`")
      * </code>
      *
-     * @param string $query The raw SQL query
-     * @param array  $parameters Optional bound parameters
-     * @param string $name Which connection to use
-     * @return bool Success
+     * @access public
+     * @param string $query SQL语句
+     * @param array  $parameters 绑定的变量
+     * @param string $name 默认数据链接
+     * @return bool
      */
     public static function query(string! query, parameters = [], name = "default") 
     {
@@ -355,8 +362,14 @@ class Db
     }
 
     /**
-     * Returns the PDOStatement instance last used by any connection wrapped by the ORM.
-     * Useful for access to PDOStatement::rowCount() or error information
+     * 返回最后一次使用的PDOStatement实例
+     * 方便调用PDOStatement::rowCount()或者获取错误
+     *
+     *<code>
+     *Db::getLastStatement();
+     *</code>
+     *
+     * @access public
      * @return PDOStatement
      */
     public static function getLastStatement() -> <\PDOStatement>
@@ -368,6 +381,7 @@ class Db
     /**
      * 获取最后执行的一句SQL
      *
+     * @access public
      * @return string
      */
     public function getLastSql()
@@ -376,9 +390,9 @@ class Db
     }
 
    /**
-    * Internal helper method for executing statments. Logs queries, and
-    * stores statement object in ::_last_statment, accessible publicly
-    * through ::getLastStatement()
+    * 内部执行SQL的方法
+    *
+    * @access protected
     * @param string $query
     * @param array $parameters An array of parameters to be bound in to the query
     * @param string $name Which connection to use
@@ -414,15 +428,11 @@ class Db
     }
 
     /**
-     * Add a query to the internal query log. Only works if the
-     * "logging" config option is set to true.
+     * 记录查询日志
      *
-     * This works by manually binding the parameters to the query - the
-     * query isn"t executed like this (PDO normally passes the query and
-     * parameters to the database which takes care of the binding) but
-     * doing it this way makes the logged queries more readable.
+     * @access public
      * @param string $query
-     * @param array $parameters An array of parameters to be bound in to the query
+     * @param array $parameters 参数绑定
      * @param string $name Which connection to use
      * @param float $query_time Query time
      * @return bool
@@ -475,10 +485,14 @@ class Db
     }
 
     /**
-     * Get the last query executed. Only works if the
-     * "logging" config option is set to true. Otherwise
-     * this will return null. Returns last query from all connections if
-     * no name is specified
+     * 获取执行的最后一条SQL
+     *
+     *<code>
+     *Db::getLastQuery();
+     *Db::getLastQuery('default');
+     *</code>
+     *
+     * @access public
      * @param null|string $name Which connection to use
      * @return string
      */
@@ -510,7 +524,12 @@ class Db
     }
 
     /**
-     * Get a list of the available connection names
+     * 列出可用的PDO链接
+     *
+     *<code>
+     * Db::getConnectionNames();
+     *</code>
+     *
      * @return array
      */
     public static function getConnectionNames() 
@@ -525,6 +544,10 @@ class Db
      * Db::name('user')->find(6);//Find by primary key value
      * Db::name('user')->where('uid',6)->find();
      * </code>
+     *
+     * @access public
+     * @param integer|null
+     * @return bool|array
      */
     public function find(id=null) 
     {
@@ -541,10 +564,15 @@ class Db
     }
 
     /**
-     * Tell the ORM that you are expecting multiple results
-     * from your query, and execute it. Will return an array
-     * of instances of the ORM class, or an empty array if
-     * no rows were returned.
+     * 获取多条记录
+     * 
+     * 执行此方法后，无法再进行链式调用
+     * 
+     *<cdoe>
+     *$users = Db::name('user')->select();
+     *print_r($users);
+     *</code>
+     * @access public
      * @return array
      */
     public function select() 
@@ -553,10 +581,9 @@ class Db
     }
 
     /**
-     * Tell the ORM that you are expecting multiple results
-     * from your query, and execute it. Will return an array
-     * of instances of the ORM class, or an empty array if
-     * no rows were returned.
+     * 内部查询多条用
+     *
+     * @access protected
      * @return array
      */
     protected function _find_many()
@@ -565,26 +592,15 @@ class Db
     }
 
     /**
-     * Tell the ORM that you are expecting multiple results
-     * from your query, and execute it. Will return an array,
-     * or an empty array if no rows were returned.
+     * 执行COUNT查询
      *
-     * <code>
-     * $info = Db::table('table')->fields('id,name')->getArray();
-     * var_dump($info);
-     * </code>
+     *<code>
+     *Db::name('user')->count();
+     *Db::name('user')->count('DISTINCT gid');
+     *</code>
      *
-     * @return array
-     */
-    public function getArray() 
-    {
-        return this->_run(); 
-    }
-
-    /**
-     * Tell the ORM that you wish to execute a COUNT query.
-     * Will return an integer representing the number of
-     * rows returned.
+     * @access public
+     * @param string 
      */
     public function count(column = "*") 
     {
@@ -592,8 +608,14 @@ class Db
     }
 
     /**
-     * Tell the ORM that you wish to execute a MAX query.
-     * Will return the max value of the choosen column.
+     * 执行MAX查询，获取字段最大值
+     *
+     *<code>
+     *Db::name('user')->max('amount');
+     *</code>
+     *
+     * @access public
+     * @param string 
      */
     public function max(column)
     {
@@ -601,8 +623,14 @@ class Db
     }
 
     /**
-     * Tell the ORM that you wish to execute a MIN query.
-     * Will return the min value of the choosen column.
+     * 执行MIN查询，获取字段最小值
+     *
+     *<code>
+     *Db::name('user')->min('amount');
+     *</code>
+     *
+     * @access public
+     * @param string 
      */
     public function min(column)
     {
@@ -610,8 +638,14 @@ class Db
     }
 
     /**
-     * Tell the ORM that you wish to execute a AVG query.
-     * Will return the average value of the choosen column.
+     * 执行AVG查询，获取字段平均值
+     *
+     *<code>
+     *Db::name('logs')->avg('fee');
+     *</code>
+     *
+     * @access public
+     * @param string 
      */
     public function avg(column) 
     {
@@ -619,8 +653,14 @@ class Db
     }
 
     /**
-     * Tell the ORM that you wish to execute a SUM query.
-     * Will return the sum of the choosen column.
+     * 执行SUM查询，获取一列的和
+     *
+     *<code>
+     *Db::name('logs')->sum('fee');
+     *</code>
+     *
+     * @access public
+     * @param string 
      */
     public function sum(column)
     {
@@ -628,7 +668,9 @@ class Db
     }
 
     /**
-     * Execute an aggregate query on the current connection.
+     * 执行常用统计函数
+     *
+     * @access protected
      * @param string $sql_function The aggregate function to call eg. MIN, COUNT, etc
      * @param string $column The column to execute the aggregate query against
      * @return int
@@ -661,43 +703,15 @@ class Db
         return return_value;
     }
 
-     /**
-     * This method can be called to hydrate (populate) this
-     * instance of the class from an associative array of data.
-     * This will usually be called only from inside the class,
-     * but it"s public in case you need to call it directly.
-     */
-    public function data(data=[]) 
-    {
-        let this->_data = data;
-        return this;
-    }
-
     /**
-     * Perform a raw query. The query can contain placeholders in
-     * either named or question mark style. If placeholders are
-     * used, the parameters should be an array of values which will
-     * be bound to the placeholders in the query. If this method
-     * is called, all other query building methods will be ignored.
-     *
-     * <code>
-     * Db::table('users')->sql('SELECT * `users` WHERE `uid` = ?',[3])->select();
-     * </code>
-     */
-    public function sql(query, parameters = []) 
-    {
-        let this->_is_raw_query = true;
-        let this->_raw_query = query;
-        let this->_raw_parameters = parameters;
-        return this;
-    }
-
-    /**
-     * Add an alias for the main table to be used in SELECT queries
+     * 为当前表指定别名
      *
      * <code>
      * Db::table('user')->alias('u')->where('u.uid',3)->find();
      * </code>
+     *
+     * @access public
+     * @return Db
      */
     public function alias(string! alias) -> <Query>
     {
@@ -737,24 +751,25 @@ class Db
     }
 
     /**
-     * Add an unquoted expression to the list of columns returned
-     * by the SELECT query. The second optional argument is
-     * the alias to return the column as.
+     * 查询表达式字段
+     * @access protected
      */
     protected function fieldExpr(expr, alias=null)
     {
         return this->_add_result_column(expr, alias);
     }
 
+    /**
+     * 清理单个字段
+     * @access protected
+     */
     protected function trimField(string! field)
     {
         return trim(field," \t\n\r\0\x0B`'\"[]");
     }
 
     /**
-     * Add columns to the list of columns returned by the SELECT
-     * query. This defaults to "*". Many columns can be supplied
-     * as either an array or as a list of parameters to the method.
+     * 指定查询的字段
      * 
      * Note that the alias must not be numeric - if you want a
      * numeric alias then prepend it with some alpha chars. eg. a1
@@ -766,9 +781,11 @@ class Db
      * Db::table('logs')->fields('uid,COUNT(*) as count')->...;
      * Db::table('user')->fields('uid,username',['amount'=>'SUM(`fee`)'])->...;
      * //Wrong example
-     * //When due to use SQL Function may be contain "," syntax will be cause sql error;
+     * //Do not use SQL Function contain "," syntax,it will be cause sql error;
      * Db::table('user')->field('uid,CONCAT(roleid,"_",departmentid) as rel');
      * </code>
+     *
+     * @access public
      * @return <Query>
      */
     public function fields() -> <Query>
@@ -776,7 +793,6 @@ class Db
         var columns,alias,column,fields,aliass,field,parts;
         let columns = func_get_args();
         if !empty columns {
-            //let columns = this->_normalise_select_many_columns(columns);
             for alias,column in columns {
                 if (typeof column == "string") {
                     if strpos(column, ",")!== false {
@@ -823,38 +839,7 @@ class Db
     }
 
     /**
-     * Take a column specification for the select many methods and convert it
-     * into a normalised array of columns and aliases.
-     * 
-     * It is designed to turn the following styles into a normalised array:
-     * 
-     * array(array("alias" => "column", "column2", "alias2" => "column3"), "column4", "column5"))
-     * 
-     * @param array $columns
-     * @return array
-     */
-    protected function _normalise_select_many_columns(columns)->array 
-    {
-        var column,key,value;
-        array result = [];
-        for column in columns {
-            if (typeof column == "array") {
-                for key,value in column {
-                    if !is_numeric(key) {
-                        let result[key] = value;
-                    } else {
-                        let result[] = value;
-                    }
-                }
-            } else {
-                let result[]=column;
-            }
-        }
-        return result;
-    }
-
-    /**
-     * Add a DISTINCT keyword before the list of columns in the SELECT query
+     * 在SELECT查询前添加 DISTINCT 关键字
      */
     public function distinct()-><Query>
     {
@@ -863,7 +848,7 @@ class Db
     }
 
     /**
-     * Internal method to add a JOIN source to the query.
+     * 内部方法向查询增加链接
      *
      * The join_operator should be one of INNER, LEFT OUTER, CROSS etc - this
      * will be prepended to JOIN.
@@ -883,6 +868,7 @@ class Db
      * ON `user`.`id` = `profile`.`user_id`
      *
      * The final (optional) argument specifies an alias for the joined table.
+     * @access protected
      */
     protected function _add_join_source(join_operator, table, constraint, table_alias=null) 
     {
@@ -933,9 +919,18 @@ class Db
     }
 
     /**
-     * Add a simple JOIN source to the query
+     * 连表查询方法
+     *
+     *<code>
+     * Db::name('user')->join('profile','user.uid=profile.uid','RIGHT')->select();
+     *</code>
+     *
+     * @access public
+     * @param string table 表名
+     * @param string|array ON条件
+     * @param string joinType 链接方式，支持 LEFT,RIGHT,INNER,FULL
      */
-    public function join(table, constraint,joinType="LEFT", table_alias=null) 
+    public function join(string! table,var constraint,joinType="LEFT", table_alias=null) 
     {
         string types = "_LEFT_RIGHT_INNER_FULL_";
         let joinType = strtoupper(joinType);
@@ -1069,13 +1064,8 @@ class Db
         return this;
     }
 
-   /**
-     * Helper method to compile a simple COLUMN SEPARATOR VALUE
-     * style HAVING or WHERE condition into a string and value ready to
-     * be passed to the _add_condition method. Avoids duplication
-     * of the call to _quote_identifier
-     *
-     * If column_name is an associative array, it will add a condition for each column
+    /**
+     * 内部方法处理where条件和having条件
      */
     protected function _add_simple_condition(type, column_name, separator, value) 
     {
@@ -1097,8 +1087,7 @@ class Db
     } 
 
     /**
-     * Return a string containing the given number of question marks,
-     * separated by commas. Eg "?, ?, ?"
+     * 创建占位符
      */
     protected function _create_placeholders(fields) 
     {
@@ -1148,13 +1137,7 @@ class Db
     }
 
     /**
-     * Add a WHERE column = value clause to your query. Each time
-     * this is called in the chain, an additional WHERE will be
-     * added, and these will be ANDed together when the final query
-     * is built.
-     *
-     * If you use an array in $column_name, a new clause will be
-     * added for each element. In this case, $value is ignored.
+     * WHERE条件
      *
      * <code>
      * Db::table('user')->where('uid=3')->find();
@@ -1168,6 +1151,7 @@ class Db
      *     'name' => ['LIKE', 'test%'],
      * ])->select();
      * </code>
+     * @access public
      */
     public function where(a,b=null,c=null) 
     {
@@ -1217,8 +1201,7 @@ class Db
     }
 
     /**
-     * More explicitly named version of for the where() method.
-     * Can be used if preferred.
+     * WHERE =
      */
     public function whereEqual(column_name, value=null) 
     {
@@ -1226,7 +1209,7 @@ class Db
     }
 
     /**
-     * Add a WHERE column != value clause to your query.
+     * WHERE <>
      */
     public function whereNotEqual(column_name, value=null) 
     {
@@ -1247,14 +1230,7 @@ class Db
     }
 
     /**
-     * Allows adding a WHERE clause that matches any of the conditions
-     * specified in the array. Each element in the associative array will
-     * be a different condition, where the key will be the column name.
-     *
-     * By default, an equal operator will be used against all columns, but
-     * it can be overriden for any or every column using the second parameter.
-     *
-     * Each condition will be ORed together when added to the final query.
+     * 任意条件命中
      */        
     public function whereAnyIs(values, operator="=") 
     {
@@ -1286,10 +1262,7 @@ class Db
     }
 
     /**
-     * Similar to where_id_is() but allowing multiple primary keys.
-     *
-     * If primary key is compound, only the columns that
-     * belong to they key will be used for the query
+     * 支持联合主键的where in
      *
      * <code>
      * $data = Db::table('table')->whereIdIn(['uid'=>3,'tagid'=>5]);
@@ -1303,7 +1276,7 @@ class Db
     }
 
     /**
-     * Add a WHERE ... LIKE clause to your query.
+     * LIKE 方法
      *
      * <code>
      * $data = Db::table('table')->whereLike('name','keyword%');
@@ -1438,7 +1411,7 @@ class Db
     /**
      * Add a LIMIT to the query
      */
-    public function limit(limit,offset=null) 
+    public function limit(limit,offset=null) -> <Db>
     {
         let this->_limit = limit;
         if is_null(offset) {
@@ -1451,16 +1424,16 @@ class Db
     /**
      * Add an OFFSET to the query
      */
-    public function offset(offset) 
+    public function offset(offset) -> <Db>
     {
         let this->_offset = offset;
         return this;
     }
 
     /**
-     * Add an ORDER BY clause to the query
+     * 内部排序辅助方法
      */
-    protected function _add_order_by(column_name, ordering) 
+    protected function _add_order_by(column_name, ordering) -> <Db>
     {
         let column_name = this->_quote_identifier(column_name);
         let this->_order_by[] = column_name." ".ordering;
@@ -1468,34 +1441,62 @@ class Db
     }
 
     /**
-     * Add an ORDER BY column DESC clause
+     * 倒序排列
+     *
+     *<code>
+     * Db::name('user')->orderByDesc('uid')->select();
+     *</code>
+     *
+     *@access public
+     *@param string column_name 字段名
      */
-    public function orderByDesc(column_name) 
+    public function orderByDesc(string! column_name) -> <Db>
     {
         return this->_add_order_by(column_name, "DESC");
     }
 
     /**
-     * Add an ORDER BY column ASC clause
+     * 正序排列
+     *
+     *<code>
+     * Db::name('user')->orderByAsc('uid')->select();
+     *</code>
+     *
+     *@access public
+     *@param string column_name 字段名
      */
-    public function orderByAsc(column_name) 
+    public function orderByAsc(string! column_name) -> <Db>
     {
         return this->_add_order_by(column_name, "ASC");
     }
 
     /**
-     * Add an unquoted expression as an ORDER BY clause
+     * 添加不被符号包围的表达式排序方式
+     *
+     *<code>
+     * Db::name('user')->orderByExpr('RAND()')->select();//MySQL RAND() 
+     *</code>
+     *
+     *@access public
+     *@param string clause 表达式
      */
-    public function orderByExpr(clause) 
+    public function orderByExpr(string! clause) -> <Db>
     {
         let this->_order_by[] = clause;
         return this;
     }
 
     /**
-     * Add a column to the list of columns to GROUP BY
+     * 结果分组
+     *
+     *<code>
+     * Db::name('user')->groupBy('groupid')->select();
+     *</code>
+     *
+     *@access public
+     *@param string column_name 字段名
      */
-    public function groupBy(column_name) 
+    public function groupBy(string! column_name) -> <Db>
     {
         let column_name = this->_quote_identifier(column_name);
         let this->_group_by[] = column_name;
@@ -1503,9 +1504,16 @@ class Db
     }
 
     /**
-     * Add an unquoted expression to the list of columns to GROUP BY 
+     * 表达式结果分组
+     *
+     *<code>
+     * Db::name('user')->groupBy('groupid')->select();
+     *</code>
+     *
+     *@access public
+     *@param string expr 表达式
      */
-    public function groupByExpr(expr) 
+    public function groupByExpr(string! expr) -> <Db>
     {
         let this->_group_by[] = expr;
         return this;
@@ -1646,8 +1654,8 @@ class Db
     }
 
     /**
-     * Build a SELECT statement based on the clauses that have
-     * been passed to this instance by chaining method calls.
+     * 组装SELECT
+     * @access protected
      */
     protected function _build_select() 
     {
