@@ -1898,7 +1898,7 @@ class Db
      * multiple identifiers. This method can also deal with
      * dot-separated identifiers eg table.column
      */
-    protected function _quote_identifier(identifier) 
+    public function _quote_identifier(identifier) 
     {
         var result;
         if (typeof identifier == "array")  {
@@ -2034,7 +2034,7 @@ class Db
      */
     protected function _build_insert(array! data) 
     {
-        array query;
+        array query = [];
         var field_list,placeholders;
         let query[] = "INSERT INTO";
         let query[] = this->_quote_identifier(this->_table_name);

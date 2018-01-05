@@ -47,9 +47,10 @@ class Model
      * $user->password = '123456';
      * $user->save();
      *</code>
-     */
+     */             
     public function __construct()
-    {}
+    {
+    }
 
     public function __set(string! name, value) -> void
     {
@@ -121,7 +122,7 @@ class Model
         for field in validateFields {
             let ruleString = this->_validateRules["rules"][field];
             let rules      = explode("|", ruleString);
-            let v          = this->_data[field];
+            let v          = isset this->_data[field] ? this->_data[field] : null;
             for rule in rules {
                 if strpos(rule, ":") === false {
                     if rule == "require" {
@@ -156,11 +157,6 @@ class Model
                         }
                     }elseif rule == "alphaNum" {
                         if !preg_match("/^[a-z0-9]+$/i",v) {
-                            let this->_error[]=messages[field.".".rule];
-                            return false;
-                        }
-                    }elseif rule == "alphaDash" {
-                        if !preg_match("/^[a-z0-9_]+$/i",v) {
                             let this->_error[]=messages[field.".".rule];
                             return false;
                         }
@@ -340,10 +336,10 @@ class Model
     {
         var model,table;
         let model = get_called_class();
-        if strpos(model, "\\") !== false {
-            let table = substr(strrpos(model, "\\"), 1);
-        }else{
+        if strpos(model, "\\") === false {
             let table = model;
+        }else{
+            let table = substr(strrchr(model, "\\"), 1);
         }
         return Db::name(table)->setEntity(model,self::primary)->where(a,b,c);
     }
@@ -370,10 +366,10 @@ class Model
         }
         var model,table;
         let model = get_called_class();
-        if strpos(model, "\\") !== false {
-            let table = substr(strrpos(model, "\\"), 1);
-        }else{
+        if strpos(model, "\\") === false {
             let table = model;
+        }else{
+            let table = substr(strrchr(model, "\\"), 1);
         }
         return Db::name(table)->setEntity(model,self::primary)->where(self::primary[0],id)->find();
     }
@@ -393,17 +389,18 @@ class Model
      */
     public function save()
     {
-        var model,table,id;
+        var model,table,id,pk;
         let model = get_called_class();
-        if strpos(model, "\\") !== false {
-            let table = substr(strrpos(model, "\\"), 1);
-        }else{
+        if strpos(model, "\\") === false {
             let table = model;
+        }else{
+            let table = substr(strrchr(model, "\\"), 1);
         }
         if this->isValid() {
             if !empty self::primary && count(self::primary)===1 {
                 let id = Db::name(table)->insertGetId(this->_data);
-                let this->_data[self::primary[0]] = id;
+                let pk = self::primary[0];
+                let this->_data[pk] = id;
                 return true;
             }else{
                 return Db::name(table)->insert(this->_data);
@@ -432,14 +429,19 @@ class Model
         array cond = [];
         var model,table,k;
         for k in self::primary {
-            let cond[k]=this->_data[k];
-            unset this->_data[k];
+            if isset this->_data[k] {
+                let cond[k]=this->_data[k];
+                unset this->_data[k];
+            }
+        }
+        if empty cond {
+            throw "Model data error,No primary value";
         }
         let model = get_called_class();
-        if strpos(model, "\\") !== false {
-            let table = substr(strrpos(model, "\\"), 1);
-        }else{
+        if strpos(model, "\\") === false {
             let table = model;
+        }else{
+            let table = substr(strrchr(model, "\\"), 1);
         }
         if this->isValid(){
             return Db::name(table)->where(cond)->update(this->_data);
@@ -469,10 +471,10 @@ class Model
             let cond[k]=this->_data[k];
         }
         let model = get_called_class();
-        if strpos(model, "\\") !== false {
-            let table = substr(strrpos(model, "\\"), 1);
-        }else{
+        if strpos(model, "\\") === false {
             let table = model;
+        }else{
+            let table = substr(strrchr(model, "\\"), 1);
         }
         let this->_data[field]=value;
         return Db::name(table)->where(cond)->update([field:value]);
@@ -499,10 +501,10 @@ class Model
             let cond[k]=this->_data[k];
         }
         let model = get_called_class();
-        if strpos(model, "\\") !== false {
-            let table = substr(strrpos(model, "\\"), 1);
-        }else{
+        if strpos(model, "\\") === false {
             let table = model;
+        }else{
+            let table = substr(strrchr(model, "\\"), 1);
         }
         let returnValue = Event::trigger("beforeDestroy",[this->_data,this]);
         if returnValue === false {
