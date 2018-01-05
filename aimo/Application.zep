@@ -22,26 +22,33 @@ class Application {
      */
     public params = [] {set,get};
 
+    /**
+     * @var boolean 是否支持多模块
+     */
     public multipleModule = false;
     
     /**
-     * @var string
+     * @var string 默认模块
      */
     public moduleName = "index" {set,get};
     
     /**
-     * @var string
+     * @var string 默认控制器
      */
     public controllerName = "index" {set,get};
     
     /**
-     * @var string
+     * @var string 默认动作
      */
     public actionName = "index" {set,get};
 
     /**
-     * Initilize Application Instance
+     * 初始化应用
      *
+     *<code>
+     *use Aimo\Application;
+     *Application::init(Config::get('app'))->run();
+     *</code>
      * @return <Application>
      */
     public static function init(array! config)-><Application>
@@ -53,6 +60,15 @@ class Application {
         return self::_instance;
     }
 
+    /**
+     * 载入应用配置
+     *
+     *<code>
+     *use Aimo\Application;
+     *Application::init(Config::get('app'))->loadConfig(Config::get('otherConfig'))->run();
+     *</code>
+     * @return <Application>
+     */
     public function loadConfig(array config=[])-><Application>
     {
         let config["app_path"] = rtrim(config["app_path"],"\\/")."/";
@@ -63,6 +79,24 @@ class Application {
         return this;
     }
 
+    /**
+     * 委托路由解析回调
+     *
+     *<code>
+     *use Aimo\Application;
+     *Application::init(Config::get('app'))->setRouter(function($pathinfo){
+     *    //your code here
+     *    //must return
+     *    return [
+     *        'moduleName'=>'',
+     *        'controllerName'=>'',
+     *        'actionName'=>'',
+     *        'params'=> array_merge($_GET,$_POST),
+     *    ]; 
+     *})->run();
+     *</code>
+     * @return <Application>
+     */
     public function setRouter(string! name,callable func)-><Application>
     {
         let this->_routers[name]=func;
@@ -146,6 +180,9 @@ class Application {
 
     }
 
+    /**
+     * 调度
+     */
     private function dispacher()
     {
         var klass,ctl,action;
@@ -184,6 +221,11 @@ class Application {
         }
     }
 
+    /**
+     * 获取控制器
+     *
+     * @return sting
+     */
     private function getController(string! ctl)
     {
         var controllerName,klass,name;
@@ -196,8 +238,9 @@ class Application {
         }
         return klass;
     }
+
     /**
-     * Bootstrap method 
+     * 启动运行 
      *
      * @return void
      */
