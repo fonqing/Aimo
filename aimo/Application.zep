@@ -23,22 +23,22 @@ class Application {
     public params = [] {set,get};
 
     /**
-     * @var boolean 是否支持多模块
+     * @var boolean
      */
     public multipleModule = false;
     
     /**
-     * @var string 默认模块
+     * @var string
      */
     public moduleName = "index" {set,get};
     
     /**
-     * @var string 默认控制器
+     * @var string
      */
     public controllerName = "index" {set,get};
     
     /**
-     * @var string 默认动作
+     * @var string
      */
     public actionName = "index" {set,get};
 
