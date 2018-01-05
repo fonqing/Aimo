@@ -18,15 +18,12 @@ class Db
         "identifier_quote_character" : null,
         "limit_clause_style" : null,
         "logging" : false,
-        "logger" : null,
-        "caching" : false,
-        "caching_auto_clear" : false
+        "logger" : null
     ];
     protected static _config = [];
     protected static _db = [];
     protected static _last_query;
     protected static _query_log = [];
-    protected static _query_cache = [];
     protected static _last_statement = null;
     /**
      * 链接名称
@@ -51,6 +48,8 @@ class Db
     protected _data = [];
     protected _expr_fields = [];
     protected _instance_id_column = null;
+
+    protected _entity = null;
     /**
      * 避免DB被直接实例化
      */
@@ -257,6 +256,21 @@ class Db
     public static function resetDb() -> void
     {
         let self::_db = [];
+    }
+
+    public function setEntity(klass,var primary)
+    {
+        if (typeof primary == "array") {
+            if count(primary) === 1 {
+                let primary = primary[0];
+            }
+            if empty primary {
+                let primary = "";
+            }
+        }
+        let this->_entity = klass;
+        self::config("id_column", primary);
+        return this;
     }
 
     /**
@@ -547,20 +561,30 @@ class Db
      *
      * @access public
      * @param integer|null
-     * @return bool|array
+     * @return mixd
      */
     public function find(id=null) 
     {
         var rows;
+        string fun = "fetch";
         if (typeof id != "null") {
             this->whereIdIs(id);
         }
         this->limit(1);
-        let rows = this->_run();
-        if empty rows {
-            return false;
+        if this->_entity == null {
+            let rows = this->_run();
+            if empty rows {
+                return false;
+            }
+            return rows[0];
+        }else{
+            let rows = this->_run_by_model();
+            if rows->rowCount() > 0 {
+                return rows->{fun}(\PDO::FETCH_CLASS,this->_entity);
+            } else {
+                return false;
+            }
         }
-        return rows[0];
     }
 
     /**
@@ -577,18 +601,11 @@ class Db
      */
     public function select() 
     {
-        return this->_find_many();
-    }
-
-    /**
-     * 内部查询多条用
-     *
-     * @access protected
-     * @return array
-     */
-    protected function _find_many()
-    {
-        return this->_run();
+        if this->_entity == null {
+            return this->_run();
+        }else{
+            return this->_run_by_model();
+        }
     }
 
     /**
@@ -1185,15 +1202,18 @@ class Db
                 }
             }
         } elseif a!=null && b!=null && c!=null {
-            let operators = "_=_!=_>_<>_<_>=_<=_LIKE_NOT LIKE_like_not like_";
-            if operators->index("_".b."_") {
-                return this->_add_simple_where(a, b, c);
-            }
-            if strcasecmp(b,"in") === 0 {
-                return this->_add_where_placeholder(a, "IN", c);
-            }
-            if strcasecmp(b,"not in") === 0 {
-                return this->_add_where_placeholder(a, "NOT IN", c);
+            let operators = "_=_!=_>_<>_<_>=_<=_LIKE_NOT LIKE_";
+            if (typeof b == "string"){
+                let b = strtoupper(b);
+                if operators->index("_".b."_") {
+                    return this->_add_simple_where(a, b, c);
+                }
+                if strcasecmp(b,"in") === 0 {
+                    return this->_add_where_placeholder(a, "IN", c);
+                }
+                if strcasecmp(b,"not in") === 0 {
+                    return this->_add_where_placeholder(a, "NOT IN", c);
+                }
             }
         }
         trigger_error("where method execute failed", E_USER_NOTICE);
@@ -1201,17 +1221,33 @@ class Db
     }
 
     /**
-     * WHERE =
+     * 条件等于
+     *
+     *<code>
+     *Db::name('table')->whereEqual('field','value')->find();
+     *</code>
+     *
+     * @access public
+     * @param string column_name 字段名
+     * @param string|int|float value
      */
-    public function whereEqual(column_name, value=null) 
+    public function whereEqual(string! column_name, value=null) 
     {
         return this->_add_simple_where(column_name, "=", value);
     }
 
     /**
-     * WHERE <>
+     * 条件不等于
+     *
+     *<code>
+     *Db::name('table')->whereNotEqual('field','value')->find();
+     *</code>
+     *
+     * @access public
+     * @param string column_name 字段名
+     * @param string|int|float value
      */
-    public function whereNotEqual(column_name, value=null) 
+    public function whereNotEqual(string! column_name, value=null) 
     {
         return this->_add_simple_where(column_name, "!=", value);
     }
@@ -1219,8 +1255,13 @@ class Db
     /**
      * Special method to query the table by its primary key
      *
-     * If primary key is compound, only the columns that
-     * belong to they key will be used for the query
+     *<code>
+     *Db::name('table')->whereIdIs('field','value')->find();
+     *</code>
+     *
+     * @access public
+     * @param string column_name 字段名
+     * @param string|int|float value
      */
     public function whereIdIs(id) 
     {
@@ -1889,79 +1930,15 @@ class Db
     }
 
     /**
-     * Create a cache key for the given query and parameters.
-     */
-    protected static function _create_cache_key(query, parameters, table_name = null, name = "default") 
-    {
-        var parameter_string,key;
-        if isset self::_config[name]["create_cache_key"] && 
-            is_callable(self::_config[name]["create_cache_key"]) {
-            return call_user_func_array(self::_config[name]["create_cache_key"], [query, parameters, table_name, name]);
-        }
-        let parameter_string = implode(",", parameters);
-        let key = query . ":" . parameter_string;
-        return sha1(key);
-    }
-
-    /**
-     * Check the query cache for the given cache key. If a value
-     * is cached for the key, return the value. Otherwise, return false.
-     */
-    protected static function _check_query_cache(cache_key, table_name = null, name = "default") 
-    {
-        if isset self::_config[name]["check_query_cache"] && 
-            is_callable(self::_config[name]["check_query_cache"]) {
-            return call_user_func_array(self::_config[name]["check_query_cache"], [cache_key, table_name, name]);
-        } elseif isset self::_query_cache[name][cache_key]  {
-            return self::_query_cache[name][cache_key];
-        }
-        return false;
-    }
-
-    /**
-     * Clear the query cache
-     */
-    public static function clearCache(table_name = null, name = "default") 
-    {
-        let self::_query_cache = [];
-        if isset self::_config[name]["clear_cache"] && 
-        is_callable(self::_config[name]["clear_cache"]) {
-            return call_user_func_array(self::_config[name]["clear_cache"], [table_name, name]);
-        }
-    }
-
-    /**
-     * Add the given value to the query cache.
-     */
-    protected static function _cache_query_result(cache_key, value, table_name = null, name = "default") 
-    {
-        if isset self::_config[name]["cache_query_result"] && 
-            is_callable(self::_config[name]["cache_query_result"]) {
-            return call_user_func_array(self::_config[name]["cache_query_result"], [cache_key, value,table_name, name]);
-        } elseif !isset self::_query_cache[name] {
-            let self::_query_cache[name] = [];
-        }
-        let self::_query_cache[name][cache_key] = value;
-    }
-
-    /**
      * Execute the SELECT query that has been built up by chaining methods
      * on this class. Return an array of rows as associative arrays.
      */
     protected function _run() 
     {
-        var query,caching_enabled,cache_key,cached_result,statement,rows,row;
+        var query,statement,rows,row;
         string fun = "fetch";
         let query = this->_build_select();
-        let caching_enabled = self::_config[this->_name]["caching"];
 
-        if caching_enabled {
-            let cache_key = self::_create_cache_key(query, this->_values, this->_table_name, this->_name);
-            let cached_result = self::_check_query_cache(cache_key, this->_table_name, this->_name);
-            if cached_result !== false {
-                return cached_result;
-            }
-        }
         self::_execute(query, this->_values, this->_name);
         let statement = self::getLastStatement();
         let rows = [];
@@ -1972,14 +1949,28 @@ class Db
             }
             let rows[]=row;
         }
-        if caching_enabled {
-            self::_cache_query_result(cache_key, rows, this->_table_name, this->_name);
-        }
-        // reset ORM after executing the query
         let this->_values = [];
         let this->_result_columns = ["*"];
         let this->_using_default_result_columns = true;
         return rows;
+    }
+
+    /**
+     * Execute the SELECT query that has been built up by chaining methods
+     * on this class. Return an array of rows as associative arrays.
+     */
+    protected function _run_by_model() -> <\PDOStatement>
+    {
+        var query,statement;
+        let query = this->_build_select();
+        self::_execute(query, this->_values, this->_name);
+        let statement = self::getLastStatement();
+        statement->setFetchMode(\PDO::FETCH_CLASS,this->_entity);
+        let this->_values = [];
+        let this->_result_columns = ["*"];
+        let this->_using_default_result_columns = true;
+        let this->_entity = null;
+        return statement;
     }
 
     /**

@@ -20,7 +20,7 @@ abstract class Cache {
      * Cache::init('Memcache', [
      *     'host' => '127.0.0.1',
      *     'port' => '11211',
-     * ]);
+     * ],'dbCache');
      * //or
      * Cache::init('File', [
      *     'cache_path' => './runtime/',
@@ -29,17 +29,16 @@ abstract class Cache {
      *     'cache_subdir' => true,      //启用子目录
      *     'cache_check' => false,      //是否开启数据校检，开启后影响性能，默认关闭
      *     'cache_compress' => false,   //是否开启数据压缩，开启后影响性能，默认关闭
-     * ]);
+     * ],'htmlCache');
      * </code>
 	 *
 	 * @param string driver
 	 * @param mixed config
+     * @param string name
 	 * @return Aimo\Cache\CacheInterface
 	 */
-	public static function init(string! driver,array config)
+	public static function init(string! driver,array config=[],string key="default")
 	{
-        var key;
-        let key = self::guid(func_get_args());
 		if !isset self::_instance[key] {
 			string klass;
             let driver = ucfirst(driver);
@@ -53,6 +52,24 @@ abstract class Cache {
 	}
 
     /**
+     * 使用名称获取缓存实例 
+     *
+     *<code>
+     *$htmlCache = Cache::get('htmlCache');
+     *</code>
+     *
+     * @param string 实例名称
+     * @return string
+     */
+    public static function getInstance(string! name)
+    {
+        if isset self::_instance[name] {
+            return self::_instance[name];
+        }
+        throw "Cache Instance '".name."' not exists";
+    }
+
+    /**
      * Generate GUID string 
      *
      * @param array
@@ -60,6 +77,6 @@ abstract class Cache {
      */
     private static function guid(array param)->string
     {
-        return md5(serialize(param)); 
+        return md5(serialize(param));
     }
 }

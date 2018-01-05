@@ -8,7 +8,7 @@ class Model
 {
     protected table   = "";
     protected prefix  = "";
-    protected primary = [];
+    protected static primary = [];
     protected fields  = [];
     protected _data   = [];
     protected _rows   = [];
@@ -25,7 +25,7 @@ class Model
      * use Aimo\Model;
      * class User extends Model {
      *     protected $table = 'user';
-     *     protected $primary = ['uid'];
+     *     protected static $primary = ['uid'];
      *     protected $fields  = [
      *         'uid','username','password',
      *         'groupid','regtime'
@@ -100,7 +100,7 @@ class Model
         array cond;
         let messages = this->_validateRules["msg"];
         let operate  = "update";
-        for key in this->primary {
+        for key in self::primary {
             let value = this->_data[key];
             if empty value {
                 let operate = "create";
@@ -182,7 +182,7 @@ class Model
                         }elseif operate == "update" {
                             
                             let cond = [field:v];
-                            for kk in this->primary {
+                            for kk in self::primary {
                                 let cond[kk]=["<>",this->{kk}];
                             }
                             let c = self::where(cond)->count();
@@ -300,7 +300,7 @@ class Model
                                 }
                             }elseif operate == "update" {
                                 let cond = [field:v];
-                                for kk in this->primary{
+                                for kk in self::primary{
                                     let cond[kk]=["<>",this->{kk}];
                                 }
                                 let c = self::where(cond)->count();
@@ -317,6 +317,10 @@ class Model
         return true;
     }
 
+    public function isValid()
+    {
+        return this->validate();
+    }
 
     /**
      * 模型查询入口
@@ -334,11 +338,166 @@ class Model
      */
     public static function where(a,b=null,c=null)
     {
-        var model;
+        var model,table;
         let model = get_called_class();
         if strpos(model, "\\") !== false {
-            let model = substr(strrpos(model, "\\"), 1);
+            let table = substr(strrpos(model, "\\"), 1);
         }
-        return Db::name(model)->where(a,b,c);
+        return Db::name(table)->setEntity(model,self::primary)->where(a,b,c);
+    }
+
+    /**
+     * 获取单条信息
+     *
+     *<code>
+     *$user = User::get(6);
+     *echo $user->username;
+     *</code>
+     *
+     * @access public
+     * @parma integer|string id
+     * @return Model
+     */
+    public static function get(id)
+    {
+        if empty self::primary {
+            throw "Model Primary not defined.Can't use Model::get method";
+        }
+        if count(self::primary) > 1 {
+            throw "Model Multiple Primary not supported yet.";
+        }
+        var model,table;
+        let model = get_called_class();
+        if strpos(model, "\\") !== false {
+            let table = substr(strrpos(model, "\\"), 1);
+        }
+        return Db::name(table)->setEntity(model,self::primary)->where(self::primary[0],id)->find();
+    }
+
+    /**
+     * 新增模型数据
+     *
+     *<code>
+     *$user = new User();
+     *$user->username = 'eric';
+     *$user->password = '123456';
+     *$user->save();
+     *</code>
+     *
+     * @access public
+     * @return Model
+     */
+    public function save()
+    {
+        var model,table,id;
+        let model = get_called_class();
+        if strpos(model, "\\") !== false {
+            let table = substr(strrpos(model, "\\"), 1);
+        }
+        if this->isValid() {
+            if !empty self::primary && count(self::primary)===1 {
+                let id = Db::name(table)->insertGetId(this->_data);
+                let this->_data[self::primary[0]] = id;
+                return true;
+            }else{
+                return Db::name(table)->insert(this->_data);
+            }
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * 更新模型数据
+     *
+     *<code>
+     *$user = User::get(6);
+     *$user->lastlogin = time();
+     *$user->update();
+     *</code>
+     *
+     * @access public
+     */
+    public function update()
+    {
+        if empty self::primary {
+            throw "Model Primary not defined.Can't use Model::update method";
+        }
+        array cond = [];
+        var model,table,k;
+        for k in self::primary {
+            let cond[k]=this->_data[k];
+            unset this->_data[k];
+        }
+        let model = get_called_class();
+        if strpos(model, "\\") !== false {
+            let table = substr(strrpos(model, "\\"), 1);
+        }
+        if this->isValid(){
+            return Db::name(table)->where(cond)->update(this->_data);
+        }else{
+            return false;
+        }
+    }
+
+    /**
+     * 软删除
+     *
+     *<code>
+     *$user = User::get(6);
+     *$user->delete();
+     *</code>
+     *
+     * @access public
+     */
+    public function delete(field="status",value=-1)
+    {
+        if empty self::primary {
+            throw "Model Primary not defined.Can't use Model::delete method";
+        }
+        array cond = [];
+        var model,table,k;
+        for k in self::primary {
+            let cond[k]=this->_data[k];
+        }
+        let model = get_called_class();
+        if strpos(model, "\\") !== false {
+            let table = substr(strrpos(model, "\\"), 1);
+        }
+        let this->_data[field]=value;
+        return Db::name(table)->where(cond)->update([field:value]);
+    }
+
+    /**
+     * 硬删除/彻底删除
+     *
+     *<code>
+     *$user = User::get(6);
+     *$user->destroy();
+     *</code>
+     *
+     * @access public
+     */
+    public function destroy()
+    {
+        if empty self::primary {
+            throw "Model Primary not defined.Can't use Model::destroy method";
+        }
+        var model,table,k,rs,returnValue;
+        array cond = [];
+        for k in self::primary {
+            let cond[k]=this->_data[k];
+        }
+        let model = get_called_class();
+        if strpos(model, "\\") !== false {
+            let table = substr(strrpos(model, "\\"), 1);
+        }
+        let returnValue = Event::trigger("beforeDestroy",[this->_data,this]);
+        if returnValue === false {
+            return false;
+        }
+        let rs = Db::name(table)->where(cond)->delete();
+        Event::trigger("afterDestroy",[this->_data,this]);
+        return rs;
     }
 }
