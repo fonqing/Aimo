@@ -342,6 +342,8 @@ class Model
         let model = get_called_class();
         if strpos(model, "\\") !== false {
             let table = substr(strrpos(model, "\\"), 1);
+        }else{
+            let table = model;
         }
         return Db::name(table)->setEntity(model,self::primary)->where(a,b,c);
     }
@@ -370,6 +372,8 @@ class Model
         let model = get_called_class();
         if strpos(model, "\\") !== false {
             let table = substr(strrpos(model, "\\"), 1);
+        }else{
+            let table = model;
         }
         return Db::name(table)->setEntity(model,self::primary)->where(self::primary[0],id)->find();
     }
@@ -393,6 +397,8 @@ class Model
         let model = get_called_class();
         if strpos(model, "\\") !== false {
             let table = substr(strrpos(model, "\\"), 1);
+        }else{
+            let table = model;
         }
         if this->isValid() {
             if !empty self::primary && count(self::primary)===1 {
@@ -432,6 +438,8 @@ class Model
         let model = get_called_class();
         if strpos(model, "\\") !== false {
             let table = substr(strrpos(model, "\\"), 1);
+        }else{
+            let table = model;
         }
         if this->isValid(){
             return Db::name(table)->where(cond)->update(this->_data);
@@ -463,6 +471,8 @@ class Model
         let model = get_called_class();
         if strpos(model, "\\") !== false {
             let table = substr(strrpos(model, "\\"), 1);
+        }else{
+            let table = model;
         }
         let this->_data[field]=value;
         return Db::name(table)->where(cond)->update([field:value]);
@@ -491,6 +501,8 @@ class Model
         let model = get_called_class();
         if strpos(model, "\\") !== false {
             let table = substr(strrpos(model, "\\"), 1);
+        }else{
+            let table = model;
         }
         let returnValue = Event::trigger("beforeDestroy",[this->_data,this]);
         if returnValue === false {
