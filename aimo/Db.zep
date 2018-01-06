@@ -196,42 +196,6 @@ class Db
     }
 
     /**
-     * 使用配置链接到数据库
-     *
-     * @access protected
-     * @param string $name Which connection to use
-     */
-    protected static function _setup_db(string! name = "default") -> void
-    {
-        if !isset self::_db[name] ||
-            !is_object(self::_db[name]) {
-            self::_setup_db_config(name);
-            var db;
-            let db = new \PDO(
-                self::_config[name]["dsn"],
-                self::_config[name]["username"],
-                self::_config[name]["password"],
-                self::_config[name]["options"]
-            );
-            db->setAttribute(\PDO::ATTR_ERRMODE, self::_config[name]["error_mode"]);
-            self::setDb(db, name);
-        }
-    }
-
-   /**
-    * 初始化配置
-    *
-    * @access protected
-    * @param string $name Which connection to use
-    */
-    protected static function _setup_db_config(string! name) -> void
-    {
-        if !isset self::_config[name] {
-            let self::_config[name] = self::_default_config;
-        }
-    }
-
-    /**
      * 设置PDO链接
      *
      * @access public
@@ -249,6 +213,24 @@ class Db
     }
 
     /**
+     * 获取PDO实例
+     *
+     * <code>
+     * $pdo = Db::getDb();
+     * $pdo = Db::getDb('name');//多数据库实例时通过name指定
+     * </code>
+     *
+     * @access public
+     * @param string $name Which connection to use
+     * @return PDO
+     */
+    public static function getDb(string! name = "default") -> <\PDO>
+    {
+        self::_setup_db(name); // required in case this is called before ORM is instantiated
+        return self::_db[name];
+    }
+
+    /**
      * 删除已注册的PDO链接对象
      *
      * @access public
@@ -258,7 +240,13 @@ class Db
         let self::_db = [];
     }
 
-    public function setEntity(klass,var primary)
+    /**
+     * 绑定模型到查询出的数据
+     *
+     * 本方法在Aimo\Model中调用，并根据called class 实例化模型类
+     *
+     */
+    public function setEntity(klass,var primary) -> <Db>
     {
         if (typeof primary == "array") {
             if count(primary) === 1 {
@@ -271,88 +259,6 @@ class Db
         let this->_entity = klass;
         self::config("id_column", primary);
         return this;
-    }
-
-    /**
-     * 设置字段和表名的转移字符
-     *
-     * @access protected
-     * @param string $name Which connection to use
-     */
-    protected static function _setup_identifier_quote_character(string! name) -> void
-    {
-        if is_null(self::_config[name]["identifier_quote_character"]) {
-            let self::_config[name]["identifier_quote_character"] =
-                self::_detect_identifier_quote_character(name);
-        }
-    }
-
-    /**
-     * 设置查询条数限制(Limit in mysql,TOP in MSSql)
-     * 如果通过 Db::config("limit_clause_style", "top"),进行了设置，那么本函数将不起作用
-     *
-     * @access public
-     * @param string $name Which connection to use
-     */
-    protected static function _setup_limit_clause_style(string! name) -> void
-    {
-        if is_null(self::_config[name]["limit_clause_style"]) {
-            let self::_config[name]["limit_clause_style"] =
-                self::_detect_limit_clause_style(name);
-        }
-    }
-
-    /**
-     * 探测转义符号
-     *
-     * @access protected
-     * @param string $name Which connection to use
-     * @return string
-     */
-    protected static function _detect_identifier_quote_character(string! name)
-    {
-        switch self::getDb(name)->getAttribute(\PDO::ATTR_DRIVER_NAME) {
-            case "pgsql":
-            case "sqlsrv":
-            case "dblib":
-            case "mssql":
-            case "sybase":
-            case "firebird":
-                return "\"";
-            case "mysql":
-            case "sqlite":
-            case "sqlite2":
-            default:
-                return "`";
-        }
-    }
-
-    /**
-     * 返回LIMIT形式
-     *
-     * @access protected
-     * @param string $name Which connection to use
-     * @return string Limit clause style keyword/constant
-     */
-    protected static function _detect_limit_clause_style(string! name)->string
-    {
-        var driver;
-        string drivers = "_sqlsrv_dblib_mssql_";
-        let driver = self::getDb(name)->getAttribute(\PDO::ATTR_DRIVER_NAME);
-        return drivers->index("_".driver."_") ? Db::LIMIT_STYLE_TOP_N : Db::LIMIT_STYLE_LIMIT;
-    }
-
-    /**
-     * 获取PDO实例
-     *
-     * @access public
-     * @param string $name Which connection to use
-     * @return PDO
-     */
-    public static function getDb(string! name = "default") -> <\PDO>
-    {
-        self::_setup_db(name); // required in case this is called before ORM is instantiated
-        return self::_db[name];
     }
 
     /**
@@ -401,101 +307,6 @@ class Db
     public function getLastSql()
     {
         return self::getLastQuery();
-    }
-
-   /**
-    * 内部执行SQL的方法
-    *
-    * @access protected
-    * @param string $query
-    * @param array $parameters An array of parameters to be bound in to the query
-    * @param string $name Which connection to use
-    * @return bool Response of PDOStatement::execute()
-    */
-    protected static function _execute(query, parameters = [], name = "default") 
-    {
-        var statement,time,key,param,type,result,k;
-        let statement = self::getDb(name)->prepare(query);
-        let self::_last_statement = statement;
-        let time = microtime(true);
-        for key,param in parameters {
-            if (typeof param == "null") {
-                let type = \PDO::PARAM_NULL;
-            } elseif (typeof param == "boolean") {
-                let type = \PDO::PARAM_BOOL;
-            } elseif (typeof param == "integer") {
-                let type = \PDO::PARAM_INT;
-            } else {
-                let type = \PDO::PARAM_STR;
-            }
-            if (typeof key == "integer") {
-                let k = key + 1;
-                statement->bindValue(k, param, type);
-            }else{
-                statement->bindValue(key, param, type);
-            }
-        }
-        let result = statement->execute();
-        //statement->debugDumpParams();
-        self::_log_query(query, parameters, name, (microtime(true)-time));
-        return result;
-    }
-
-    /**
-     * 记录查询日志
-     *
-     * @access public
-     * @param string $query
-     * @param array $parameters 参数绑定
-     * @param string $name Which connection to use
-     * @param float $query_time Query time
-     * @return bool
-     */
-    protected static function _log_query(query, parameters, name, query_time) 
-    {
-        var key,val,bound_query;
-        if !(self::_config[name]["logging"]) {
-            return false;
-        }
-        if !isset self::_query_log[name] {
-            let self::_query_log[name] = [];
-        }
-        if empty parameters {
-            let bound_query = query;
-        } else {
-            // Escape the parameters
-            let parameters = array_map([self::getDb(name), "quote"], parameters);
-
-            if array_values(parameters) === parameters {
-                // ? placeholders
-                // Avoid %format collision for vsprintf
-                let query = str_replace("%", "%%", query);
-
-                // Replace placeholders in the query for vsprintf
-                if false !== strpos(query, "\"") || false !== strpos(query, "\"") {
-                    let query = Helper::str_replace_outside_quotes("?", "%s", query);
-                } else {
-                    let query = str_replace("?", "%s", query);
-                }
-
-                // Replace the question marks in the query with the parameters
-                let bound_query = vsprintf(query, parameters);
-            } else {
-                
-                for key,val in parameters {
-                    let query = str_replace(key, val, query);
-                }
-                let bound_query = query;
-            }
-        }
-        let self::_last_query = bound_query;
-        let self::_query_log[name][] = bound_query;
-        
-        if is_callable(self::_config[name]["logger"]) {
-            call_user_func_array(self::_config[name]["logger"],[bound_query, query_time]);
-        }
-        
-        return true;
     }
 
     /**
@@ -552,175 +363,6 @@ class Db
     }
 
     /**
-     * 获取一条记录并返回数组
-     * 
-     * <code>
-     * Db::name('user')->find(6);//Find by primary key value
-     * Db::name('user')->where('uid',6)->find();
-     * </code>
-     *
-     * @access public
-     * @param integer|null
-     * @return mixd
-     */
-    public function find(id=null) 
-    {
-        var rows;
-        string fun = "fetch";
-        if (typeof id != "null") {
-            this->whereIdIs(id);
-        }
-        this->limit(1);
-        if this->_entity == null {
-            let rows = this->_run();
-            if empty rows {
-                return false;
-            }
-            return rows[0];
-        }else{
-            let rows = this->_run_by_model();
-            if rows->rowCount() > 0 {
-                return rows->{fun}(\PDO::FETCH_CLASS,this->_entity);
-            } else {
-                return false;
-            }
-        }
-    }
-
-    /**
-     * 获取多条记录
-     * 
-     * 执行此方法后，无法再进行链式调用
-     * 
-     *<cdoe>
-     *$users = Db::name('user')->select();
-     *print_r($users);
-     *</code>
-     * @access public
-     * @return array
-     */
-    public function select() 
-    {
-        if this->_entity == null {
-            return this->_run();
-        }else{
-            return this->_run_by_model();
-        }
-    }
-
-    /**
-     * 执行COUNT查询
-     *
-     *<code>
-     *Db::name('user')->count();
-     *Db::name('user')->count('DISTINCT gid');
-     *</code>
-     *
-     * @access public
-     * @param string 
-     */
-    public function count(column = "*") 
-    {
-        return this->_call_aggregate_db_function("COUNT", column);
-    }
-
-    /**
-     * 执行MAX查询，获取字段最大值
-     *
-     *<code>
-     *Db::name('user')->max('amount');
-     *</code>
-     *
-     * @access public
-     * @param string 
-     */
-    public function max(column)
-    {
-        return this->_call_aggregate_db_function("MAX", column);
-    }
-
-    /**
-     * 执行MIN查询，获取字段最小值
-     *
-     *<code>
-     *Db::name('user')->min('amount');
-     *</code>
-     *
-     * @access public
-     * @param string 
-     */
-    public function min(column)
-    {
-        return this->_call_aggregate_db_function("MIN", column);
-    }
-
-    /**
-     * 执行AVG查询，获取字段平均值
-     *
-     *<code>
-     *Db::name('logs')->avg('fee');
-     *</code>
-     *
-     * @access public
-     * @param string 
-     */
-    public function avg(column) 
-    {
-        return this->_call_aggregate_db_function("AVG", column);
-    }
-
-    /**
-     * 执行SUM查询，获取一列的和
-     *
-     *<code>
-     *Db::name('logs')->sum('fee');
-     *</code>
-     *
-     * @access public
-     * @param string 
-     */
-    public function sum(column)
-    {
-        return this->_call_aggregate_db_function("SUM", column);
-    }
-
-    /**
-     * 执行常用统计函数
-     *
-     * @access protected
-     * @param string $sql_function The aggregate function to call eg. MIN, COUNT, etc
-     * @param string $column The column to execute the aggregate query against
-     * @return int
-     */
-    protected function _call_aggregate_db_function(sql_function, column) 
-    {
-        var alias,result_columns,result,v,return_value = 0;
-        let alias = strtolower(sql_function);
-        let sql_function = strtoupper(sql_function);
-        if "*" != column {
-            let column = this->_quote_identifier(column);
-        }
-        let result_columns = this->_result_columns;
-        let this->_result_columns = [];
-        this->fieldExpr(sql_function."(".column.")", alias);
-        let result = this->find();
-        let this->_result_columns = result_columns;
-        if result !== false {
-            let v = result[alias];
-            if !empty v {
-                if !is_numeric(v) {
-                    let return_value = result->{alias};
-                }elseif (int) v == (float) v {
-                    let return_value = (int) v;
-                } else {
-                    let return_value = (float) v;
-                }
-            }
-        }
-        return return_value;
-    }
-
-    /**
      * 为当前表指定别名
      *
      * <code>
@@ -734,55 +376,6 @@ class Db
     {
         let this->_table_alias = alias;
         return this;
-    }
-
-    /**
-     * Internal method to add an unquoted expression to the set
-     * of columns returned by the SELECT query. The second optional
-     * argument is the alias to return the expression as.
-     */
-    protected function _add_result_column(expr, alias=null) 
-    {
-        if !is_null(alias) {
-            let expr .= " AS " . this->_quote_identifier(alias);
-        }
-
-        if !empty this->_using_default_result_columns {
-            let this->_result_columns = [expr];
-            let this->_using_default_result_columns = false;
-        } else {
-            let this->_result_columns[] = expr;
-        }
-        return this;
-    }
-
-    /**
-     * Add a column to the list of columns returned by the SELECT
-     * query. This defaults to "*". The second optional argument is
-     * the alias to return the column as.
-     */
-    protected function field(column, alias=null)
-    {
-        let column = this->_quote_identifier(column);
-        return this->_add_result_column(column, alias);
-    }
-
-    /**
-     * 查询表达式字段
-     * @access protected
-     */
-    protected function fieldExpr(expr, alias=null)
-    {
-        return this->_add_result_column(expr, alias);
-    }
-
-    /**
-     * 清理单个字段
-     * @access protected
-     */
-    protected function trimField(string! field)
-    {
-        return trim(field," \t\n\r\0\x0B`'\"[]");
     }
 
     /**
@@ -865,50 +458,25 @@ class Db
     }
 
     /**
-     * 内部方法向查询增加链接
+     * 连表查询方法
      *
-     * The join_operator should be one of INNER, LEFT OUTER, CROSS etc - this
-     * will be prepended to JOIN.
+     *<code>
+     * Db::name('user')->join('profile','user.uid=profile.uid','RIGHT')->select();
+     *</code>
      *
-     * The table should be the name of the table to join to.
-     *
-     * The constraint may be either a string or an array with three elements. If it
-     * is a string, it will be compiled into the query as-is, with no escaping. The
-     * recommended way to supply the constraint is as an array with three elements:
-     *
-     * first_column, operator, second_column
-     *
-     * Example: array("user.id", "=", "profile.user_id")
-     *
-     * will compile to
-     *
-     * ON `user`.`id` = `profile`.`user_id`
-     *
-     * The final (optional) argument specifies an alias for the joined table.
-     * @access protected
+     * @access public
+     * @param string table 表名
+     * @param string|array ON条件
+     * @param string joinType 链接方式，支持 LEFT,RIGHT,INNER,FULL
      */
-    protected function _add_join_source(join_operator, table, constraint, table_alias=null) 
+    public function join(string! table,var constraint,joinType="LEFT", table_alias=null) 
     {
-        var first_column,operator,second_column,prefix;
-        let join_operator = trim(join_operator." JOIN");
-        let prefix = this->getConfig("prefix");
-        let prefix = typeof prefix == "string" ? prefix : "";
-        let table  = this->_quote_identifier(prefix.table);
-
-        // Add table alias if present
-        if table_alias != null {
-            let table_alias = this->_quote_identifier(table_alias);
-            let table .= " ".table_alias;
+        string types = "_LEFT_RIGHT_INNER_FULL_";
+        let joinType = strtoupper(joinType);
+        if types->index("_".joinType."_") {
+            return this->_add_join_source(joinType, table, constraint, table_alias);
         }
-        // Build the constraint
-        if (typeof constraint == "array") {
-            let first_column  = this->_quote_identifier(constraint[0]);
-            let operator      = this->_quote_identifier(constraint[1]);
-            let second_column = this->_quote_identifier(constraint[2]);
-            let constraint    = first_column." ".operator." ".second_column;
-        }
-        let this->_join_sources[] = join_operator." ".table." ON ".constraint;
-        return this;
+        throw "Unsupported JOIN TYPE";
     }
 
     /**
@@ -933,224 +501,6 @@ class Db
 
         let this->_join_sources[] = table." ON ".constraint;
         return this;
-    }
-
-    /**
-     * 连表查询方法
-     *
-     *<code>
-     * Db::name('user')->join('profile','user.uid=profile.uid','RIGHT')->select();
-     *</code>
-     *
-     * @access public
-     * @param string table 表名
-     * @param string|array ON条件
-     * @param string joinType 链接方式，支持 LEFT,RIGHT,INNER,FULL
-     */
-    public function join(string! table,var constraint,joinType="LEFT", table_alias=null) 
-    {
-        string types = "_LEFT_RIGHT_INNER_FULL_";
-        let joinType = strtoupper(joinType);
-        if types->index("_".joinType."_") {
-            return this->_add_join_source(joinType, table, constraint, table_alias);
-        }
-        throw "Unsupported JOIN TYPE";
-    }
-
-    /**
-     * Internal method to add a HAVING condition to the query
-     */
-    protected function _add_having(fragment, values=[]) 
-    {
-        return this->_add_condition("having", fragment, values);
-    }
-
-    /**
-     * Internal method to add a HAVING condition to the query
-     */
-    protected function _add_simple_having(column_name, separator, value) 
-    {
-        return this->_add_simple_condition("having", column_name, separator, value);
-    }
-
-    /**
-     * Internal method to add a HAVING clause with multiple values (like IN and NOT IN)
-     */
-    protected function _add_having_placeholder(column_name, separator, values) 
-    {
-        var data,key,val,column,placeholders;
-        if (typeof column_name != "array") {
-            let data = [column_name : values];
-        } else {
-            let data = column_name;
-        }
-        for key,val in data {
-            let column = this->_quote_identifier(key);
-            let placeholders = this->_create_placeholders(val);
-            this->_add_having(column." ".separator." (".placeholders.")", val);    
-        }
-        return this;
-    }
-
-    /**
-     * Internal method to add a HAVING clause with no parameters(like IS NULL and IS NOT NULL)
-     */
-    protected function _add_having_no_value(column_name, operator) 
-    {
-        var conditions,column;
-        let conditions = (typeof column_name=="array") ? column_name : [column_name];
-        for column in conditions {
-            let column = this->_quote_identifier(column);
-            this->_add_having(column." ".operator);
-        }
-        return this;
-    }
-
-    /**
-     * Internal method to add a WHERE condition to the query
-     */
-    protected function _add_where(fragment, values=[]) 
-    {
-        return this->_add_condition("where", fragment, values);
-    }
-
-    /**
-     * Internal method to add a WHERE condition to the query
-     */
-    protected function _add_simple_where(column_name, separator, value) 
-    {
-        return this->_add_simple_condition("where", column_name, separator, value);
-    }
-
-    /**
-     * Add a WHERE clause with multiple values (like IN and NOT IN)
-     */
-    protected function _add_where_placeholder(column_name, separator, values)
-    {
-        var data,key,val,placeholders,column;
-        if (typeof column_name != "array") {
-            let data = [column_name:values];
-        } else {
-            let data = column_name;
-        }
-        for key,val in data {
-            let column = this->_quote_identifier(key);
-            let placeholders = this->_create_placeholders(val);
-            this->_add_where(column." ".separator." (".placeholders.")", val);    
-        }
-        return this;
-    }
-
-    /**
-     * Add a WHERE clause with no parameters(like IS NULL and IS NOT NULL)
-     */
-    protected function _add_where_no_value(column_name, operator)
-    {
-        var conditions,column;
-        let conditions = (typeof column_name=="array") ? column_name : [column_name];
-        for column in conditions {
-            let column = this->_quote_identifier(column);
-            this->_add_where(column." ".operator);
-        }
-        return this;
-    }
-
-    /**
-     * Internal method to add a HAVING or WHERE condition to the query
-     */
-    protected function _add_condition(type, fragment, values=[]) 
-    {
-        var temp;
-        if type == "where" {
-            if (typeof values != "array")  {
-                let temp = [values];
-            }
-            let this->_where_conditions[]=[
-                self::CONDITION_FRAGMENT : fragment,
-                self::CONDITION_VALUES : temp
-            ];
-        } elseif type == "having" {
-            if (typeof values != "array")  {
-                let temp = [values];
-            }
-            let this->_having_conditions[]=[
-                self::CONDITION_FRAGMENT : fragment,
-                self::CONDITION_VALUES : temp
-            ];
-        }
-        return this;
-    }
-
-    /**
-     * 内部方法处理where条件和having条件
-     */
-    protected function _add_simple_condition(type, column_name, separator, value) 
-    {
-        array multiple;
-        var key,val,table;
-        let multiple = (typeof column_name == "array") ? column_name : [column_name : value];
-        for key,val in multiple {
-            if count(this->_join_sources) > 0 && strpos(key, ".") === false {
-                let table = this->_table_name;
-                if ( typeof this->_table_alias != "null") {
-                    let table = this->_table_alias;
-                }
-                let key = table.".".key;
-            }
-            let key = this->_quote_identifier(key);
-            this->_add_condition(type, key." ".separator." ?", val);
-        }
-        return this;
-    } 
-
-    /**
-     * 创建占位符
-     */
-    protected function _create_placeholders(fields) 
-    {
-        array db_fields = [];
-        var key,value;
-        if !empty fields {
-            for key,value in fields {
-                if isset this->_expr_fields[key] {
-                    let db_fields[] = value;
-                } else {
-                    let db_fields[] = "?";
-                }
-            }
-            return db_fields->join(", ");
-        }
-    }
-    
-    /**
-     * Helper method that filters a column/value array returning only those
-     * columns that belong to a compound primary key.
-     *
-     * If the key contains a column that does not exist in the given array,
-     * a null value will be returned for it.
-     */
-    protected function _get_compound_id_column_values(value) 
-    {
-        array filtered = [];
-        var key;
-        for key in this->_get_id_column_name() {
-            let filtered[key] = isset value[key] ? value[key] : null;
-        }
-        return filtered;
-    }
-
-   /**
-     * Helper method that filters an array containing compound column/value
-     * arrays.
-     */
-    protected function _get_compound_id_column_values_array(values) 
-    {
-        array filtered = [];
-        var value;
-        for value in values {
-            let filtered[] = this->_get_compound_id_column_values(value);
-        }
-        return filtered;
     }
 
     /**
@@ -1383,7 +733,8 @@ class Db
      * $data = Db::table('table')->whereLte('score',60);
      * </code>
      */
-    public function whereLte(column_name, value=null) {
+    public function whereLte(column_name, value=null) 
+    {
         return this->_add_simple_where(column_name, "<=", value);
     }
 
@@ -1447,38 +798,6 @@ class Db
     public function whereRaw(clause, parameters=[]) 
     {
         return this->_add_where(clause, parameters);
-    }
-
-    /**
-     * Add a LIMIT to the query
-     */
-    public function limit(limit,offset=null) -> <Db>
-    {
-        let this->_limit = limit;
-        if is_null(offset) {
-            return this;
-        } else {
-            return this->offset(offset);
-        }
-    }
-
-    /**
-     * Add an OFFSET to the query
-     */
-    public function offset(offset) -> <Db>
-    {
-        let this->_offset = offset;
-        return this;
-    }
-
-    /**
-     * 内部排序辅助方法
-     */
-    protected function _add_order_by(column_name, ordering) -> <Db>
-    {
-        let column_name = this->_quote_identifier(column_name);
-        let this->_order_by[] = column_name." ".ordering;
-        return this;
     }
 
     /**
@@ -1692,6 +1011,847 @@ class Db
     public function havingRaw(clause, parameters=[]) 
     {
         return this->_add_having(clause, parameters);
+    }
+
+    /**
+     * Add a LIMIT to the query
+     */
+    public function limit(limit,offset=null) -> <Db>
+    {
+        let this->_limit = limit;
+        if is_null(offset) {
+            return this;
+        } else {
+            return this->offset(offset);
+        }
+    }
+
+    /**
+     * Add an OFFSET to the query
+     */
+    public function offset(offset) -> <Db>
+    {
+        let this->_offset = offset;
+        return this;
+    }
+
+    /**
+     * 获取一条记录并返回数组
+     * 
+     * <code>
+     * Db::name('user')->find(6);//Find by primary key value
+     * Db::name('user')->where('uid',6)->find();
+     * </code>
+     *
+     * @access public
+     * @param integer|null
+     * @return mixd
+     */
+    public function find(id=null) 
+    {
+        var rows;
+        string fun = "fetch";
+        if (typeof id != "null") {
+            this->whereIdIs(id);
+        }
+        this->limit(1);
+        if this->_entity == null {
+            let rows = this->_run();
+            if empty rows {
+                return false;
+            }
+            return rows[0];
+        }else{
+            let rows = this->_run_by_model();
+            if rows->rowCount() > 0 {
+                return rows->{fun}(\PDO::FETCH_CLASS,this->_entity);
+            } else {
+                return false;
+            }
+        }
+    }
+
+    /**
+     * 获取多条记录
+     * 
+     * 执行此方法后，无法再进行链式调用
+     * 
+     *<cdoe>
+     *$users = Db::name('user')->select();
+     *print_r($users);
+     *</code>
+     * @access public
+     * @return array
+     */
+    public function select() 
+    {
+        if this->_entity == null {
+            return this->_run();
+        }else{
+            return this->_run_by_model();
+        }
+    }
+
+    /**
+     * 执行COUNT查询
+     *
+     *<code>
+     *Db::name('user')->count();
+     *Db::name('user')->count('DISTINCT gid');
+     *</code>
+     *
+     * @access public
+     * @param string 
+     */
+    public function count(column = "*") 
+    {
+        return this->_call_aggregate_db_function("COUNT", column);
+    }
+
+    /**
+     * 执行MAX查询，获取字段最大值
+     *
+     *<code>
+     *Db::name('user')->max('amount');
+     *</code>
+     *
+     * @access public
+     * @param string 
+     */
+    public function max(column)
+    {
+        return this->_call_aggregate_db_function("MAX", column);
+    }
+
+    /**
+     * 执行MIN查询，获取字段最小值
+     *
+     *<code>
+     *Db::name('user')->min('amount');
+     *</code>
+     *
+     * @access public
+     * @param string 
+     */
+    public function min(column)
+    {
+        return this->_call_aggregate_db_function("MIN", column);
+    }
+
+    /**
+     * 执行AVG查询，获取字段平均值
+     *
+     *<code>
+     *Db::name('logs')->avg('fee');
+     *</code>
+     *
+     * @access public
+     * @param string 
+     */
+    public function avg(column) 
+    {
+        return this->_call_aggregate_db_function("AVG", column);
+    }
+
+    /**
+     * 执行SUM查询，获取一列的和
+     *
+     *<code>
+     *Db::name('logs')->sum('fee');
+     *</code>
+     *
+     * @access public
+     * @param string 
+     */
+    public function sum(column)
+    {
+        return this->_call_aggregate_db_function("SUM", column);
+    }
+
+    /**
+     * 向数据表插入数据
+     *
+     *<code>
+     *Db::name('news')->insert([
+     *    'title' => 'title',
+     *    'content' => 'content'
+     *]);
+     *</code>
+     */
+    public function insert(array! data)
+    {
+        if empty data {
+            throw "Data can't empty";
+        }
+        var sql;
+        let sql =  this->_build_insert(data);
+        return self::_execute(sql, array_values(data), this->_name);
+    }
+
+    /**
+     * 向数据表插入数据并返回插入的主键
+     *
+     *<code>
+     *$newsid = Db::name('news')->insertGetId([
+     *    'title' => 'title',
+     *    'content' => 'content'
+     *]);
+     *</code>
+     */
+    public function insertGetId(array! data)
+    {
+        var sql,result,db;
+        if empty data {
+            throw "Data can't empty";
+        }
+        let sql =  this->_build_insert(data);
+        let result = self::_execute(sql, array_values(data), this->_name);
+        let db = self::getDb(this->_name);
+        return result ? db->lastInsertId() : false;
+    }
+
+    /**
+     * 更新数据表
+     *
+     *<code>
+     *Db::name('news')->where('newsid',5)->update([
+     *    'title' => 'title',
+     *    'content' => 'content'
+     *]);
+     *</code>
+     */
+    public function update(array! data)
+    {
+        if empty data {
+            throw "Data can't empty";
+        }
+        var sql;
+        let sql =  this->_build_update(data);
+        return self::_execute(sql, array_values(data), this->_name);
+    }
+
+    /**
+     * 从数据表删除数据
+     *
+     *<code>
+     *Db::name('news')->where('newsid',5)->delete());
+     *</code>
+     */
+    public function delete() 
+    {
+        var query;
+        let query = this->_join_if_not_empty(" ", [
+            "DELETE FROM",
+            this->_quote_identifier(this->_table_name),
+            this->_build_where()
+        ]);
+        return self::_execute(query, this->_values, this->_name);
+    }
+
+    /**
+     * 开始执行事物
+     *
+     *<code>
+     *Db::beginTransaction();
+     *Db::beginTransaction('pdoName');//哪个pdo链接上执行
+     *</code>
+     */
+    public static function beginTransaction(string! name = "default")
+    {
+        self::getDb(name)->beginTransaction(); 
+    }
+
+    /**
+     * 提交事物
+     *
+     *<code>
+     *Db::commit();
+     *Db::commit('pdoName');//哪个pdo链接上提交
+     *</code>
+     */
+    public static function commit(string! name = "default")
+    {
+        self::getDb(name)->commit(); 
+    }
+
+    /**
+     * 回滚事务
+     *
+     *<code>
+     *Db::rollBack();
+     *Db::rollBack('pdoName');//哪个pdo链接上回滚
+     *</code>
+     */
+    public static function rollBack(string! name = "default")
+    {
+        self::getDb(name)->rollBack(); 
+    }
+
+    /**
+     * 事务封装
+     *
+     *<code>
+     *Db::transaction([
+     *   'DELETE FROM `logs` WHERE `typeid`=6 ',
+     *   'UPDATE `counts` SET `num`=1 WHERE `typeid`=6'
+     *], 'pdoName');
+     *</code>
+     */
+    public static function transaction(array! sqls,string! name = "default")
+    {
+        var sql,db,e;
+        let db = self::getDb(name);
+        try {
+            self::beginTransaction(name);
+            for sql in sqls {
+                db->exec(sql);
+            }
+            self::commit(name);
+        } catch \PDOException,e {
+            self::rollBack(name);
+            throw e->getMessage();
+        }
+    }
+
+    /**
+     * 使用配置链接到数据库
+     *
+     * @access protected
+     * @param string $name Which connection to use
+     */
+    protected static function _setup_db(string! name = "default") -> void
+    {
+        if !isset self::_db[name] ||
+            !is_object(self::_db[name]) {
+            self::_setup_db_config(name);
+            var db;
+            let db = new \PDO(
+                self::_config[name]["dsn"],
+                self::_config[name]["username"],
+                self::_config[name]["password"],
+                self::_config[name]["options"]
+            );
+            db->setAttribute(\PDO::ATTR_ERRMODE, self::_config[name]["error_mode"]);
+            self::setDb(db, name);
+        }
+    }
+
+   /**
+    * 初始化配置
+    *
+    * @access protected
+    * @param string $name Which connection to use
+    */
+    protected static function _setup_db_config(string! name) -> void
+    {
+        if !isset self::_config[name] {
+            let self::_config[name] = self::_default_config;
+        }
+    }
+
+    /**
+     * 设置字段和表名的转移字符
+     *
+     * @access protected
+     * @param string $name Which connection to use
+     */
+    protected static function _setup_identifier_quote_character(string! name) -> void
+    {
+        if is_null(self::_config[name]["identifier_quote_character"]) {
+            let self::_config[name]["identifier_quote_character"] =
+                self::_detect_identifier_quote_character(name);
+        }
+    }
+
+    /**
+     * 设置查询条数限制(Limit in mysql,TOP in MSSql)
+     * 如果通过 Db::config("limit_clause_style", "top"),进行了设置，那么本函数将不起作用
+     *
+     * @access public
+     * @param string $name Which connection to use
+     */
+    protected static function _setup_limit_clause_style(string! name) -> void
+    {
+        if is_null(self::_config[name]["limit_clause_style"]) {
+            let self::_config[name]["limit_clause_style"] =
+                self::_detect_limit_clause_style(name);
+        }
+    }
+
+    /**
+     * 探测转义符号
+     *
+     * @access protected
+     * @param string $name Which connection to use
+     * @return string
+     */
+    protected static function _detect_identifier_quote_character(string! name)
+    {
+        switch self::getDb(name)->getAttribute(\PDO::ATTR_DRIVER_NAME) {
+            case "pgsql":
+            case "sqlsrv":
+            case "dblib":
+            case "mssql":
+            case "sybase":
+            case "firebird":
+                return "\"";
+            case "mysql":
+            case "sqlite":
+            case "sqlite2":
+            default:
+                return "`";
+        }
+    }
+
+    /**
+     * 返回LIMIT形式
+     *
+     * @access protected
+     * @param string $name Which connection to use
+     * @return string Limit clause style keyword/constant
+     */
+    protected static function _detect_limit_clause_style(string! name)->string
+    {
+        var driver;
+        string drivers = "_sqlsrv_dblib_mssql_";
+        let driver = self::getDb(name)->getAttribute(\PDO::ATTR_DRIVER_NAME);
+        return drivers->index("_".driver."_") ? Db::LIMIT_STYLE_TOP_N : Db::LIMIT_STYLE_LIMIT;
+    }
+
+   /**
+    * 内部执行SQL的方法
+    *
+    * @access protected
+    * @param string $query
+    * @param array $parameters An array of parameters to be bound in to the query
+    * @param string $name Which connection to use
+    * @return bool Response of PDOStatement::execute()
+    */
+    protected static function _execute(query, parameters = [], name = "default") 
+    {
+        var statement,time,key,param,type,result,k;
+        let statement = self::getDb(name)->prepare(query);
+        let self::_last_statement = statement;
+        let time = microtime(true);
+        for key,param in parameters {
+            if (typeof param == "null") {
+                let type = \PDO::PARAM_NULL;
+            } elseif (typeof param == "boolean") {
+                let type = \PDO::PARAM_BOOL;
+            } elseif (typeof param == "integer") {
+                let type = \PDO::PARAM_INT;
+            } else {
+                let type = \PDO::PARAM_STR;
+            }
+            if (typeof key == "integer") {
+                let k = key + 1;
+                statement->bindValue(k, param, type);
+            }else{
+                statement->bindValue(key, param, type);
+            }
+        }
+        let result = statement->execute();
+        //statement->debugDumpParams();
+        self::_log_query(query, parameters, name, (microtime(true)-time));
+        return result;
+    }
+
+    /**
+     * 记录查询日志
+     *
+     * @access public
+     * @param string $query
+     * @param array $parameters 参数绑定
+     * @param string $name Which connection to use
+     * @param float $query_time Query time
+     * @return bool
+     */
+    protected static function _log_query(query, parameters, name, query_time) 
+    {
+        var key,val,bound_query;
+        if !(self::_config[name]["logging"]) {
+            return false;
+        }
+        if !isset self::_query_log[name] {
+            let self::_query_log[name] = [];
+        }
+        if empty parameters {
+            let bound_query = query;
+        } else {
+            // Escape the parameters
+            let parameters = array_map([self::getDb(name), "quote"], parameters);
+
+            if array_values(parameters) === parameters {
+                // ? placeholders
+                // Avoid %format collision for vsprintf
+                let query = str_replace("%", "%%", query);
+
+                // Replace placeholders in the query for vsprintf
+                if false !== strpos(query, "\"") || false !== strpos(query, "\"") {
+                    let query = Helper::str_replace_outside_quotes("?", "%s", query);
+                } else {
+                    let query = str_replace("?", "%s", query);
+                }
+
+                // Replace the question marks in the query with the parameters
+                let bound_query = vsprintf(query, parameters);
+            } else {
+                
+                for key,val in parameters {
+                    let query = str_replace(key, val, query);
+                }
+                let bound_query = query;
+            }
+        }
+        let self::_last_query = bound_query;
+        let self::_query_log[name][] = bound_query;
+        
+        if is_callable(self::_config[name]["logger"]) {
+            call_user_func_array(self::_config[name]["logger"],[bound_query, query_time]);
+        }
+        
+        return true;
+    }
+
+
+    /**
+     * 执行常用统计函数
+     *
+     * @access protected
+     * @param string $sql_function The aggregate function to call eg. MIN, COUNT, etc
+     * @param string $column The column to execute the aggregate query against
+     * @return int
+     */
+    protected function _call_aggregate_db_function(sql_function, column) 
+    {
+        var alias,result_columns,result,v,return_value = 0;
+        let alias = strtolower(sql_function);
+        let sql_function = strtoupper(sql_function);
+        if "*" != column {
+            let column = this->_quote_identifier(column);
+        }
+        let result_columns = this->_result_columns;
+        let this->_result_columns = [];
+        this->fieldExpr(sql_function."(".column.")", alias);
+        let result = this->find();
+        let this->_result_columns = result_columns;
+        if result !== false {
+            let v = result[alias];
+            if !empty v {
+                if !is_numeric(v) {
+                    let return_value = result->{alias};
+                }elseif (int) v == (float) v {
+                    let return_value = (int) v;
+                } else {
+                    let return_value = (float) v;
+                }
+            }
+        }
+        return return_value;
+    }
+
+    /**
+     * Internal method to add an unquoted expression to the set
+     * of columns returned by the SELECT query. The second optional
+     * argument is the alias to return the expression as.
+     */
+    protected function _add_result_column(expr, alias=null) 
+    {
+        if !is_null(alias) {
+            let expr .= " AS " . this->_quote_identifier(alias);
+        }
+
+        if !empty this->_using_default_result_columns {
+            let this->_result_columns = [expr];
+            let this->_using_default_result_columns = false;
+        } else {
+            let this->_result_columns[] = expr;
+        }
+        return this;
+    }
+
+    /**
+     * Add a column to the list of columns returned by the SELECT
+     * query. This defaults to "*". The second optional argument is
+     * the alias to return the column as.
+     */
+    protected function field(column, alias=null)
+    {
+        let column = this->_quote_identifier(column);
+        return this->_add_result_column(column, alias);
+    }
+
+    /**
+     * 查询表达式字段
+     * @access protected
+     */
+    protected function fieldExpr(expr, alias=null)
+    {
+        return this->_add_result_column(expr, alias);
+    }
+
+    /**
+     * 清理单个字段
+     * @access protected
+     */
+    protected function trimField(string! field)
+    {
+        return trim(field," \t\n\r\0\x0B`'\"[]");
+    }
+
+    /**
+     * 内部方法向查询增加链接
+     *
+     * The join_operator should be one of INNER, LEFT OUTER, CROSS etc - this
+     * will be prepended to JOIN.
+     *
+     * The table should be the name of the table to join to.
+     *
+     * The constraint may be either a string or an array with three elements. If it
+     * is a string, it will be compiled into the query as-is, with no escaping. The
+     * recommended way to supply the constraint is as an array with three elements:
+     *
+     * first_column, operator, second_column
+     *
+     * Example: array("user.id", "=", "profile.user_id")
+     *
+     * will compile to
+     *
+     * ON `user`.`id` = `profile`.`user_id`
+     *
+     * The final (optional) argument specifies an alias for the joined table.
+     * @access protected
+     */
+    protected function _add_join_source(join_operator, table, constraint, table_alias=null) 
+    {
+        var first_column,operator,second_column,prefix;
+        let join_operator = trim(join_operator." JOIN");
+        let prefix = this->getConfig("prefix");
+        let prefix = typeof prefix == "string" ? prefix : "";
+        let table  = this->_quote_identifier(prefix.table);
+
+        // Add table alias if present
+        if table_alias != null {
+            let table_alias = this->_quote_identifier(table_alias);
+            let table .= " ".table_alias;
+        }
+        // Build the constraint
+        if (typeof constraint == "array") {
+            let first_column  = this->_quote_identifier(constraint[0]);
+            let operator      = this->_quote_identifier(constraint[1]);
+            let second_column = this->_quote_identifier(constraint[2]);
+            let constraint    = first_column." ".operator." ".second_column;
+        }
+        let this->_join_sources[] = join_operator." ".table." ON ".constraint;
+        return this;
+    }
+
+    /**
+     * Internal method to add a HAVING condition to the query
+     */
+    protected function _add_having(fragment, values=[]) 
+    {
+        return this->_add_condition("having", fragment, values);
+    }
+
+    /**
+     * Internal method to add a HAVING condition to the query
+     */
+    protected function _add_simple_having(column_name, separator, value) 
+    {
+        return this->_add_simple_condition("having", column_name, separator, value);
+    }
+
+    /**
+     * Internal method to add a HAVING clause with multiple values (like IN and NOT IN)
+     */
+    protected function _add_having_placeholder(column_name, separator, values) 
+    {
+        var data,key,val,column,placeholders;
+        if (typeof column_name != "array") {
+            let data = [column_name : values];
+        } else {
+            let data = column_name;
+        }
+        for key,val in data {
+            let column = this->_quote_identifier(key);
+            let placeholders = this->_create_placeholders(val);
+            this->_add_having(column." ".separator." (".placeholders.")", val);    
+        }
+        return this;
+    }
+
+    /**
+     * Internal method to add a HAVING clause with no parameters(like IS NULL and IS NOT NULL)
+     */
+    protected function _add_having_no_value(column_name, operator) 
+    {
+        var conditions,column;
+        let conditions = (typeof column_name=="array") ? column_name : [column_name];
+        for column in conditions {
+            let column = this->_quote_identifier(column);
+            this->_add_having(column." ".operator);
+        }
+        return this;
+    }
+
+    /**
+     * Internal method to add a WHERE condition to the query
+     */
+    protected function _add_where(fragment, values=[]) 
+    {
+        return this->_add_condition("where", fragment, values);
+    }
+
+    /**
+     * Internal method to add a WHERE condition to the query
+     */
+    protected function _add_simple_where(column_name, separator, value) 
+    {
+        return this->_add_simple_condition("where", column_name, separator, value);
+    }
+
+    /**
+     * Add a WHERE clause with multiple values (like IN and NOT IN)
+     */
+    protected function _add_where_placeholder(column_name, separator, values)
+    {
+        var data,key,val,placeholders,column;
+        if (typeof column_name != "array") {
+            let data = [column_name:values];
+        } else {
+            let data = column_name;
+        }
+        for key,val in data {
+            let column = this->_quote_identifier(key);
+            let placeholders = this->_create_placeholders(val);
+            this->_add_where(column." ".separator." (".placeholders.")", val);    
+        }
+        return this;
+    }
+
+    /**
+     * Add a WHERE clause with no parameters(like IS NULL and IS NOT NULL)
+     */
+    protected function _add_where_no_value(column_name, operator)
+    {
+        var conditions,column;
+        let conditions = (typeof column_name=="array") ? column_name : [column_name];
+        for column in conditions {
+            let column = this->_quote_identifier(column);
+            this->_add_where(column." ".operator);
+        }
+        return this;
+    }
+
+    /**
+     * Internal method to add a HAVING or WHERE condition to the query
+     */
+    protected function _add_condition(type, fragment, values=[]) 
+    {
+        var temp;
+        if type == "where" {
+            if (typeof values != "array")  {
+                let temp = [values];
+            }
+            let this->_where_conditions[]=[
+                self::CONDITION_FRAGMENT : fragment,
+                self::CONDITION_VALUES : temp
+            ];
+        } elseif type == "having" {
+            if (typeof values != "array")  {
+                let temp = [values];
+            }
+            let this->_having_conditions[]=[
+                self::CONDITION_FRAGMENT : fragment,
+                self::CONDITION_VALUES : temp
+            ];
+        }
+        return this;
+    }
+
+    /**
+     * 内部方法处理where条件和having条件
+     */
+    protected function _add_simple_condition(type, column_name, separator, value) 
+    {
+        array multiple;
+        var key,val,table;
+        let multiple = (typeof column_name == "array") ? column_name : [column_name : value];
+        for key,val in multiple {
+            if count(this->_join_sources) > 0 && strpos(key, ".") === false {
+                let table = this->_table_name;
+                if ( typeof this->_table_alias != "null") {
+                    let table = this->_table_alias;
+                }
+                let key = table.".".key;
+            }
+            let key = this->_quote_identifier(key);
+            this->_add_condition(type, key." ".separator." ?", val);
+        }
+        return this;
+    } 
+
+    /**
+     * 创建占位符
+     */
+    protected function _create_placeholders(fields) 
+    {
+        array db_fields = [];
+        var key,value;
+        if !empty fields {
+            for key,value in fields {
+                if isset this->_expr_fields[key] {
+                    let db_fields[] = value;
+                } else {
+                    let db_fields[] = "?";
+                }
+            }
+            return db_fields->join(", ");
+        }
+    }
+    
+    /**
+     * Helper method that filters a column/value array returning only those
+     * columns that belong to a compound primary key.
+     *
+     * If the key contains a column that does not exist in the given array,
+     * a null value will be returned for it.
+     */
+    protected function _get_compound_id_column_values(value) 
+    {
+        array filtered = [];
+        var key;
+        for key in this->_get_id_column_name() {
+            let filtered[key] = isset value[key] ? value[key] : null;
+        }
+        return filtered;
+    }
+
+   /**
+     * Helper method that filters an array containing compound column/value
+     * arrays.
+     */
+    protected function _get_compound_id_column_values_array(values) 
+    {
+        array filtered = [];
+        var value;
+        for value in values {
+            let filtered[] = this->_get_compound_id_column_values(value);
+        }
+        return filtered;
+    }
+
+
+
+    /**
+     * 内部排序辅助方法
+     */
+    protected function _add_order_by(column_name, ordering) -> <Db>
+    {
+        let column_name = this->_quote_identifier(column_name);
+        let this->_order_by[] = column_name." ".ordering;
+        return this;
     }
 
     /**
@@ -1974,21 +2134,6 @@ class Db
     }
 
     /**
-     * Return the raw data wrapped by this ORM
-     * instance as an associative array. Column
-     * names may optionally be supplied as arguments,
-     * if so, only those keys will be returned.
-     */
-    public function asArray() 
-    {
-        var args = func_get_args();
-        if func_num_args() === 0 {
-            return this->_data;
-        }
-        return array_intersect_key(this->_data, array_flip(args));
-    }
-
-    /**
      * Return the name of the column in the database table which contains
      * the primary key ID of the row.
      */
@@ -2049,49 +2194,4 @@ class Db
         return implode(" ", query);
     }
 
-    public function insert(array! data)
-    {
-        if empty data {
-            throw "Data can't empty";
-        }
-        var sql;
-        let sql =  this->_build_insert(data);
-        return self::_execute(sql, array_values(data), this->_name);
-    }
-
-    public function insertGetId(array! data)
-    {
-        var sql,result,db;
-        if empty data {
-            throw "Data can't empty";
-        }
-        let sql =  this->_build_insert(data);
-        let result = self::_execute(sql, array_values(data), this->_name);
-        let db = self::getDb(this->_name);
-        return result ? db->lastInsertId() : false;
-    }
-
-    public function update(array! data)
-    {
-        if empty data {
-            throw "Data can't empty";
-        }
-        var sql;
-        let sql =  this->_build_update(data);
-        return self::_execute(sql, array_values(data), this->_name);
-    }
-
-    /**
-     * Delete many records from the database
-     */
-    public function delete() 
-    {
-        var query;
-        let query = this->_join_if_not_empty(" ", [
-            "DELETE FROM",
-            this->_quote_identifier(this->_table_name),
-            this->_build_where()
-        ]);
-        return self::_execute(query, this->_values, this->_name);
-    }
 }
