@@ -27,10 +27,10 @@ class Request {
      */
     public function __construct()
     {
-        let this->isGet    = strtoupper(_SERVER["REQUEST_METHOD"]) === "GET";
-        let this->isPost   = strtoupper(_SERVER["REQUEST_METHOD"]) === "POST";
-        let this->isPut    = strtoupper(_SERVER["REQUEST_METHOD"]) === "PUT";
-        let this->isDelete = strtoupper(_SERVER["REQUEST_METHOD"]) === "DELETE";
+        let this->isGet    = this->getMethod() === "GET";
+        let this->isPost   = this->getMethod() === "POST";
+        let this->isPut    = this->getMethod() === "PUT";
+        let this->isDelete = this->getMethod() === "DELETE";
         let this->isAjax   = strtoupper(isset _SERVER["HTTP_X_REQUESTED_WITH"] ? _SERVER["HTTP_X_REQUESTED_WITH"] : "") === "XMLHTTPREQUEST";
         let this->isMobile = !!preg_match("/android|iphone/i", _SERVER["HTTP_USER_AGENT"]);
     }
@@ -54,6 +54,68 @@ class Request {
     }
 
     /**
+     * Gets HTTP method which request has been made
+     *
+     * If the X-HTTP-Method-Override header is set, and if the method is a POST,
+     * then it is used to determine the "real" intended HTTP method.
+     *
+     * The _method request parameter can also be used to determine the HTTP method,
+     * but only if setHttpMethodParameterOverride(true) has been called.
+     *
+     * The method is always an uppercased string.
+     */
+    public final function getMethod() -> string
+    {
+        var overridedMethod, spoofedMethod, requestMethod;
+        string returnMethod = "";
+
+        if likely fetch requestMethod, _SERVER["REQUEST_METHOD"] {
+            let returnMethod = strtoupper(requestMethod);
+        } else {
+            return "GET";
+        }
+
+        if "POST" === returnMethod {
+            let overridedMethod = this->getHeader("X-HTTP-METHOD-OVERRIDE");
+            if !empty overridedMethod {
+                let returnMethod = strtoupper(overridedMethod);
+            } elseif this->_httpMethodParameterOverride {
+                if fetch spoofedMethod, _REQUEST["_method"] {
+                    let returnMethod = strtoupper(spoofedMethod);
+                }
+            }
+        }
+
+        if !this->isValidHttpMethod(returnMethod) {
+            return "GET";
+        }
+
+        return returnMethod;
+    }
+
+    /**
+     * Checks if a method is a valid HTTP method
+     */
+    public function isValidHttpMethod(string method) -> boolean
+    {
+        switch strtoupper(method) {
+            case "GET":
+            case "POST":
+            case "PUT":
+            case "DELETE":
+            case "HEAD":
+            case "OPTIONS":
+            case "PATCH":
+            case "PURGE":
+            case "TRACE":
+            case "CONNECT":
+                return true;
+        }
+        return false;
+    }
+
+
+    /**
      * 获取客户端IP地址
      *
      * <code>
@@ -68,22 +130,22 @@ class Request {
     {
         var arr, pos,ip;
         if adv {
-            if isset(_SERVER["HTTP_X_FORWARDED_FOR"]) {
+            if isset _SERVER["HTTP_X_FORWARDED_FOR"]  {
                 let arr = explode(",", _SERVER["HTTP_X_FORWARDED_FOR"]);
                 let pos = array_search("unknown", arr);
                 if false !== pos {
-                    unset(arr[pos]);
+                    unset arr[pos] ;
                 }
                 let ip = trim(current(arr));
-            } elseif isset(_SERVER["HTTP_CLIENT_IP"]) {
+            } elseif isset _SERVER["HTTP_CLIENT_IP"]  {
                 let ip = _SERVER["HTTP_CLIENT_IP"];
-            } elseif isset(_SERVER["REMOTE_ADDR"]) {
+            } elseif isset _SERVER["REMOTE_ADDR"] {
                 let ip = _SERVER["REMOTE_ADDR"];
             }
-        } elseif isset(_SERVER["REMOTE_ADDR"]) {
+        } elseif isset _SERVER["REMOTE_ADDR"] {
             let ip = _SERVER["REMOTE_ADDR"];
         }
-        return ip;
+        return (string) ip;
     }
 
 }
