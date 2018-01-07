@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta content="Aimo PHP Framework API doc" name="description">
+    <title>
+                    Aimo PHP Framework API Documentation
+            </title>
+    <link rel="stylesheet" type="text/css" href="../../asset/static/prettify.css" />
+
+<script src="../../asset/static/prettify.js"></script>
+<script src="../../asset/api_definition.js"></script>
+
+
+                        <link rel="stylesheet" type="text/css" href="../../asset/static/prettify.css" />
+                    <link rel="stylesheet" type="text/css" href="../../asset/static/zephir-theme.css" />
+            
+    
+
+                        <script src="../../asset/static/prettify.js"></script>
+                                    <script src="../../asset/api_definition.js"></script>
+                    <script src="../../asset/static/jquery.min.js"></script>
+                    <script src="../../asset/static/zephir-doc.js"></script>
+                <script>var ZepCurrentPath = '../../'</script>
+    </head>
+ <body onload="prettyPrint()">
+        <div id="top-bar">
+            <div id="top-left">
+                                    Aimo PHP Framework Documentation <span class="version">v0.6.0</span>
+                            </div>
+            <div id="top-right">
+            </div>
+        </div>
+        <div id="body">
+            <div id="body-left">
+                <div class="header-search">
+                    <input class="search-box" placeholder="Search for a class or namespace " type="text" />
+                    <div id="menu-wrapper">
+                    </div>
+                </div>
+            </div>
+            <div id="body-right">
+                <div class="content">
+                    
+<div class="breadcrumb">
+    
+    <ul>
+        
+        <li><a href="../../index.html">Home</a></li>
+        
+                <li><a href="../../classes.html">Classes</a></li>
+                <li><a href="../../class/Aimo/Config.html">Aimo\Config</a></li>
+                <li><a >Source</a></li>
+                
+    </ul>
+    
+</div>
+<div class="class-header source clearfix">
+    
+    <div class="access-buttons">
+        <a class="zep-button" href="../../class/Aimo/Config.html">Class</a>
+
+            </div>
+    
+    <div class="class-full-name">
+        
+        <span class="class-type">Class</span>
+        
+                <span class="namespace-piece">
+            <a href="../../namespace/Aimo.html">Aimo</a>
+        </span>
+                <h1 class="class-name">Config</h1>
+    </div>
+    
+</div>
+
+
+<pre class="zephir-source-file prettyprint linenums">namespace Aimo;
+/**
+ * 应用设置操作类
+ *
+ * 用于运行时存取设置项目
+ *
+ * @package Aimo
+ *
+ */
+class Config {
+    /**
+     * @var array 
+     */
+    private static _data;
+
+    /**
+     * 批量装载配置
+     *
+     * <code>
+     * Config::init([
+            'debug' => true,
+            'db' => [
+                'dirver' => 'mysql'
+            ],
+            'view' => [
+                'cache' => true
+            ]
+     * ]);
+     * </code>
+     *
+     * @param string name 设置项名称
+     * @param mixed value 设置值
+     * @return void
+     */
+    public static function init(array! config)->void
+    {
+        var k,v;
+        for k,v in config {
+            self::set(k, v);
+        }
+    }
+
+    /**
+     * 存储设置
+     *
+     * <code>
+     * Config::set('debug',true);
+     * </code>
+     *
+     * @param string name 设置项名称
+     * @param mixed value 设置值
+     * @return void
+     */
+    public static function set(string! name, value)->void
+    {
+        let self::_data[name]=value;
+    }
+
+    /**
+     * Get config
+     *
+     * <code>
+     * $dbConfig   = Config::get('db');
+     * $dbUsername = Config::get('db.username');
+     * </code>
+     *
+     * @param string name 设置项名称
+     * @return mixed
+     */
+    public static function get(string! name)
+    {
+        let name = name->trim(".");
+        if name->index(".") !== false {
+            var parts,k1,k2;
+            let parts = explode(".",name);
+            let k1    = isset parts[0] ? parts[0] : "";
+            let k2    = isset parts[1] ? parts[1] : "";
+            if empty k1 || empty k2 {
+                return null;
+            }
+            if isset self::_data[k1] {
+                if isset self::_data[k1][k2] {
+                    return self::_data[k1][k2];
+                }
+            }
+        } else {
+            if isset self::_data[name] {
+                return self::_data[name];
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 删除配置项
+     *
+     * <code>
+     * Config::delete('cache');
+     * </code>
+     *
+     * @param string name 设置项名称
+     */
+    public static function delete(string! name)->void
+    {
+        if isset self::_data[name] {
+            unset(self::_data[name]);
+        }
+    }
+
+    /**
+     * 清空所有设置
+     *
+     **<code>
+     * Config::clear();
+     * </code>
+     */
+    public static function clear()->void
+    {
+        let self::_data = [];
+    }
+
+}</pre>                </div>
+            </div>
+        </div>
+    </body>
+</html>

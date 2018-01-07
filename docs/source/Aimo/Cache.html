@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta content="Aimo PHP Framework API doc" name="description">
+    <title>
+                    Aimo PHP Framework API Documentation
+            </title>
+    <link rel="stylesheet" type="text/css" href="../../asset/static/prettify.css" />
+
+<script src="../../asset/static/prettify.js"></script>
+<script src="../../asset/api_definition.js"></script>
+
+
+                        <link rel="stylesheet" type="text/css" href="../../asset/static/prettify.css" />
+                    <link rel="stylesheet" type="text/css" href="../../asset/static/zephir-theme.css" />
+            
+    
+
+                        <script src="../../asset/static/prettify.js"></script>
+                                    <script src="../../asset/api_definition.js"></script>
+                    <script src="../../asset/static/jquery.min.js"></script>
+                    <script src="../../asset/static/zephir-doc.js"></script>
+                <script>var ZepCurrentPath = '../../'</script>
+    </head>
+ <body onload="prettyPrint()">
+        <div id="top-bar">
+            <div id="top-left">
+                                    Aimo PHP Framework Documentation <span class="version">v0.6.0</span>
+                            </div>
+            <div id="top-right">
+            </div>
+        </div>
+        <div id="body">
+            <div id="body-left">
+                <div class="header-search">
+                    <input class="search-box" placeholder="Search for a class or namespace " type="text" />
+                    <div id="menu-wrapper">
+                    </div>
+                </div>
+            </div>
+            <div id="body-right">
+                <div class="content">
+                    
+<div class="breadcrumb">
+    
+    <ul>
+        
+        <li><a href="../../index.html">Home</a></li>
+        
+                <li><a href="../../classes.html">Classes</a></li>
+                <li><a href="../../class/Aimo/Cache.html">Aimo\Cache</a></li>
+                <li><a >Source</a></li>
+                
+    </ul>
+    
+</div>
+<div class="class-header source clearfix">
+    
+    <div class="access-buttons">
+        <a class="zep-button" href="../../class/Aimo/Cache.html">Class</a>
+
+            </div>
+    
+    <div class="class-full-name">
+        
+        <span class="class-type">Class</span>
+        
+                <span class="namespace-piece">
+            <a href="../../namespace/Aimo.html">Aimo</a>
+        </span>
+                <h1 class="class-name">Cache</h1>
+    </div>
+    
+</div>
+
+
+<pre class="zephir-source-file prettyprint linenums">namespace Aimo;
+/**
+ * A simple Cache Factory
+ *
+ * A Cache Factory can manage more instance in runtime
+ *
+ * @package Aimo
+ * @author <Eric,fonqing@qq.com>
+ */
+abstract class Cache {
+    /**
+     * @var array cache instances;
+     */
+    protected static _instance = [];
+
+	/**
+	 * 缓存工厂
+     *
+     * <code>
+     * Cache::init('Memcache', [
+     *     'host' => '127.0.0.1',
+     *     'port' => '11211',
+     * ],'dbCache');
+     * //or
+     * Cache::init('File', [
+     *     'cache_path' => './runtime/',
+     *     'cache_ttl' => 1800,         //默认缓存时间
+     *     'cache_path_level' => 3,     //缓存目录深度
+     *     'cache_subdir' => true,      //启用子目录
+     *     'cache_check' => false,      //是否开启数据校检，开启后影响性能，默认关闭
+     *     'cache_compress' => false,   //是否开启数据压缩，开启后影响性能，默认关闭
+     * ],'htmlCache');
+     * </code>
+	 *
+	 * @param string driver
+	 * @param mixed config
+     * @param string name
+	 * @return Aimo\Cache\CacheInterface
+	 */
+	public static function init(string! driver,array config=[],string key="default")
+	{
+		if !isset self::_instance[key] {
+			string klass;
+            let driver = ucfirst(driver);
+			let klass = "Aimo\\Cache\\".driver;
+            if !class_exists(klass){
+                throw "Cache Driver:".klass."dose not exists!";
+            }
+			let self::_instance[key] = new {klass}(config);
+		}
+		return self::_instance[key];
+	}
+
+    /**
+     * 使用名称获取缓存实例 
+     *
+     *<code>
+     *$htmlCache = Cache::get('htmlCache');
+     *</code>
+     *
+     * @param string 实例名称
+     * @return string
+     */
+    public static function getInstance(string! name)
+    {
+        if isset self::_instance[name] {
+            return self::_instance[name];
+        }
+        throw "Cache Instance '".name."' not exists";
+    }
+
+    /**
+     * Generate GUID string 
+     *
+     * @param array
+     * @return string
+     */
+    private static function guid(array param)->string
+    {
+        return md5(serialize(param));
+    }
+}
+</pre>                </div>
+            </div>
+        </div>
+    </body>
+</html>

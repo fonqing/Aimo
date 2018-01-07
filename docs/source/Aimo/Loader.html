@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta content="Aimo PHP Framework API doc" name="description">
+    <title>
+                    Aimo PHP Framework API Documentation
+            </title>
+    <link rel="stylesheet" type="text/css" href="../../asset/static/prettify.css" />
+
+<script src="../../asset/static/prettify.js"></script>
+<script src="../../asset/api_definition.js"></script>
+
+
+                        <link rel="stylesheet" type="text/css" href="../../asset/static/prettify.css" />
+                    <link rel="stylesheet" type="text/css" href="../../asset/static/zephir-theme.css" />
+            
+    
+
+                        <script src="../../asset/static/prettify.js"></script>
+                                    <script src="../../asset/api_definition.js"></script>
+                    <script src="../../asset/static/jquery.min.js"></script>
+                    <script src="../../asset/static/zephir-doc.js"></script>
+                <script>var ZepCurrentPath = '../../'</script>
+    </head>
+ <body onload="prettyPrint()">
+        <div id="top-bar">
+            <div id="top-left">
+                                    Aimo PHP Framework Documentation <span class="version">v0.6.0</span>
+                            </div>
+            <div id="top-right">
+            </div>
+        </div>
+        <div id="body">
+            <div id="body-left">
+                <div class="header-search">
+                    <input class="search-box" placeholder="Search for a class or namespace " type="text" />
+                    <div id="menu-wrapper">
+                    </div>
+                </div>
+            </div>
+            <div id="body-right">
+                <div class="content">
+                    
+<div class="breadcrumb">
+    
+    <ul>
+        
+        <li><a href="../../index.html">Home</a></li>
+        
+                <li><a href="../../classes.html">Classes</a></li>
+                <li><a href="../../class/Aimo/Loader.html">Aimo\Loader</a></li>
+                <li><a >Source</a></li>
+                
+    </ul>
+    
+</div>
+<div class="class-header source clearfix">
+    
+    <div class="access-buttons">
+        <a class="zep-button" href="../../class/Aimo/Loader.html">Class</a>
+
+            </div>
+    
+    <div class="class-full-name">
+        
+        <span class="class-type">Class</span>
+        
+                <span class="namespace-piece">
+            <a href="../../namespace/Aimo.html">Aimo</a>
+        </span>
+                <h1 class="class-name">Loader</h1>
+    </div>
+    
+</div>
+
+
+<pre class="zephir-source-file prettyprint linenums">namespace Aimo;
+/**
+ * Class loader
+ *
+ * @package Aimo
+ * @author Eric,<fonqing@gmail.com>
+ *
+ */
+class Loader
+{
+    /* 路径映射 */
+    private static vendorMap = [];
+
+    /**
+     * 添加命名空间映射
+     *
+     * <code>
+     * Aimo\Loader::addNamespace('PHPExcel', APP_PATH.'vendor/phpoffice/src/phpexcel');
+     * </code>
+     *
+     * @param array nspaces
+     */
+    public static function addNamespace(string! nspace,string! dir)->void
+    {
+        let self::vendorMap[nspace] = dir;
+    }
+
+    /**
+     * 批量添加命名空间映射
+     *
+     * <code>
+     * Aimo\Loader::addNamespaces([
+     *    'PHPExcel' => APP_PATH.'vendor/phpoffice/src/phpexcel',
+     *    'GuzzleHttp' => APP_PATH.'vendor/GuzzleHttp/src',
+     * ]);
+     * </code>
+     *
+     * @param array nspaces
+     */
+    public static function addNamespaces(array! nspaces)->void
+    {
+        var nspace,dir;
+        for nspace,dir in nspaces {
+            let self::vendorMap[nspace] = dir;
+        }
+    }
+
+    /**
+     * 自动加载器
+     *
+     * <code>
+     * use Aimo\Loader;
+     * spl_autoload_register("Loader::autoload");
+     * </code>
+     */
+    public static function autoload(string! klass)->void
+    {
+        var file;
+        let file = self::findFile(klass);
+        if file_exists(file) {
+            self::includeFile(file);
+        }
+    }
+
+    /**
+     * 解析文件路径
+     *
+     * 根据命名空间查找类文件
+     *
+     * @param string klass
+     * @return string
+     */
+    private static function findFile(string! klass)->string
+    {
+        var vendor,vendorDir,filePath;
+        let vendor = substr(klass, 0, strpos(klass, "\\")); // 顶级命名空间
+        if !isset self::vendorMap[vendor] {
+            throw "Namespace ".vendor." not found";
+        }
+        let vendorDir = self::vendorMap[vendor]; // 文件基目录
+        let filePath = substr(klass, strlen(vendor)) . ".php"; // 文件相对路径
+        return strtr(vendorDir . filePath, "\\", DIRECTORY_SEPARATOR); // 文件标准路径
+    }
+
+    /**
+     * 载入php文件
+     *
+     * 载入PHP文件
+     *
+     * @param string file
+     */
+    private static function includeFile(string! file)->void
+    {
+        if is_file(file) {
+            require file;
+        }
+    }
+}</pre>                </div>
+            </div>
+        </div>
+    </body>
+</html>
