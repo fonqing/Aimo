@@ -105,9 +105,10 @@ class IndexController extends Controller {
 ```
 
 ###视图脚本
+
 模板代码如下：
 
-```php
+```html
 <!doctype html>
 <html lang="en">
 <head>
