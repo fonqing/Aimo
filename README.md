@@ -5,4 +5,124 @@ dll目录目前只编译了PHP7.0版本，
 框架正在编写阶段....
 ### 运行环境
 * PHP = 7.0
-* MySQL >= 5.7
+
+## 使用指引
+
+### 程序架构
+常见并推荐的目录结构如下：
+```
+- .htaccess // Rewrite rules for Apache
++ public //应用WEB根目录
+  | - index.php // 应用入口
+  | + css
+  | + js
+  | + img
++ config
+  | - config.php // 配置文件
++ controller
+  | - Index.php // 默认控制器
++ model
+  | - User.php // 模型
++ view    
+  | - index   
+     | - index.html //模板文件
++ runtime //缓存目录
++ vendor
+  ... 其他自定义目录
+```
+### WEB根目录
+绑定上面目录结构的`public`目录.
+
+### index.php
+`index.php` 入口文件代码大致如下：
+
+```php
+<?php
+use Aimo\Application;
+use Aimo\Config;
+define('InAimo',true);
+define('APP_PATH', rtrim(realpath(__DIR__."/../"),"\\/")."/");
+require(APP_PATH . 'config/config.php');
+Application::init(Config::get('application'))->run();
+```
+### Rewrite rules
+
+Aimo框架重写支持
+index.php/module/controller/action/param/value/param1/value1.html //包含URL后缀
+index.php?_url_=/module/controller/action/param/value/param1/value1.html //包含URL后缀
+
+### config.php
+`config.php` 包含应用全部组件配置
+```php
+<?php
+use Aimo\Config;
+Config::init([
+    'application' => [
+        'debug' => true,
+        'app_path' => APP_PATH,
+        'namespace' => 'app',
+        'multipleModule' => false,
+        'url_suffix' => '.html'
+    ],
+    'namespaces' => [
+        'app' => APP_PATH,
+    ],
+    'db' => [
+        'dsn'  => 'mysql:host=localhost;dbname=database',
+        'username'  => 'username',
+        'password'  => 'password',
+        'prefix'    => 'pre_',
+        'options'   => [
+            \PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8'
+        ]
+    ],
+    'cache' => [
+        'cache_path'=> APP_PATH.'runtime/cache/data/',
+    ],
+    'view' => [
+        'view_path' => APP_PATH.'view/',
+        'view_cache_path' => APP_PATH.'runtime/cache/tpl/',
+        'view_file_ext' => 'html'
+    ]
+]);
+```
+### 默认控制器
+默认控制器 `IndexController`:
+
+```php
+<?php
+namespace app\controller;
+use Aimo\Controller;
+use Aimo\View;
+class IndexController extends Controller {
+    public function indexAction()
+    {
+        View::assign('list',['a','b','c']);
+        View::assign('number',6);
+        View::render('index/index',['data' => 'hello world']);
+    }
+}
+```
+
+###视图脚本
+模板代码如下：
+
+```php
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Aimo Hello World</title>
+</head>
+<body>
+{$data}
+<ul>
+  <loop $list $v>
+  <li>{$n}:{$v}</li>
+  </loop>
+</ul>
+{var_dump($number)}
+{$number++}
+</body>
+</html>
+```
