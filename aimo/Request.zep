@@ -66,7 +66,7 @@ class Request {
      */
     public final function getMethod() -> string
     {
-        var overridedMethod, spoofedMethod, requestMethod;
+        var overridedMethod, requestMethod;
         string returnMethod = "";
 
         if likely fetch requestMethod, _SERVER["REQUEST_METHOD"] {
@@ -79,11 +79,7 @@ class Request {
             let overridedMethod = this->getHeader("X-HTTP-METHOD-OVERRIDE");
             if !empty overridedMethod {
                 let returnMethod = strtoupper(overridedMethod);
-            } elseif this->_httpMethodParameterOverride {
-                if fetch spoofedMethod, _REQUEST["_method"] {
-                    let returnMethod = strtoupper(spoofedMethod);
-                }
-            }
+            } 
         }
 
         if !this->isValidHttpMethod(returnMethod) {
@@ -112,6 +108,26 @@ class Request {
                 return true;
         }
         return false;
+    }
+
+    /**
+     * Gets HTTP header from request data
+     */
+    public final function getHeader(string! header) -> string
+    {
+        var value, name;
+
+        let name = strtoupper(strtr(header, "-", "_"));
+
+        if fetch value, _SERVER[name] {
+            return value;
+        }
+
+        if fetch value, _SERVER["HTTP_" . name] {
+            return value;
+        }
+
+        return "";
     }
 
 
