@@ -1,6 +1,6 @@
 namespace Aimo\Session;
 
-class MemcacheHandler implements SessionHandlerInterface
+class MemcacheHandler
 {
     public function open(string path , string name )->boolean
     {
@@ -20,7 +20,7 @@ class MemcacheHandler implements SessionHandlerInterface
         return true;
     }
 
-    public function gc(integer ttl) -> boolean
+    public function gc(long ttl) -> boolean
     {
         return true;
     }

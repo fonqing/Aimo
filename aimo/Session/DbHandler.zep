@@ -1,16 +1,16 @@
 namespace Aimo\Session;
 
-class DbHandler implements SessionHandlerInterface
+class DbHandler
 {
-    public function open (string path , string name )->boolean
+    public function open(string path , string name )->boolean
     {
         return true;
     }
-    public function read (string! id)->string
+    public function read(string! id)->string
     {
         return "";
     }
-    public function write (string! id ,string! data )->boolean
+    public function write(string! id ,string! data )->boolean
     {
         return true;
     }
@@ -20,7 +20,7 @@ class DbHandler implements SessionHandlerInterface
         return true;
     }
 
-    public function gc (integer ttl) -> boolean
+    public function gc(long ttl) -> boolean
     {
         return true;
     }
