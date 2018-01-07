@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta content="Aimo PHP Framework API doc" name="description">
+    <title>
+                    Aimo PHP Framework API Documentation
+            </title>
+    <link rel="stylesheet" type="text/css" href="../../asset/static/prettify.css" />
+
+<script src="../../asset/static/prettify.js"></script>
+<script src="../../asset/api_definition.js"></script>
+
+
+                        <link rel="stylesheet" type="text/css" href="../../asset/static/prettify.css" />
+                    <link rel="stylesheet" type="text/css" href="../../asset/static/zephir-theme.css" />
+            
+    
+
+                        <script src="../../asset/static/prettify.js"></script>
+                                    <script src="../../asset/api_definition.js"></script>
+                    <script src="../../asset/static/jquery.min.js"></script>
+                    <script src="../../asset/static/zephir-doc.js"></script>
+                <script>var ZepCurrentPath = '../../'</script>
+    </head>
+ <body onload="prettyPrint()">
+        <div id="top-bar">
+            <div id="top-left">
+                                    Aimo PHP Framework Documentation <span class="version">v0.6.0</span>
+                            </div>
+            <div id="top-right">
+            </div>
+        </div>
+        <div id="body">
+            <div id="body-left">
+                <div class="header-search">
+                    <input class="search-box" placeholder="Search for a class or namespace " type="text" />
+                    <div id="menu-wrapper">
+                    </div>
+                </div>
+            </div>
+            <div id="body-right">
+                <div class="content">
+                    
+<div class="breadcrumb">
+    
+    <ul>
+        
+        <li><a href="../../index.html">Home</a></li>
+        
+                <li><a href="../../classes.html">Classes</a></li>
+                <li><a href="../../class/Aimo/Html.html">Aimo\Html</a></li>
+                <li><a >Source</a></li>
+                
+    </ul>
+    
+</div>
+<div class="class-header source clearfix">
+    
+    <div class="access-buttons">
+        <a class="zep-button" href="../../class/Aimo/Html.html">Class</a>
+
+            </div>
+    
+    <div class="class-full-name">
+        
+        <span class="class-type">Class</span>
+        
+                <span class="namespace-piece">
+            <a href="../../namespace/Aimo.html">Aimo</a>
+        </span>
+                <h1 class="class-name">Html</h1>
+    </div>
+    
+</div>
+
+
+<pre class="zephir-source-file prettyprint linenums">namespace Aimo;
+
+class Html {
+    /**
+     * HTML标签
+     *
+     * 生成HTML标签
+     * 
+     * <code>
+     * echo Html::tag('a',['href'=>'#','class'=>'anchor'],'文字');
+     * //Will output : <a href="#" class="anchor">文字</a>
+     * echo Html::tag('input',['type'=>'text','name'=>'name'], '', true);
+     * /Will output : <input type="text" name="name" />
+     * </code>
+     *
+     * @param string tagName
+     * @param array attributes
+     * @param string inner inner text
+     * @param boolean selfClose 
+     */
+    public static function tag(string! tagName, array! attributes, string! inner = "", boolean selfClose = false) -> string
+    {
+        var attr;
+        let attr = self::renderAttributes(attributes);
+        return selfClose ?
+            "<".tagName.attr." />" :
+            "<".tagName.attr.">".inner."</".tagName.">";
+    }
+
+    /**
+     * Build attribute string for element
+     *
+     * Render html tag attributes
+     *
+     * @access protected
+     * @param array  atts
+     * @return string
+     */
+    protected static function renderAttributes(array! atts = []) -> string
+    {
+        string attributes = "";
+        var name,value;
+        for name,value in atts {
+            let value    = htmlspecialchars(value, ENT_QUOTES, "UTF-8");
+            let attributes .= " ".name."=\"".value."\"";
+        }
+        return attributes;
+    }
+
+    /**
+     * 魔术方法实现其他方法
+     *
+     * <code>
+     * echo Html::a(['href'=>'#','class'=>'anchor'],'文字');
+     * //Will output : <a href="#" class="anchor">文字</a>
+     * echo Html::input(['type'=>'text','name'=>'name'], '', true);
+     * /Will output : <input type="text" name="name" />
+     * </code>
+     */
+    public static function __callStatic(tagName,args)
+    {
+        string single     = ",input,hr,br,img,";
+        //string special    = "";
+        boolean selfClose = false;
+        let tagName = strtolower(tagName);
+        if single->index(",".tagName.",") {
+            let selfClose = true;
+        }
+        let args[2] = selfClose;
+        array_unshift(args, tagName);
+        return call_user_func_array("Aimo\\Html::tag",args);
+    }
+
+}</pre>                </div>
+            </div>
+        </div>
+    </body>
+</html>

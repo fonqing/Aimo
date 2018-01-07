@@ -147,6 +147,57 @@
 <li class="class-method clearfix">
     <div class="method-summary">
         <div class="method-signature">
+            <span class="method-name"><a href="#method-details-getMethod">getMethod</a></span>()
+            <span class="method-return">
+                &nbsp;<strong>:</strong>&nbsp;
+                                    string                            </span>
+        </div>
+                    <div class="method-doc">
+                <div class="summary-text">
+                                    </div>
+            </div>
+            </div>
+</li>
+
+    
+        
+<li class="class-method clearfix">
+    <div class="method-summary">
+        <div class="method-signature">
+            <span class="method-name"><a href="#method-details-isValidHttpMethod">isValidHttpMethod</a></span>(<span class="param-data-type">string</span> <span class="variable param-name">$method</span>)
+            <span class="method-return">
+                &nbsp;<strong>:</strong>&nbsp;
+                                    bool                            </span>
+        </div>
+                    <div class="method-doc">
+                <div class="summary-text">
+                                    </div>
+            </div>
+            </div>
+</li>
+
+    
+        
+<li class="class-method clearfix">
+    <div class="method-summary">
+        <div class="method-signature">
+            <span class="method-name"><a href="#method-details-getHeader">getHeader</a></span>(<span class="param-data-type">string</span> <span class="variable param-name">$header</span>)
+            <span class="method-return">
+                &nbsp;<strong>:</strong>&nbsp;
+                                    string                            </span>
+        </div>
+                    <div class="method-doc">
+                <div class="summary-text">
+                                    </div>
+            </div>
+            </div>
+</li>
+
+    
+        
+<li class="class-method clearfix">
+    <div class="method-summary">
+        <div class="method-signature">
             <span class="method-name"><a href="#method-details-ip">ip</a></span>(<span class="param-data-type">bool</span> <span class="variable param-name">$adv</span>)
             <span class="method-return">
                 &nbsp;<strong>:</strong>&nbsp;
@@ -276,6 +327,84 @@
      var_dump($request);
 
      </code>                    </div>
+                            </div>
+        </div>
+    </div>
+</li>
+
+    
+        
+<li class="class-method clearfix">
+    <div class="hidden-anchor" id="method-details-getMethod"></div>
+    <div class="method-details">
+        <div class="method-details-details">
+            <div class="method-signature">
+                                    <span class="visibility-public keyword">public</span>
+                                    <span class="visibility-final keyword">final</span>
+                                <span class="keyword">function</span>&nbsp;<span class="method-name">getMethod</span>()
+            </div>
+            <div class="method-doc">
+                                    <div class="summary">
+                                            </div>
+                    <div class="description">
+                        Gets HTTP method which request has been made
+
+     
+
+     If the X-HTTP-Method-Override header is set, and if the method is a POST,
+
+     then it is used to determine the "real" intended HTTP method.
+
+     
+
+     The _method request parameter can also be used to determine the HTTP method,
+
+     but only if setHttpMethodParameterOverride(true) has been called.
+
+     
+
+     The method is always an uppercased string.                    </div>
+                            </div>
+        </div>
+    </div>
+</li>
+
+    
+        
+<li class="class-method clearfix">
+    <div class="hidden-anchor" id="method-details-isValidHttpMethod"></div>
+    <div class="method-details">
+        <div class="method-details-details">
+            <div class="method-signature">
+                                    <span class="visibility-public keyword">public</span>
+                                <span class="keyword">function</span>&nbsp;<span class="method-name">isValidHttpMethod</span>(<span class="param-data-type">string</span> <span class="variable param-name">$method</span>)
+            </div>
+            <div class="method-doc">
+                                    <div class="summary">
+                                            </div>
+                    <div class="description">
+                        Checks if a method is a valid HTTP method                    </div>
+                            </div>
+        </div>
+    </div>
+</li>
+
+    
+        
+<li class="class-method clearfix">
+    <div class="hidden-anchor" id="method-details-getHeader"></div>
+    <div class="method-details">
+        <div class="method-details-details">
+            <div class="method-signature">
+                                    <span class="visibility-public keyword">public</span>
+                                    <span class="visibility-final keyword">final</span>
+                                <span class="keyword">function</span>&nbsp;<span class="method-name">getHeader</span>(<span class="param-data-type">string</span> <span class="variable param-name">$header</span>)
+            </div>
+            <div class="method-doc">
+                                    <div class="summary">
+                                            </div>
+                    <div class="description">
+                        Gets HTTP header from request data                    </div>
                             </div>
         </div>
     </div>
