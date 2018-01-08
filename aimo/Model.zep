@@ -71,6 +71,25 @@ class Model
      *         'groupid','regtime'
      *     ];
      *     protected $validateRules = [
+     *          'rules'  => [
+     *              'comid'   => 'require|number',
+     *              'uid'     => 'require|number',
+     *              'content' => 'require',
+     *              'time'    => 'require|number'
+     *          ],
+     *          'msg'   => [
+     *              'comid.require'   => '必须指定企业ID',
+     *              'comid.number'    => '必须指定企业ID',
+     *              'uid.require'     => '登陆后操作',
+     *              'uid.number'      => '登陆后操作',
+     *              'content.require' => '笔记内容必须填写',
+     *              'time.require'    => '记录时间必须设置',
+     *              'time.number'     => '记录时间必须设置',
+     *          ],
+     *          'scene' => [
+     *              'create' =>  ['comid','uid','content','time'],
+     *              'update' =>  ['content','time']
+     *          ]
      *     ];
      *     
      *     protected function setPassword($value)
@@ -79,7 +98,7 @@ class Model
      *     }
      *     protected function getRegtime($value)
      *     {
-     *            return date('Y-m-d H:i:s',$value);
+     *         return date('Y-m-d H:i:s',$value);
      *     }
      * }
      * $user = new User();
@@ -94,7 +113,6 @@ class Model
 
     /**
      *Judge if the operation is Create or Update
-     *
      */
     protected function isNew()->boolean
     {
@@ -108,6 +126,9 @@ class Model
         return true;
     }
 
+    /**
+     * 魔术方法设置模型数据
+     */
     public function __set(string! name, value) -> void
     {
         var method;
@@ -208,6 +229,11 @@ class Model
                             return false;
                         }
                     }elseif rule == "integer" {
+                        if (typeof v != "integer"){
+                            let this->_error[]=messages[field.".".rule];
+                            return false;
+                        }
+                    }elseif rule == "int" {
                         if (typeof v != "integer"){
                             let this->_error[]=messages[field.".".rule];
                             return false;

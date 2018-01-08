@@ -3,6 +3,30 @@ namespace Aimo;
  * 视图类
  *
  * 包含模板语法与编译，视图模板缓存
+ *<code>
+ *Template syntax:
+ * Variable output: {$name} {$data[name]} {$data.name} {$data->name} {PHP_VERSION}
+ * Call global function: {print_r($data)}
+ * Loop: {loop $items $item} {/loop} 
+ *       {loop $items $k $item} {/loop}
+ *       {foreach $items $item} {/foreach}
+ *       {foreach $items $k $item} {/foreach}
+ * For:  {for $i=0;$i<10;$i++} {/for}
+ * Subtemplate: {template "index/public/header"}
+ * Include: {include "vars.php"}
+ * Taglib: 
+ * {Aimo::news action="getlist" name="infos" ttl="3600"}
+ *   {loop $infos $info} 
+ *   {/loop} 
+ * {/Aimo}
+ * Condition:
+ * {if isset($var)}
+ * {elseif isset($var2)}
+ * {else}
+ * {/if}
+ * OriPHP:
+ * {php}{/php}
+ *</code>
  *
  * @package Aimo
  * @author Eric,<fonqing@gmail.com>
@@ -143,7 +167,7 @@ class View {
     {
         var db,de;
         let db = (isset self::_config["delimiter_begin"]) ? self::_config["delimiter_begin"] : "{";
-        let de = (isset self::_config["delimiter_end"])   ? self::_config["delimiter_end"]   : "{";
+        let de = (isset self::_config["delimiter_end"])   ? self::_config["delimiter_end"]   : "}";
 
         let content = preg_replace ( "/".db."template\s+(.+)".de."/", "<?php include \\Aimo\\View::load(\\1); ?>", content );
         let content = preg_replace ( "/".db."include\s+(.+)".de."/", "<?php include \\1; ?>", content );
