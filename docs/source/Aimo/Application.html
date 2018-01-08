@@ -151,7 +151,7 @@ class Application {
     {
         let config["app_path"] = rtrim(config["app_path"],"\\/")."/";
         let this->_config = config;
-        if isset this->_config["multipleModule"] && this->_config["multipleModule"]===true {
+        if isset this->_config["multiple_module"] && this->_config["multiple_module"]===true {
             let this->multipleModule = true;
         } 
         return this;

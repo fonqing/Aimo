@@ -324,18 +324,16 @@ class Db
      * 本方法在Aimo\Model中调用，并根据called class 实例化模型类
      *
      */
-    public function setEntity(klass,var primary) -> <Db>
+    public function setEntity(string klass,array! primary) -> <Db>
     {
+        let this->_entity  = klass;
         if (typeof primary == "array") {
             if count(primary) === 1 {
-                let primary = primary[0];
-            }
-            if empty primary {
-                let primary = "";
+                self::config("id_column", primary[0]);
+            }else{
+                self::config("id_column", primary);
             }
         }
-        let this->_entity = klass;
-        self::config("id_column", primary);
         return this;
     }
 
@@ -1142,7 +1140,7 @@ class Db
         }else{
             let rows = this->_run_by_model();
             if rows->rowCount() > 0 {
-                return rows->{fun}(\PDO::FETCH_CLASS,this->_entity);
+                return rows->{fun}(\PDO::FETCH_CLASS, this->_entity);
             } else {
                 return false;
             }
@@ -1303,9 +1301,10 @@ class Db
         if empty data {
             throw "Data can't empty";
         }
-        var sql;
+        var sql,values;
         let sql =  this->_build_update(data);
-        return self::_execute(sql, array_values(data), this->_name);
+        let values = array_merge(array_values(data),this->_values);
+        return self::_execute(sql, values , this->_name);
     }
 
     /**
@@ -1402,15 +1401,19 @@ class Db
         if !isset self::_db[name] ||
             !is_object(self::_db[name]) {
             self::_setup_db_config(name);
-            var db;
-            let db = new \PDO(
-                self::_config[name]["dsn"],
-                self::_config[name]["username"],
-                self::_config[name]["password"],
-                self::_config[name]["options"]
-            );
-            db->setAttribute(\PDO::ATTR_ERRMODE, self::_config[name]["error_mode"]);
-            self::setDb(db, name);
+            var db,e;
+            try {
+                let db = new \PDO(
+                    self::_config[name]["dsn"],
+                    self::_config[name]["username"],
+                    self::_config[name]["password"],
+                    self::_config[name]["options"]
+                );
+                db->setAttribute(\PDO::ATTR_ERRMODE, self::_config[name]["error_mode"]);
+                self::setDb(db, name);
+            } catch \PDOException,e {
+                throw e->getMessage();
+            }
         }
     }
 
@@ -1507,6 +1510,8 @@ class Db
     */
     protected static function _execute(query, parameters = [], name = "default") 
     {
+        //uncomment to debug
+        //print_r(func_get_args());
         var statement,time,key,param,type,result,k;
         let statement = self::getDb(name)->prepare(query);
         let self::_last_statement = statement;
@@ -1587,7 +1592,6 @@ class Db
         if is_callable(self::_config[name]["logger"]) {
             call_user_func_array(self::_config[name]["logger"],[bound_query, query_time]);
         }
-        
         return true;
     }
 
@@ -2203,7 +2207,7 @@ class Db
         let query = this->_build_select();
         self::_execute(query, this->_values, this->_name);
         let statement = self::getLastStatement();
-        statement->setFetchMode(\PDO::FETCH_CLASS,this->_entity);
+        statement->setFetchMode(\PDO::FETCH_CLASS, this->_entity);
         let this->_values = [];
         let this->_result_columns = ["*"];
         let this->_using_default_result_columns = true;
@@ -2248,7 +2252,7 @@ class Db
         if empty where {
             throw "Update on NO WHERE conditions";
         }
-        let query[]= "WHERE ".where;
+        let query[]= where;
         return implode(" ", query);
     }
 

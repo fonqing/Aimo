@@ -102,12 +102,33 @@
 <li class="class-method clearfix">
     <div class="method-summary">
         <div class="method-signature">
+            <span class="method-name"><a href="#method-details-isNew">isNew</a></span>()
+            <span class="method-return">
+                &nbsp;<strong>:</strong>&nbsp;
+                                    bool                            </span>
+        </div>
+                    <div class="method-doc">
+                <div class="summary-text">
+                                    </div>
+            </div>
+            </div>
+</li>
+
+    
+        
+<li class="class-method clearfix">
+    <div class="method-summary">
+        <div class="method-signature">
             <span class="method-name"><a href="#method-details-__set">__set</a></span>(<span class="param-data-type">string</span> <span class="variable param-name">$name</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$value</span>)
             <span class="method-return">
                 &nbsp;<strong>:</strong>&nbsp;
                                     void
                             </span>
         </div>
+                    <div class="method-doc">
+                <div class="summary-text">
+                                    </div>
+            </div>
             </div>
 </li>
 
@@ -122,6 +143,28 @@
                                     void
                             </span>
         </div>
+                    <div class="method-doc">
+                <div class="summary-text">
+                                    </div>
+            </div>
+            </div>
+</li>
+
+    
+        
+<li class="class-method clearfix">
+    <div class="method-summary">
+        <div class="method-signature">
+            <span class="method-name"><a href="#method-details-attr">attr</a></span>(<span class="param-data-type">string</span> <span class="variable param-name">$name</span>)
+            <span class="method-return">
+                &nbsp;<strong>:</strong>&nbsp;
+                                    void
+                            </span>
+        </div>
+                    <div class="method-doc">
+                <div class="summary-text">
+                                    </div>
+            </div>
             </div>
 </li>
 
@@ -136,6 +179,10 @@
                                     void
                             </span>
         </div>
+                    <div class="method-doc">
+                <div class="summary-text">
+                                    </div>
+            </div>
             </div>
 </li>
 
@@ -150,6 +197,10 @@
                                     void
                             </span>
         </div>
+                    <div class="method-doc">
+                <div class="summary-text">
+                                    </div>
+            </div>
             </div>
 </li>
 
@@ -164,6 +215,28 @@
                                     void
                             </span>
         </div>
+                    <div class="method-doc">
+                <div class="summary-text">
+                                    </div>
+            </div>
+            </div>
+</li>
+
+    
+        
+<li class="class-method clearfix">
+    <div class="method-summary">
+        <div class="method-signature">
+            <span class="method-name"><a href="#method-details-getPk">getPk</a></span>()
+            <span class="method-return">
+                &nbsp;<strong>:</strong>&nbsp;
+                                    void
+                            </span>
+        </div>
+                    <div class="method-doc">
+                <div class="summary-text">
+                                    </div>
+            </div>
             </div>
 </li>
 
@@ -178,6 +251,10 @@
                                     void
                             </span>
         </div>
+                    <div class="method-doc">
+                <div class="summary-text">
+                                    </div>
+            </div>
             </div>
 </li>
 
@@ -192,6 +269,10 @@
                                     void
                             </span>
         </div>
+                    <div class="method-doc">
+                <div class="summary-text">
+                                    </div>
+            </div>
             </div>
 </li>
 
@@ -272,7 +353,7 @@
 <li class="class-method clearfix">
     <div class="method-summary">
         <div class="method-signature">
-            <span class="method-name"><a href="#method-details-delete">delete</a></span>(<span class="param-data-type">variable</span> <span class="variable param-name">$field</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$value</span>)
+            <span class="method-name"><a href="#method-details-delete">delete</a></span>(<span class="param-data-type">string</span> <span class="variable param-name">$field</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$value</span>)
             <span class="method-return">
                 &nbsp;<strong>:</strong>&nbsp;
                                     void
@@ -300,20 +381,6 @@
                 <div class="summary-text">
                                     </div>
             </div>
-            </div>
-</li>
-
-    
-        
-<li class="class-method clearfix">
-    <div class="method-summary">
-        <div class="method-signature">
-            <span class="method-name"><a href="#method-details-zephir_init_static_properties_Aimo_Model">zephir_init_static_properties_Aimo_Model</a></span>()
-            <span class="method-return">
-                &nbsp;<strong>:</strong>&nbsp;
-                                    void
-                            </span>
-        </div>
             </div>
 </li>
 
@@ -366,7 +433,7 @@
 
          protected $table = 'user';
 
-         protected static $primary = ['uid'];
+         protected $primary = ['uid'];
 
          protected $fields  = [
 
@@ -378,23 +445,63 @@
 
          protected $validateRules = [
 
+              'rules'  => [
+
+                  'comid'   => 'require|number',
+
+                  'uid'     => 'require|number',
+
+                  'content' => 'require',
+
+                  'time'    => 'require|number'
+
+              ],
+
+              'msg'   => [
+
+                  'comid.require'   => '必须指定企业ID',
+
+                  'comid.number'    => '必须指定企业ID',
+
+                  'uid.require'     => '登陆后操作',
+
+                  'uid.number'      => '登陆后操作',
+
+                  'content.require' => '笔记内容必须填写',
+
+                  'time.require'    => '记录时间必须设置',
+
+                  'time.number'     => '记录时间必须设置',
+
+              ],
+
+              'scene' => [
+
+                  'create' =>  ['comid','uid','content','time'],
+
+                  'update' =>  ['content','time']
+
+              ]
+
          ];
 
-         
+         //设置器 输入的数据将经过此函数处理，函数名为 set字段名首字母大写
 
          protected function setPassword($value)
 
          {
 
-             return md5($value);    
+             return md5($value);
 
          }
+
+         //获取器 输出此字段之前数据将经过此函数处理，函数名为 get字段名首字母大写
 
          protected function getRegtime($value)
 
          {
 
-                return date('Y-m-d H:i:s',$value);
+             return date('Y-m-d H:i:s',$value);
 
          }
 
@@ -417,6 +524,26 @@
     
         
 <li class="class-method clearfix">
+    <div class="hidden-anchor" id="method-details-isNew"></div>
+    <div class="method-details">
+        <div class="method-details-details">
+            <div class="method-signature">
+                                    <span class="visibility-protected keyword">protected</span>
+                                <span class="keyword">function</span>&nbsp;<span class="method-name">isNew</span>()
+            </div>
+            <div class="method-doc">
+                                    <div class="summary">
+                                            </div>
+                    <div class="description">
+                        判断数据状态是新增还是更新                    </div>
+                            </div>
+        </div>
+    </div>
+</li>
+
+    
+        
+<li class="class-method clearfix">
     <div class="hidden-anchor" id="method-details-__set"></div>
     <div class="method-details">
         <div class="method-details-details">
@@ -425,6 +552,22 @@
                                 <span class="keyword">function</span>&nbsp;<span class="method-name">__set</span>(<span class="param-data-type">string</span> <span class="variable param-name">$name</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$value</span>)
             </div>
             <div class="method-doc">
+                                    <div class="summary">
+                                            </div>
+                    <div class="description">
+                        魔术方法设置模型数据
+
+     
+
+     <code>
+
+     $model->name = 'error';
+
+     //如果模型中定义了设置器
+
+     //数据将会先经过设置器处理
+
+     </code>                    </div>
                             </div>
         </div>
     </div>
@@ -441,6 +584,54 @@
                                 <span class="keyword">function</span>&nbsp;<span class="method-name">__get</span>(<span class="param-data-type">string</span> <span class="variable param-name">$name</span>)
             </div>
             <div class="method-doc">
+                                    <div class="summary">
+                                            </div>
+                    <div class="description">
+                        魔术方法获取模型数据
+
+     
+
+     <code>
+
+     echo $model->name;
+
+     //如果模型中定义了获取器
+
+     //数据将会先经过获取器处理
+
+     </code>                    </div>
+                            </div>
+        </div>
+    </div>
+</li>
+
+    
+        
+<li class="class-method clearfix">
+    <div class="hidden-anchor" id="method-details-attr"></div>
+    <div class="method-details">
+        <div class="method-details-details">
+            <div class="method-signature">
+                                    <span class="visibility-public keyword">public</span>
+                                <span class="keyword">function</span>&nbsp;<span class="method-name">attr</span>(<span class="param-data-type">string</span> <span class="variable param-name">$name</span>)
+            </div>
+            <div class="method-doc">
+                                    <div class="summary">
+                                            </div>
+                    <div class="description">
+                        获取模型原始数据
+
+     
+
+     当需要获取定义了获取器的字段的原始值时，使用此方法
+
+     
+
+     <code>
+
+     echo $model->attr('time');
+
+     </code>                    </div>
                             </div>
         </div>
     </div>
@@ -457,6 +648,10 @@
                                 <span class="keyword">function</span>&nbsp;<span class="method-name">__toString</span>()
             </div>
             <div class="method-doc">
+                                    <div class="summary">
+                                            </div>
+                    <div class="description">
+                        toString                    </div>
                             </div>
         </div>
     </div>
@@ -473,6 +668,10 @@
                                 <span class="keyword">function</span>&nbsp;<span class="method-name">toArray</span>()
             </div>
             <div class="method-doc">
+                                    <div class="summary">
+                                            </div>
+                    <div class="description">
+                        获取模型数据                    </div>
                             </div>
         </div>
     </div>
@@ -489,6 +688,50 @@
                                 <span class="keyword">function</span>&nbsp;<span class="method-name">getError</span>()
             </div>
             <div class="method-doc">
+                                    <div class="summary">
+                                            </div>
+                    <div class="description">
+                        获取模型验证的错误信息
+
+     
+
+     <code>
+
+     $user = new User();
+
+     $user->name = 'name';
+
+     if(!$user->save()){
+
+         echo $user->getError();
+
+     }
+
+     </code>                    </div>
+                            </div>
+        </div>
+    </div>
+</li>
+
+    
+        
+<li class="class-method clearfix">
+    <div class="hidden-anchor" id="method-details-getPk"></div>
+    <div class="method-details">
+        <div class="method-details-details">
+            <div class="method-signature">
+                                    <span class="visibility-public keyword">public</span>
+                                <span class="keyword">function</span>&nbsp;<span class="method-name">getPk</span>()
+            </div>
+            <div class="method-doc">
+                                    <div class="summary">
+                                            </div>
+                    <div class="description">
+                        获取定义在模型中的主键
+
+     
+
+     注意本函数暂时不会自动探测各种数据库的主键                    </div>
                             </div>
         </div>
     </div>
@@ -505,6 +748,66 @@
                                 <span class="keyword">function</span>&nbsp;<span class="method-name">validate</span>()
             </div>
             <div class="method-doc">
+                                    <div class="summary">
+                                            </div>
+                    <div class="description">
+                        模型验证
+
+     
+
+     <code>
+
+     //本验证参考了ThinkPHP5的形式
+
+     //支持的验证规则：
+
+     $validateRules = [
+
+         'passwd'  => 'require',
+
+         'age'     => 'number',
+
+         'height'  => 'integer',//alias int
+
+         'weight'  => 'float',
+
+         'email'   => 'email',
+
+         'gender'  => 'alpha', //a-z
+
+         'id'      => 'alphaNum', //a-z0-9
+
+         'uname'   => 'alphaDash', //a-z0-9_
+
+         'mobile'  => 'unique', //数据表中不允许重复
+
+         'field10' => 'in:1,2,3', // 'in:a,b,c'
+
+         'field11' => 'notin:1,2,3', //a-z
+
+         'full'    => 'between:1,100', //a-z
+
+         'score'   => 'notBetween:0,60', //a-z
+
+         'idcard'  => 'length:15,18', //'length:6' 也可以固定长度
+
+         'eyes'    => 'max:2',
+
+         'count'   => 'min:1',
+
+         'birth'   => 'before:1990-01-01',//1990年以前出生
+
+         'date'    => 'after:2017-01-01',//2017年以后的日期
+
+         'insvr'   => 'expire:2010-01-01,2012-01-01',//在一个有效的时间段内
+
+         'repass'  => 'confirm:passwd',//与当前验证中的passwd字段比较是否相等
+
+         'phone'   => 'regex:^0\d{2,3}\-\d{7,8}$',//固话正则表达式
+
+     ];
+
+     </code>                    </div>
                             </div>
         </div>
     </div>
@@ -521,6 +824,10 @@
                                 <span class="keyword">function</span>&nbsp;<span class="method-name">isValid</span>()
             </div>
             <div class="method-doc">
+                                    <div class="summary">
+                                            </div>
+                    <div class="description">
+                        判断模型数据是否通过验证器验证                    </div>
                             </div>
         </div>
     </div>
@@ -674,7 +981,7 @@
         <div class="method-details-details">
             <div class="method-signature">
                                     <span class="visibility-public keyword">public</span>
-                                <span class="keyword">function</span>&nbsp;<span class="method-name">delete</span>(<span class="param-data-type">variable</span> <span class="variable param-name">$field</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$value</span>)
+                                <span class="keyword">function</span>&nbsp;<span class="method-name">delete</span>(<span class="param-data-type">string</span> <span class="variable param-name">$field</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$value</span>)
             </div>
             <div class="method-doc">
                                     <div class="summary">
@@ -721,22 +1028,6 @@
      $user->destroy();
 
      </code>                    </div>
-                            </div>
-        </div>
-    </div>
-</li>
-
-    
-        
-<li class="class-method clearfix">
-    <div class="hidden-anchor" id="method-details-zephir_init_static_properties_Aimo_Model"></div>
-    <div class="method-details">
-        <div class="method-details-details">
-            <div class="method-signature">
-                                    <span class="visibility-internal keyword">internal</span>
-                                <span class="keyword">function</span>&nbsp;<span class="method-name">zephir_init_static_properties_Aimo_Model</span>()
-            </div>
-            <div class="method-doc">
                             </div>
         </div>
     </div>
