@@ -91,11 +91,12 @@ class Model
      *              'update' =>  ['content','time']
      *          ]
      *     ];
-     *     
+     *     //设置器 输入的数据将经过此函数处理，函数名为 set字段名首字母大写
      *     protected function setPassword($value)
      *     {
-     *         return md5($value);    
+     *         return md5($value);
      *     }
+     *     //获取器 输出此字段之前数据将经过此函数处理，函数名为 get字段名首字母大写
      *     protected function getRegtime($value)
      *     {
      *         return date('Y-m-d H:i:s',$value);
@@ -106,13 +107,15 @@ class Model
      * $user->password = '123456';
      * $user->save();
      *</code>
-     */             
+     */
     public function __construct()
     {
     }
 
     /**
-     *Judge if the operation is Create or Update
+     * 判断数据状态是新增还是更新
+     *
+     * @return boolean
      */
     protected function isNew()->boolean
     {
@@ -128,6 +131,16 @@ class Model
 
     /**
      * 魔术方法设置模型数据
+     *
+     * <code>
+     * $model->name = 'error';
+     * //如果模型中定义了设置器
+     * //数据将会先经过设置器处理
+     * </code>
+     *
+     * @param string name
+     * @param mixed value
+     * @return void
      */
     public function __set(string! name, value) -> void
     {
@@ -135,28 +148,41 @@ class Model
         if !property_exists(this,name) {
             let method = "set".ucfirst(name);
             if method_exists(this, method) {
-                if !isset this->_data[name] {
-                    let this->_data[name] = this->{method}(value);
-                }else{
+                if isset this->_data[name] {
                     let this->_dirty[name] = this->{method}(value);
+                }else{
+                    let this->_data[name] = this->{method}(value);
                 }
             }else{
-                if !isset this->_data[name] {
-                    let this->_data[name]=value;
-                }else{
+                if isset this->_data[name] {
                     let this->_dirty[name]=value;
+                }else{
+                    let this->_data[name]=value;
                 }
             }
         }
     }
 
+    /**
+     * 魔术方法获取模型数据
+     *
+     * <code>
+     * echo $model->name;
+     * //如果模型中定义了获取器
+     * //数据将会先经过获取器处理
+     * </code>
+     *
+     * @param string name
+     * @return mixed
+     */
     public function __get(string! name)
     {
         var method,value;
         if !property_exists(this, name){
             let method = "get".ucfirst(name);
-            let value = isset this->_dirty[name] ? 
-                    this->_dirty[name] : isset this->_data[name] ? this->_data[name] : null;
+            let value  = isset this->_dirty[name] ?
+                    this->_dirty[name] : isset this->_data[name] ?
+                    this->_data[name]  : null;
             if method_exists(this, method) {
                 return this->{method}(value);
             }else{
@@ -166,30 +192,102 @@ class Model
         return null;
     }
 
+    /**
+     * 获取模型原始数据
+     *
+     * 当需要获取定义了获取器的字段的原始值时，使用此方法
+     *
+     * <code>
+     * echo $model->attr('time');
+     * </code>
+     *
+     * @param string name
+     * @return mixed
+     */
+    public function attr(string! name)
+    {
+        return isset this->_data[name] ? this->_data[name] : null;
+    }
+
+    /**
+     * toString
+     */
     public function __toString()
     {
         return get_called_class();
     }
 
+    /**
+     * 获取模型数据
+     */
     public function toArray()
     {
         return this->_data;
     }
 
+    /**
+     * 获取模型验证的错误信息
+     *
+     * <code>
+     * $user = new User();
+     * $user->name = 'name';
+     * if(!$user->save()){
+     *     echo $user->getError();
+     * }
+     * </code>
+     */
     public function getError()
     {
         return this->_error;
     }
 
+    /**
+     * 获取定义在模型中的主键
+     *
+     * 注意本函数暂时不会自动探测各种数据库的主键
+     */
     public function getPk()
     {
         return this->primary;
     }
 
+    /**
+     * 模型验证
+     *
+     *<code>
+     * //本验证参考了ThinkPHP5的形式
+     * //支持的验证规则：
+     * $validateRules = [
+     *     'passwd'  => 'require',
+     *     'age'     => 'number',
+     *     'height'  => 'integer',//alias int
+     *     'weight'  => 'float',
+     *     'email'   => 'email',
+     *     'gender'  => 'alpha', //a-z
+     *     'id'      => 'alphaNum', //a-z0-9
+     *     'uname'   => 'alphaDash', //a-z0-9_
+     *     'mobile'  => 'unique', //数据表中不允许重复
+     *     'field10' => 'in:1,2,3', // 'in:a,b,c'
+     *     'field11' => 'notin:1,2,3', //a-z
+     *     'full'    => 'between:1,100', //a-z
+     *     'score'   => 'notBetween:0,60', //a-z
+     *     'idcard'  => 'length:15,18', //'length:6' 也可以固定长度
+     *     'eyes'    => 'max:2',
+     *     'count'   => 'min:1',
+     *     'birth'   => 'before:1990-01-01',//1990年以前出生
+     *     'date'    => 'after:2017-01-01',//2017年以后的日期
+     *     'insvr'   => 'expire:2010-01-01,2012-01-01',//在一个有效的时间段内
+     *     'repass'  => 'confirm:passwd',//与当前验证中的passwd字段比较是否相等
+     *     'phone'   => 'regex:^0\d{2,3}\-\d{7,8}$',//固话正则表达式
+     * ];
+     *</code>
+     *
+     * @return boolean
+     */
     public function validate()
     {
         var messages,operate,key,value,validateFields,field,pks;
-        var ruleString,rules,rule,v,c,kk;
+        var ruleString,rules,rule,v,c,kk,sc;
         array cond;
         let messages = this->validateRules["msg"];
         let operate  = "update";
@@ -201,7 +299,6 @@ class Model
                 break;
             }
         }
-
         if isset this->validateRules["scene"] {
             if empty this->validateRules["scene"][operate] {
                 let validateFields = array_keys(this->validateRules["rules"]);
@@ -211,89 +308,96 @@ class Model
         }else{
             let validateFields = array_keys(this->validateRules["rules"]);
         }
-
+        var tmp = ( operate == "create" ) ? this->_data : this->_dirty;
         for field in validateFields {
             let ruleString = this->validateRules["rules"][field];
-            let rules      = explode("|", ruleString);
-            let v          = isset this->_data[field] ? this->_data[field] : null;
+            //'field' => 'require|regex:^(a|b)$'
+            //TODO:正则表达式验证器中如果存在“|”字符将导致错误，稍后解决
+            let rules = explode("|", ruleString);
+            let v = isset tmp[field] ? tmp[field] : null;
             for rule in rules {
-                if strpos(rule, ":") === false {
-                    if rule == "require" {
-                        if empty v && v!==0 && v!=="0" {
-                            let this->_error[]=messages[field.".".rule];
-                            return false;
-                        }
-                    }elseif rule == "number" {
-                        if !is_numeric(v) {
-                            let this->_error[]=messages[field.".".rule];
-                            return false;
-                        }
-                    }elseif rule == "integer" {
-                        if (typeof v != "integer"){
-                            let this->_error[]=messages[field.".".rule];
-                            return false;
-                        }
-                    }elseif rule == "int" {
-                        if (typeof v != "integer"){
-                            let this->_error[]=messages[field.".".rule];
-                            return false;
-                        }
-                    }elseif rule == "float" {
-                        if !is_float(v) {
-                            let this->_error[]=messages[field.".".rule];
-                            return false;
-                        }
-                    }elseif rule == "email"{
-                        if !filter_var(v, FILTER_VALIDATE_EMAIL) {
-                            let this->_error[]=messages[field.".".rule];
-                            return false;
-                        }
-                    }elseif rule == "alpha" {
-                        if !preg_match("/^[a-z]+$/i",v) {
-                            let this->_error[]=messages[field.".".rule];
-                            return false;
-                        }
-                    }elseif rule == "alphaNum" {
-                        if !preg_match("/^[a-z0-9]+$/i",v) {
-                            let this->_error[]=messages[field.".".rule];
-                            return false;
-                        }
-                    }elseif rule == "alphaDash" {
-                        if !preg_match("/^[a-z0-9_]+$/i",v) {
-                            let this->_error[]=messages[field.".".rule];
-                            return false;
-                        }
-                    }elseif rule == "unique" {
-
-                        if operate == "create" {
-
-                            let c = self::where(field,v)->count();
-                            if c > 0 {
+                let sc = strpos(rule, ":");
+                if sc === false {
+                    switch rule {
+                        case "require":
+                            if empty v && v!==0 && v!=="0" {
                                 let this->_error[]=messages[field.".".rule];
                                 return false;
                             }
-
-                        }elseif operate == "update" {
-                            
-                            let cond = [field:v];
-                            for kk in pks {
-                                let cond[kk]=["<>",this->{kk}];
-                            }
-                            let c = self::where(cond)->count();
-                            if c>0 {
+                            break;
+                        case "number":
+                            if !is_numeric(v) {
                                 let this->_error[]=messages[field.".".rule];
                                 return false;
                             }
-
-                        }
+                            break;
+                        case "integer":
+                        case "int":
+                            if (typeof v != "integer"){
+                                let this->_error[]=messages[field.".".rule];
+                                return false;
+                            }
+                            break;
+                        case "float":
+                            if !is_float(v) {
+                                let this->_error[]=messages[field.".".rule];
+                                return false;
+                            }
+                            break;
+                        case "email":
+                            if !filter_var(v, FILTER_VALIDATE_EMAIL) {
+                                let this->_error[]=messages[field.".".rule];
+                                return false;
+                            }
+                            break;
+                        case "alpha":
+                            if !preg_match("/^[a-z]+$/i",v) {
+                                let this->_error[]=messages[field.".".rule];
+                                return false;
+                            }
+                            break;
+                        case "alphaNum":
+                            if !preg_match("/^[a-z0-9]+$/i",v) {
+                                let this->_error[]=messages[field.".".rule];
+                                return false;
+                            }
+                            break;
+                        case "alphaDash":
+                            if !preg_match("/^[a-z0-9_]+$/i",v) {
+                                let this->_error[]=messages[field.".".rule];
+                                return false;
+                            }
+                            break;
+                        case "unique":
+                            if operate == "create" {
+                                let c = self::where(field,v)->count();
+                                if c > 0 {
+                                    let this->_error[]=messages[field.".".rule];
+                                    return false;
+                                }
+                            } elseif operate == "update" {
+                                let cond = [field:v];
+                                for kk in pks {
+                                    let cond[kk]=["<>", tmp[kk]];
+                                }
+                                let c = self::where(cond)->count();
+                                if c > 0 {
+                                    let this->_error[]=messages[field.".".rule];
+                                    return false;
+                                }
+                            }
+                            break;
+                    }
+                }else{
+                    var ruleName,params,temp,length,minlength,maxlength,valid,begin,end;
+                    let ruleName = substr(rule, 0, sc);
+                    let temp     = substr(rule, sc+1);
+                    if ruleName == "regex" {
+                        let params = [temp];
+                    }else{
+                        let params = explode(",", temp);
                     }
 
-                }else{
-
-                    var ruleName,params,temp,length,minlength,maxlength,valid,begin,end;
-                    let temp = explode(":", rule);
-                    let ruleName = temp[0];
-                    let params = explode(",", temp[1]);
                     switch ruleName
                     {
                         case "in":
@@ -374,9 +478,12 @@ class Model
                             }
                             break;
                         case "confirm":
-                            if v !== params[0] {
-                                let this->_error[]=messages[field.".".ruleName];
-                                return false;
+                            let kk = params[0];
+                            if isset tmp[kk] {
+                                if v != tmp[kk]{
+                                    let this->_error[]=messages[field.".".ruleName];
+                                    return false;
+                                }
                             }
                             break;
                         case "regex":
@@ -385,7 +492,7 @@ class Model
                                 return false;
                             }
                             break;
-                        case "unique":
+                        /*case "unique":
                             if operate == "create" {
                                 let c = self::where(field,v)->count();
                                 if c>0 {
@@ -404,6 +511,7 @@ class Model
                                 }
                             }
                             break;
+                        */
                     }
                 }
             }
@@ -411,6 +519,11 @@ class Model
         return true;
     }
 
+    /**
+     * 判断模型数据是否通过验证器验证
+     *
+     * @return boolean
+     */
     public function isValid()
     {
         return this->validate();
@@ -502,7 +615,7 @@ class Model
         }
         let pks = (array) this->getPk();
         if this->isValid() {
-            if !empty pks && count(pks)===1 {
+            if count(pks)===1 {
                 let id = Db::name(table)->insertGetId(this->_data);
                 let pk = pks[0];
                 let this->_data[pk] = id;
@@ -549,8 +662,8 @@ class Model
         if empty cond {
             throw "Model data error,No primary value given";
         }
-        
-        if this->isValid(){
+
+        if this->isValid() {
             return Db::name(table)->where(cond)->update(this->_dirty);
         }else{
             return false;
