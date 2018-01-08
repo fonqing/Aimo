@@ -7,7 +7,7 @@ dll目录目前只编译了PHP7.0版本，
 * PHP = 7.0
 
 ## 使用指引
-
+[Documention](https://fonqing.github.io/Aimo/)
 ### 程序架构
 常见并推荐的目录结构如下：
 ```
@@ -48,8 +48,9 @@ Application::init(Config::get('application'))->run();
 ### Rewrite rules
 
 Aimo框架重写支持
-index.php/module/controller/action/param/value/param1/value1.html //包含URL后缀
-index.php?_url_=/module/controller/action/param/value/param1/value1.html //包含URL后缀
+index.php/module/controller/action/param/value/param1/value1.html //包含URL后缀    
+
+index.php?\_url\_=/module/controller/action/param/value/param1/value1.html //包含URL后缀
 
 ### config.php
 `config.php` 包含应用全部组件配置
