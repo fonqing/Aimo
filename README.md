@@ -58,15 +58,16 @@ index.php?_url_=/module/controller/action/param/value/param1/value1.html //包�
 use Aimo\Config;
 Config::init([
     'application' => [
-        'debug' => true,
-        'app_path' => APP_PATH,
-        'namespace' => 'app',
-        'multipleModule' => false,
-        'url_suffix' => '.html'
+        'debug'           => true,     //调试模式
+        'app_path'        => APP_PATH, //应用根目录
+        'namespace'       => 'app',    //应用命名空间前缀
+        'multiple_module' => false,    //多模块支持
+        'url_suffix'      => '.html'   //URL地址后缀
     ],
     'namespaces' => [
-        'app' => APP_PATH,
+        'app' => APP_PATH,             //命名空间注册
     ],
+    //数据库连接配置
     'db' => [
         'dsn'  => 'mysql:host=localhost;dbname=database',
         'username'  => 'username',
@@ -76,9 +77,11 @@ Config::init([
             \PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8'
         ]
     ],
+    //默认缓存配置
     'cache' => [
         'cache_path'=> APP_PATH.'runtime/cache/data/',
     ],
+    //视图配置
     'view' => [
         'view_path' => APP_PATH.'view/',
         'view_cache_path' => APP_PATH.'runtime/cache/tpl/',
@@ -100,11 +103,18 @@ class IndexController extends Controller {
         View::assign('list',['a','b','c']);
         View::assign('number',6);
         View::render('index/index',['data' => 'hello world']);
+        //Or you can render like bellow line;
+        //Attention: The View in Controller has only one method "render"
+        $this->render('index/index',[
+          'list'   => ['a','b','c'],
+          'number' => 6,
+          'data'   => 'hello world'
+        ]);
     }
 }
 ```
 
-###视图脚本
+### 视图脚本
 
 模板代码如下：
 
@@ -118,9 +128,9 @@ class IndexController extends Controller {
 <body>
 {$data}
 <ul>
-  <loop $list $v>
+  {loop $list $v}
   <li>{$n}:{$v}</li>
-  </loop>
+  {/loop}
 </ul>
 {var_dump($number)}
 {$number++}
