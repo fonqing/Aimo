@@ -180,9 +180,9 @@ class Model
         var method,value;
         if !property_exists(this, name){
             let method = "get".ucfirst(name);
-            let value  = isset this->_dirty[name] ?
-                    this->_dirty[name] : isset this->_data[name] ?
-                    this->_data[name]  : null;
+            let value  = (isset this->_dirty[name]) ?
+                    this->_dirty[name] : ( isset this->_data[name] ?
+                    this->_data[name]  : null );
             if method_exists(this, method) {
                 return this->{method}(value);
             }else{
@@ -281,19 +281,20 @@ class Model
      *     'phone'   => 'regex:^0\d{2,3}\-\d{7,8}$',//固话正则表达式
      * ];
      *</code>
-     *
-     * @return boolean
      */
     public function validate()
     {
         var messages,operate,key,value,validateFields,field,pks;
-        var ruleString,rules,rule,v,c,kk,sc;
+        var ruleString,rules,rule,v,c,kk,sc,tmp;
         array cond;
         let messages = this->validateRules["msg"];
         let operate  = "update";
         let pks = this->getPk();
         for key in pks {
-            let value = isset this->_data[key] ? this->_data[key] : "";
+            let value = "";
+            if isset this->_data[key] {
+                let value = this->_data[key];
+            }
             if empty value {
                 let operate = "create";
                 break;
@@ -308,7 +309,7 @@ class Model
         }else{
             let validateFields = array_keys(this->validateRules["rules"]);
         }
-        var tmp = ( operate == "create" ) ? this->_data : this->_dirty;
+        let tmp = (operate == "create") ? this->_data : this->_dirty;
         for field in validateFields {
             let ruleString = this->validateRules["rules"][field];
             //'field' => 'require|regex:^(a|b)$'
@@ -394,7 +395,7 @@ class Model
                     let temp     = substr(rule, sc+1);
                     if ruleName == "regex" {
                         let params = [temp];
-                    }else{
+                    } else {
                         let params = explode(",", temp);
                     }
 
@@ -492,26 +493,6 @@ class Model
                                 return false;
                             }
                             break;
-                        /*case "unique":
-                            if operate == "create" {
-                                let c = self::where(field,v)->count();
-                                if c>0 {
-                                    let this->_error[]=messages[field.".".ruleName];
-                                    return false;
-                                }
-                            }elseif operate == "update" {
-                                let cond = [field:v];
-                                for kk in pks {
-                                    let cond[kk]=["<>",this->{kk}];
-                                }
-                                let c = self::where(cond)->count();
-                                if c>0 {
-                                    let this->_error[]=messages[field.".".ruleName];
-                                    return false;
-                                }
-                            }
-                            break;
-                        */
                     }
                 }
             }
@@ -521,8 +502,6 @@ class Model
 
     /**
      * 判断模型数据是否通过验证器验证
-     *
-     * @return boolean
      */
     public function isValid()
     {
@@ -554,7 +533,6 @@ class Model
         }
         let instance  = new {model}();
         let pks       = (array) instance->getPk();
-        let instance  = null;
         return Db::name(table)->setEntity(model, pks)->where(a,b,c);
     }
 
@@ -581,7 +559,6 @@ class Model
         }
         let instance  = new {model}();
         let pks       = (array) instance->getPk();
-        let instance  = null;
         if empty pks {
             throw "Model Primary not defined.Can't use Model::get method";
         }
