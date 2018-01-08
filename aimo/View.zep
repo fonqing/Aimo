@@ -30,9 +30,11 @@ class View {
      *
      * <code>
      * \Aimo\View::init([
-     *      'view_path'=>'./_view/',
-     *      'view_cache_path'=>'./_cache/',
-     *      'view_file_ext'=>'.html'
+     *      'view_path'       => './_view/',  //模板文件目录
+     *      'view_cache_path' => './_cache/', //模板编译缓存目录
+     *      'view_file_ext'   => '.html',     //模板文件扩展名
+     *      'delimiter_begin' => '{',         //模板标记开始定界符
+     *      'delimiter_end'   => '}'          //模板标记结束定界符
      * ]);
      * </code>
      *
@@ -87,9 +89,9 @@ class View {
         int c;
         var defaultModule;
 
-        let viewPath  = isset self::_config["view_path"] ? rtrim(self::_config["view_path"], "/\\") : "";
+        let viewPath  = isset self::_config["view_path"]       ? rtrim(self::_config["view_path"], "/\\") : "";
         let cachePath = isset self::_config["view_cache_path"] ? rtrim(self::_config["view_cache_path"], "/\\") : "";
-        let viewExt   = isset self::_config["view_file_ext"] ? trim( self::_config["view_file_ext"], '.') : "html";
+        let viewExt   = isset self::_config["view_file_ext"]   ? trim( self::_config["view_file_ext"], '.') : "html";
         let defaultModule = isset self::_config["default_module"] ? self::_config["default_module"] : "index";
         let mca = trim(mca,"\\/");
 
@@ -139,35 +141,39 @@ class View {
      */
     private static function parse(string content) -> string
     {
-        let content = preg_replace ( "/<template\s+(.+)>/", "<?php include \\Aimo\\View::load(\\1); ?>", content );
-        let content = preg_replace ( "/<include\s+(.+)>/", "<?php include \\1; ?>", content );
-        let content = preg_replace ( "/<php\s+(.+)>/", "<?php \\1?>", content );
-        let content = preg_replace ( "/<if\s+(.+?)>/", "<?php if(\\1) { ?>", content );
-        let content = preg_replace ( "/<else>/", "<?php } else { ?>", content );
-        let content = preg_replace ( "/<elseif\s+(.+?)>/", "<?php } elseif (\\1) { ?>", content );
-        let content = preg_replace ( "/<\/if>/", "<?php } ?>", content );
-        let content = preg_replace ( "/<for\s+(.+?)>/", "<?php for(\\1) { ?>", content );
-        let content = preg_replace ( "/<\/for>/", "<?php } ?>", content );
-        let content = preg_replace ( "/<\+\+(.+?)>/", "<?php ++\\1; ?>", content );
-        let content = preg_replace ( "/<\-\-(.+?)>/", "<?php ++\\1; ?>", content );
-        let content = preg_replace ( "/<(.+?)\+\+>/", "<?php \\1++; ?>", content );
-        let content = preg_replace ( "/<(.+?)\-\->/", "<?php \\1--; ?>", content );
-        let content = preg_replace ( "/<loop\s+(\S+)\s+(\S+)>/", "<?php \$n=1;if(isset(\\1) && (is_array(\\1) || is_object(\\1))) foreach(\\1 AS \\2) { ?>", content );
-        let content = preg_replace ( "/<loop\s+(\S+)\s+(\S+)\s+(\S+)>/", "<?php \$n=1; if(is_array(\\1) || is_object(\\1)) foreach(\\1 AS \\2 => \\3) { ?>", content );
-        let content = preg_replace ( "/<foreach\s+(\S+)\s+(\S+)>/", "<?php \$n=1;if(isset(\\1) && (is_array(\\1) || is_object(\\1))) foreach(\\1 AS \\2) { ?>", content );
-        let content = preg_replace ( "/<foreach\s+(\S+)\s+(\S+)\s+(\S+)>/", "<?php \$n=1; if(isset(\\1) && (is_array(\\1) || is_object(\\1))) foreach(\\1 AS \\2 => \\3) { ?>", content );
-        let content = preg_replace ( "/<\/loop>/", "<?php \$n++;} unset(\$n); ?>", content );
-        let content = preg_replace ( "/<\/foreach>/", "<?php \$n++;} unset(\$n); ?>", content );
-        let content = preg_replace_callback("/\{\\$(\S+)\|(\S+)=(.+)\}/","\\Aimo\\View::fixfunction", content);
-        let content = preg_replace ( "/\{([a-zA-Z_\-\>\.\x7f-\xff][a-zA-Z0-9_\-\>\.\x7f-\xff:]*\(([^\{\}]*)\))\}/", "<?php echo \\1;?>", content );
-        let content = preg_replace ( "/\{\\$([a-zA-Z_\-\>\x7f-\xff][a-zA-Z0-9_\-\>\x7f-\xff:]*\(([^\{\}]*)\))\}/", "<?php echo \\1;?>", content );
-        let content = preg_replace ( "/\{(\\$[a-zA-Z_\-\>\x7f-\xff][a-zA-Z0-9_\-\>\x7f-\xff]*)\}/", "<?php echo \\1;?>", content );
-        let content = preg_replace_callback ( "/\{(\\$[a-zA-Z0-9_\-\>\[\]\'\"\$\x7f-\xff]+)\}/s","\\Aimo\\View::addquote",content );
-        let content = preg_replace_callback( "/\{(\\$[a-zA-Z0-9_\.\'\"\$\x7f-\xff]+)\}/s","\\Aimo\\View::fixvar",content );
-        let content = preg_replace( "/\{([A-Z_\x7f-\xff][A-Z0-9_\x7f-\xff]*)\}/s", "<?php echo \\1;?>", content );
-        let content = preg_replace_callback( "/<".self::_namespace.":(\w+)\s+([^>]+)>/i","\\Aimo\\View::tag", content );
-        let content = preg_replace( "/<\/".self::_namespace.">/i", "<?php } ?>", content );
-        let content = "<?php defined('InAimo') or exit('Access Denied!');?>\r\n".content;
+        var db,de;
+        let db = (isset self::_config["delimiter_begin"]) ? self::_config["delimiter_begin"] : "{";
+        let de = (isset self::_config["delimiter_end"])   ? self::_config["delimiter_end"]   : "{";
+
+        let content = preg_replace ( "/".db."template\s+(.+)".de."/", "<?php include \\Aimo\\View::load(\\1); ?>", content );
+        let content = preg_replace ( "/".db."include\s+(.+)".de."/", "<?php include \\1; ?>", content );
+        let content = preg_replace ( "/".db."php\s+(.+)".de."/", "<?php \\1?>", content );
+        let content = preg_replace ( "/".db."if\s+(.+?)".de."/", "<?php if(\\1) { ?>", content );
+        let content = preg_replace ( "/".db."else".de."/", "<?php } else { ?>", content );
+        let content = preg_replace ( "/".db."elseif\s+(.+?)".de."/", "<?php } elseif (\\1) { ?>", content );
+        let content = preg_replace ( "/".db."\/if".de."/", "<?php } ?>", content );
+        let content = preg_replace ( "/".db."for\s+(.+?)".de."/", "<?php for(\\1) { ?>", content );
+        let content = preg_replace ( "/".db."\/for".de."/", "<?php } ?>", content );
+        let content = preg_replace ( "/".db."\+\+(.+?)".de."/", "<?php ++\\1; ?>", content );
+        let content = preg_replace ( "/".db."\-\-(.+?)".de."/", "<?php ++\\1; ?>", content );
+        let content = preg_replace ( "/".db."(.+?)\+\+".de."/", "<?php \\1++; ?>", content );
+        let content = preg_replace ( "/".db."(.+?)\-\-".de."/", "<?php \\1--; ?>", content );
+        let content = preg_replace ( "/".db."loop\s+(\S+)\s+(\S+)".de."/", "<?php \$n=1;if(isset(\\1) && (is_array(\\1) || is_object(\\1))) foreach(\\1 AS \\2) { ?>", content );
+        let content = preg_replace ( "/".db."loop\s+(\S+)\s+(\S+)\s+(\S+)".de."/", "<?php \$n=1; if(is_array(\\1) || is_object(\\1)) foreach(\\1 AS \\2 => \\3) { ?>", content );
+        let content = preg_replace ( "/".db."foreach\s+(\S+)\s+(\S+)".de."/", "<?php \$n=1;if(isset(\\1) && (is_array(\\1) || is_object(\\1))) foreach(\\1 AS \\2) { ?>", content );
+        let content = preg_replace ( "/".db."foreach\s+(\S+)\s+(\S+)\s+(\S+)".de."/", "<?php \$n=1; if(isset(\\1) && (is_array(\\1) || is_object(\\1))) foreach(\\1 AS \\2 => \\3) { ?>", content );
+        let content = preg_replace ( "/".db."\/loop".de."/", "<?php \$n++;} unset(\$n); ?>", content );
+        let content = preg_replace ( "/".db."\/foreach".de."/", "<?php \$n++;} unset(\$n); ?>", content );
+        let content = preg_replace_callback("/".db."\\$(\S+)\|(\S+)=(.+)".de."/","\\Aimo\\View::fixfunction", content);
+        let content = preg_replace ( "/".db."([a-zA-Z_\-\>\.\x7f-\xff][a-zA-Z0-9_\-\>\.\x7f-\xff:]*\(([^\{\}]*)\))".de."/", "<?php echo \\1;?>", content );
+        let content = preg_replace ( "/".db."\\$([a-zA-Z_\-\>\x7f-\xff][a-zA-Z0-9_\-\>\x7f-\xff:]*\(([^\{\}]*)\))".de."/", "<?php echo \\1;?>", content );
+        let content = preg_replace ( "/".db."(\\$[a-zA-Z_\-\>\x7f-\xff][a-zA-Z0-9_\-\>\x7f-\xff]*)".de."/", "<?php echo \\1;?>", content );
+        let content = preg_replace_callback ( "/".db."(\\$[a-zA-Z0-9_\-\>\[\]\'\"\$\x7f-\xff]+)".de."/s","\\Aimo\\View::addquote",content );
+        let content = preg_replace_callback( "/".db."(\\$[a-zA-Z0-9_\.\'\"\$\x7f-\xff]+)".de."/s","\\Aimo\\View::fixvar",content );
+        let content = preg_replace( "/".db."([A-Z_\x7f-\xff][A-Z0-9_\x7f-\xff]*)".de."/s", "<?php echo \\1;?>", content );
+        let content = preg_replace_callback( "/".db."".self::_namespace.":(\w+)\s+([^>]+)".de."/i","\\Aimo\\View::tag", content );
+        let content = preg_replace( "/".db."\/".self::_namespace."".de."/i", "<?php } ?>", content );
+        //let content = "<?php defined('InAimo') or exit('Access Denied!');?>\r\n".content;
         return content;
     }
 
@@ -291,10 +297,10 @@ class View {
             let datas[v1] = v[2];
         }
 
-        let num    = isset(attr["num"]) ? intval(attr["num"]) : 20;
-        let name   = isset(attr["name"]) ? trim(attr["name"]) : "data";
-        let action = isset(attr["action"]) ? trim(attr["action"]) : "";
-        if  empty ( action ) {
+        let num    = isset attr["num"]    ? intval(attr["num"])  : 20;
+        let name   = isset attr["name"]   ? trim(attr["name"])   : "data";
+        let action = isset attr["action"] ? trim(attr["action"]) : "";
+        if empty action {
             return "";
         }
 
