@@ -6,15 +6,55 @@ namespace Aimo;
  */
 class Model
 {
-    protected table   = "";
-    protected prefix  = "";
-    protected static primary = [];
-    protected fields  = [];
-    protected _data   = [];
-    protected _rows   = [];
-    protected _index  = 0;
-    protected _validateRules = [];
-    protected _error = [];
+    /**
+     *@var string 模型名
+     */
+    protected modelName = "";
+
+    /**
+     *@var string 数据表名
+     */
+    protected table     = "";
+
+    /**
+     *@var array primary 模型主键
+     */
+    protected primary   = [];
+
+    /**
+     *@var array validateRules 验证规则
+     */
+    protected validateRules = [];
+
+    /**
+     *@var primary 模型主键
+     */
+    protected fields    = [];
+
+    /**
+     *@var array 数据
+     */
+    protected _data     = [];
+
+
+    /**
+     *@var array 更新的数据
+     */
+    protected _dirty     = [];
+    /**
+     *@var array 数据集
+     */
+    protected _rows     = [];
+
+    /**
+     *@var int 索引
+     */
+    protected _index    = 0;
+
+    /**
+     *@var array 模型错误信息
+     */
+    protected _error    = [];
 
     /**
      * Aimo\Model
@@ -25,7 +65,7 @@ class Model
      * use Aimo\Model;
      * class User extends Model {
      *     protected $table = 'user';
-     *     protected static $primary = ['uid'];
+     *     protected $primary = ['uid'];
      *     protected $fields  = [
      *         'uid','username','password',
      *         'groupid','regtime'
@@ -52,28 +92,54 @@ class Model
     {
     }
 
+    /**
+     *Judge if the operation is Create or Update
+     *
+     */
+    protected function isNew()->boolean
+    {
+        var pks,pk;
+        let pks = this->getPk();
+        for pk in pks {
+            if isset this->_data[pk] && !empty this->_data[pk] {
+                return false;
+            }
+        }
+        return true;
+    }
+
     public function __set(string! name, value) -> void
     {
         var method;
         if !property_exists(this,name) {
             let method = "set".ucfirst(name);
             if method_exists(this, method) {
-                let this->_data[name] = this->{method}(value);
+                if !isset this->_data[name] {
+                    let this->_data[name] = this->{method}(value);
+                }else{
+                    let this->_dirty[name] = this->{method}(value);
+                }
             }else{
-                let this->_data[name]=value;
+                if !isset this->_data[name] {
+                    let this->_data[name]=value;
+                }else{
+                    let this->_dirty[name]=value;
+                }
             }
         }
     }
 
     public function __get(string! name)
     {
-        var method;
+        var method,value;
         if !property_exists(this, name){
             let method = "get".ucfirst(name);
+            let value = isset this->_dirty[name] ? 
+                    this->_dirty[name] : isset this->_data[name] ? this->_data[name] : null;
             if method_exists(this, method) {
-                return this->{method}(this->_data[name]);
+                return this->{method}(value);
             }else{
-                return this->_data[name];
+                return value;
             }
         }
         return null;
@@ -94,33 +160,39 @@ class Model
         return this->_error;
     }
 
+    public function getPk()
+    {
+        return this->primary;
+    }
+
     public function validate()
     {
-        var messages,operate,key,value,validateFields,field;
+        var messages,operate,key,value,validateFields,field,pks;
         var ruleString,rules,rule,v,c,kk;
         array cond;
-        let messages = this->_validateRules["msg"];
+        let messages = this->validateRules["msg"];
         let operate  = "update";
-        for key in self::primary {
-            let value = this->_data[key];
+        let pks = this->getPk();
+        for key in pks {
+            let value = isset this->_data[key] ? this->_data[key] : "";
             if empty value {
                 let operate = "create";
                 break;
             }
         }
 
-        if isset this->_validateRules["scene"] {
-            if empty this->_validateRules["scene"][operate] {
-                let validateFields = array_keys(this->_validateRules["rules"]);
+        if isset this->validateRules["scene"] {
+            if empty this->validateRules["scene"][operate] {
+                let validateFields = array_keys(this->validateRules["rules"]);
             }else{
-                let validateFields = this->_validateRules["scene"][operate];
+                let validateFields = this->validateRules["scene"][operate];
             }
         }else{
-            let validateFields = array_keys(this->_validateRules["rules"]);
+            let validateFields = array_keys(this->validateRules["rules"]);
         }
 
         for field in validateFields {
-            let ruleString = this->_validateRules["rules"][field];
+            let ruleString = this->validateRules["rules"][field];
             let rules      = explode("|", ruleString);
             let v          = isset this->_data[field] ? this->_data[field] : null;
             for rule in rules {
@@ -178,7 +250,7 @@ class Model
                         }elseif operate == "update" {
                             
                             let cond = [field:v];
-                            for kk in self::primary {
+                            for kk in pks {
                                 let cond[kk]=["<>",this->{kk}];
                             }
                             let c = self::where(cond)->count();
@@ -296,7 +368,7 @@ class Model
                                 }
                             }elseif operate == "update" {
                                 let cond = [field:v];
-                                for kk in self::primary{
+                                for kk in pks {
                                     let cond[kk]=["<>",this->{kk}];
                                 }
                                 let c = self::where(cond)->count();
@@ -334,14 +406,17 @@ class Model
      */
     public static function where(a,b=null,c=null)
     {
-        var model,table;
+        var model,table,instance,pks;
         let model = get_called_class();
         if strpos(model, "\\") === false {
             let table = model;
         }else{
             let table = substr(strrchr(model, "\\"), 1);
         }
-        return Db::name(table)->setEntity(model,self::primary)->where(a,b,c);
+        let instance  = new {model}();
+        let pks       = (array) instance->getPk();
+        let instance  = null;
+        return Db::name(table)->setEntity(model, pks)->where(a,b,c);
     }
 
     /**
@@ -358,20 +433,23 @@ class Model
      */
     public static function get(id)
     {
-        if empty self::primary {
-            throw "Model Primary not defined.Can't use Model::get method";
-        }
-        if count(self::primary) > 1 {
-            throw "Model Multiple Primary not supported yet.";
-        }
-        var model,table;
+        var model,table,instance,pks;
         let model = get_called_class();
         if strpos(model, "\\") === false {
             let table = model;
         }else{
             let table = substr(strrchr(model, "\\"), 1);
         }
-        return Db::name(table)->setEntity(model,self::primary)->where(self::primary[0],id)->find();
+        let instance  = new {model}();
+        let pks       = (array) instance->getPk();
+        let instance  = null;
+        if empty pks {
+            throw "Model Primary not defined.Can't use Model::get method";
+        }
+        if count(pks) > 1 {
+            throw "Model Multiple Primary not supported yet.";
+        }
+        return Db::name(table)->setEntity(model,pks)->where(pks[0],id)->find();
     }
 
     /**
@@ -389,17 +467,18 @@ class Model
      */
     public function save()
     {
-        var model,table,id,pk;
+        var model,table,id,pks,pk;
         let model = get_called_class();
         if strpos(model, "\\") === false {
             let table = model;
         }else{
             let table = substr(strrchr(model, "\\"), 1);
         }
+        let pks = (array) this->getPk();
         if this->isValid() {
-            if !empty self::primary && count(self::primary)===1 {
+            if !empty pks && count(pks)===1 {
                 let id = Db::name(table)->insertGetId(this->_data);
-                let pk = self::primary[0];
+                let pk = pks[0];
                 let this->_data[pk] = id;
                 return true;
             }else{
@@ -423,28 +502,30 @@ class Model
      */
     public function update()
     {
-        if empty self::primary {
-            throw "Model Primary not defined.Can't use Model::update method";
-        }
         array cond = [];
-        var model,table,k;
-        for k in self::primary {
-            if isset this->_data[k] {
-                let cond[k]=this->_data[k];
-                unset this->_data[k];
-            }
-        }
-        if empty cond {
-            throw "Model data error,No primary value";
-        }
+        var model,table,k,pks;
         let model = get_called_class();
         if strpos(model, "\\") === false {
             let table = model;
         }else{
             let table = substr(strrchr(model, "\\"), 1);
         }
+        let pks  = (array) this->getPk();
+        if empty pks {
+            throw "Model Primary not defined.Can't use Model::update method";
+        }
+        for k in pks {
+            if isset this->_data[k] {
+                let cond[k]=this->_data[k];
+                unset this->_data[k];
+            }
+        }
+        if empty cond {
+            throw "Model data error,No primary value given";
+        }
+        
         if this->isValid(){
-            return Db::name(table)->where(cond)->update(this->_data);
+            return Db::name(table)->where(cond)->update(this->_dirty);
         }else{
             return false;
         }
@@ -460,21 +541,22 @@ class Model
      *
      * @access public
      */
-    public function delete(field="status",value=-1)
+    public function delete(string! field="status",value=-1)
     {
-        if empty self::primary {
-            throw "Model Primary not defined.Can't use Model::delete method";
-        }
         array cond = [];
-        var model,table,k;
-        for k in self::primary {
-            let cond[k]=this->_data[k];
-        }
-        let model = get_called_class();
+        var model,table,k,pks;
+        let model  = get_called_class();
         if strpos(model, "\\") === false {
             let table = model;
         }else{
             let table = substr(strrchr(model, "\\"), 1);
+        }
+        let pks = (array) this->getPk();
+        if empty pks {
+            throw "Model Primary not defined.Can't use Model::delete method";
+        }
+        for k in pks {
+            let cond[k]=this->_data[k];
         }
         let this->_data[field]=value;
         return Db::name(table)->where(cond)->update([field:value]);
@@ -492,19 +574,20 @@ class Model
      */
     public function destroy()
     {
-        if empty self::primary {
-            throw "Model Primary not defined.Can't use Model::destroy method";
-        }
-        var model,table,k,rs,returnValue;
+        var model,table,k,rs,pks,returnValue;
         array cond = [];
-        for k in self::primary {
-            let cond[k]=this->_data[k];
-        }
-        let model = get_called_class();
+        let model  = get_called_class();
         if strpos(model, "\\") === false {
             let table = model;
         }else{
             let table = substr(strrchr(model, "\\"), 1);
+        }
+        let pks = (array) this->getPk();
+        if empty pks {
+            throw "Model Primary not defined.Can't use Model::destroy method";
+        }
+        for k in pks {
+            let cond[k]=this->_data[k];
         }
         let returnValue = Event::trigger("beforeDestroy",[this->_data,this]);
         if returnValue === false {
