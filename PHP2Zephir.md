@@ -1,4 +1,4 @@
-# 从PHP到Zephir
+# 从PHP到Zephir快速指引
 本文旨在让更多的开发人员尽快熟悉Zephir，并使用Zephir加速自己的代码。
 ## 语法差异
      变量去掉$前缀，并且必须声明。快速声明可以使用var
@@ -8,6 +8,7 @@
 	 在Zephir中可以直接调用PHP的内置函数，函数返回值赋值必须使用var声明
 	 在Zephir中可以直接访问PHP的全局变量
 	 在Zephir中不可以使用魔术变量如：__FILE__,__DIR__,__CLASS__,__NAMESPACE__ 
+     zephir的每一个文件必须由一个类组成，类名就是文件名，扩展名是zep。
 ```
 //Zephir的变量必须声明，静态变量支持直接使用变量类型修饰符，不确定的动态变量可以使用var声明
 var data;
