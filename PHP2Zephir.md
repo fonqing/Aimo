@@ -3,7 +3,7 @@
 ## 语法差异
      变量去掉$前缀，并且必须声明。快速声明可以使用var
 	 将PHP程序中的单引号全部换为双引号
-	 Zephir不支持显示引用，如PDO中的bindParam是不被支持的，但是array_push这些是可以的。
+	 Zephir不支持显式引用，如PDO中的bindParam是不被支持的，但是array_push这些是可以的。
 	 变量赋值全部改为 let 前关键字
 	 在Zephir中可以直接调用PHP的内置函数，函数返回值赋值必须使用var声明
 	 在Zephir中可以直接访问PHP的全局变量
