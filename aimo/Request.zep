@@ -41,7 +41,7 @@ class Request {
     public static function instance() -> <Request>
     {
         if self::instance === null {
-            let self::instance = new self();
+            let self::instance = new static();
         }
         return self::instance;
     }
@@ -139,7 +139,7 @@ class Request {
      * @param mixed filter 过滤器
      * @return mixed
      */
-    public function get(var name,var def="",var filter="text")
+    public function get(var name,var def=null,var filter="text")
     {
         if empty filter {
             return isset _GET[name] ? _GET[name] : null;
@@ -177,7 +177,7 @@ class Request {
      * @param mixed filter 过滤器
      * @return mixed
      */
-    public function post(var name,var def="",var filter="text")
+    public function post(var name,var def=null,var filter="text")
     {
         if empty filter {
             return isset _POST[name] ? _POST[name] : null;
@@ -215,7 +215,7 @@ class Request {
      * @param mixed filter 过滤器
      * @return mixed
      */
-    public function param(var name,var def="",var filter="text")
+    public function param(var name,var def=null,var filter="text")
     {
         var params;
         let params = Request::instance()->getParams();
@@ -399,37 +399,37 @@ class Request {
     /**
      * Data filters
      */
-    private function f_text(var str)
+    public function f_text(var str)
     {
         return filter_var(str, FILTER_SANITIZE_SPECIAL_CHARS);
     }
 
-    private function f_int(var val)
+    public function f_int(var val)
     {
         return filter_var(val, FILTER_SANITIZE_NUMBER_INT);
     }
 
-    private function f_float(var val)
+    public function f_float(var val)
     {
         return filter_var(val, FILTER_SANITIZE_NUMBER_FLOAT);
     }
 
-    private function f_url(var val)
+    public function f_url(var val)
     {
         return filter_var(val, FILTER_SANITIZE_URL);
     }
 
-    private function f_email(var val)
+    public function f_email(var val)
     {
         return filter_var(val, FILTER_SANITIZE_EMAIL);
     }
 
-    private function f_alpha(var str)
+    public function f_alpha(var str)
     {
         return preg_replace("/[^a-z]+/i", "", str);
     }
 
-    private function f_alphanum(var str)
+    public function f_alphanum(var str)
     {
         return preg_replace("/[^a-z0-9]+/i", "", str);
     }
