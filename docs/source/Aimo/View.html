@@ -139,6 +139,30 @@ class View {
      *      'delimiter_end'   => '}'          //模板标记结束定界符
      * ]);
      * </code>
+     *<code>
+     *Template syntax:
+     * Variable output: {$name} {$data[name]} {$data.name} {$data->name} {PHP_VERSION}
+     * Call global function: {print_r($data)}
+     * Loop: {loop $items $item} {/loop} 
+     *       {loop $items $k $item} {/loop}
+     *       {foreach $items $item} {/foreach}
+     *       {foreach $items $k $item} {/foreach}
+     * For:  {for $i=0;$i<10;$i++} {/for}
+     * Subtemplate: {template "index/public/header"}
+     * Include: {include "vars.php"}
+     * Taglib: 
+     * {Aimo::news action="getlist" name="infos" ttl="3600"}
+     *   {loop $infos $info} 
+     *   {/loop} 
+     * {/Aimo}
+     * Condition:
+     * {if isset($var)}
+     * {elseif isset($var2)}
+     * {else}
+     * {/if}
+     * OriPHP:
+     * {php}{/php}
+     *</code>
      *
      * @access public
      * @param array config 视图配置

@@ -83,7 +83,7 @@ class Html {
      * HTML标签
      *
      * 生成HTML标签
-     * 
+     *
      * <code>
      * echo Html::tag('a',['href'=>'#','class'=>'anchor'],'文字');
      * //Will output : <a href="#" class="anchor">文字</a>
@@ -94,7 +94,7 @@ class Html {
      * @param string tagName
      * @param array attributes
      * @param string inner inner text
-     * @param boolean selfClose 
+     * @param boolean selfClose
      */
     public static function tag(string! tagName, array! attributes, string! inner = "", boolean selfClose = false) -> string
     {
@@ -131,25 +131,37 @@ class Html {
      * <code>
      * echo Html::a(['href'=>'#','class'=>'anchor'],'文字');
      * //Will output : <a href="#" class="anchor">文字</a>
-     * echo Html::input(['type'=>'text','name'=>'name'], '', true);
+     * echo Html::input(['type'=>'text','name'=>'name']);
      * /Will output : <input type="text" name="name" />
      * </code>
      */
-    public static function __callStatic(tagName,args)
+    public static function __callStatic(tagName, args)
     {
-        string single     = ",input,hr,br,img,";
-        //string special    = "";
-        boolean selfClose = false;
-        let tagName = strtolower(tagName);
-        if single->index(",".tagName.",") {
-            let selfClose = true;
+        var c;
+        let c = count(args),
+            tagName = preg_replace("/[^a-z1-6]+/","",strtolower(tagName));
+        if empty tagName {
+            throw "TagName can't empty";
         }
-        let args[2] = selfClose;
+        if empty args {
+            throw "Html::".tagName." params required";
+        }
+        string single = ",input,hr,br,img,";
+        //string special  = "";
+        if single->index(",".tagName.",") {
+            let args[]= "";
+            let args[]= true;
+        }else{
+            if c < 2 {
+                throw "Html::".tagName." need two params";
+            }
+        }
         array_unshift(args, tagName);
         return call_user_func_array("Aimo\\Html::tag",args);
     }
 
-}</pre>                </div>
+}
+</pre>                </div>
             </div>
         </div>
     </body>
