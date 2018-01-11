@@ -62,6 +62,7 @@ class View {
      * ]);
      * </code>
      *<code>
+     *
      *Template syntax:
      * Variable output: {$name} {$data[name]} {$data.name} {$data->name} {PHP_VERSION}
      * Call global function: {print_r($data)}
