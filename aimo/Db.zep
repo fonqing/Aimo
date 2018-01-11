@@ -16,6 +16,7 @@ class Db
         "options" : null,
         "prefix" : "",
         "identifier_quote_character" : null,
+        "identifier_case" : "default",//lower,upper,default
         "limit_clause_style" : null,
         "logging" : false,
         "logger" : null
@@ -49,6 +50,10 @@ class Db
     protected _expr_fields = [];
     protected _instance_id_column = null;
 
+    //强制返回数组结果
+    protected _as_array = false;
+
+    //绑定的模型
     protected _entity = null;
     /**
      * 避免DB被直接实例化
@@ -171,6 +176,13 @@ class Db
      */
     public static function table(string! table_name, name = "default") -> <Db>
     {
+        var identifier_case;
+        let identifier_case = self::config("identifier_case");
+        if identifier_case == "upper" {
+            let table_name = table_name->upper();
+        } elseif identifier_case == "lower" {
+            let table_name = table_name->lower();
+        }
         self::_setup_db(name);
         return new self(table_name, [], name);
     }
@@ -189,7 +201,13 @@ class Db
      */
     public static function name(string! table_name, name = "default") -> <Db>
     {
-        var prefix;
+        var prefix,identifier_case;
+        let identifier_case = self::config("identifier_case");
+        if identifier_case == "upper" {
+            let table_name = table_name->upper();
+        } elseif identifier_case == "lower" {
+            let table_name = table_name->lower();
+        }
         self::_setup_db(name);
         let prefix = self::getConfig("prefix",name);
         return new self(prefix.table_name, [], name);
@@ -1034,7 +1052,23 @@ class Db
     }
 
     /**
-     * 获取一条记录并返回数组
+     * 返回数组开关
+     * 供绑定模型后返回多条记录使用
+     * 
+     * <code>
+     * User::where('1')->asArray()->select();
+     * </code>
+     *
+     * @access public
+     */
+    public function asArray()-><Db>
+    {
+        let this->_as_array = true;
+        return this;
+    }
+
+    /**
+     * 获取一条记录并返回
      * 
      * <code>
      * Db::name('user')->find(6);//Find by primary key value
@@ -2127,9 +2161,10 @@ class Db
      * Execute the SELECT query that has been built up by chaining methods
      * on this class. Return an array of rows as associative arrays.
      */
-    protected function _run_by_model() -> <\PDOStatement>
+    protected function _run_by_model() -> <\PDOStatement>|array
     {
-        var query,statement;
+        var query,statement,row,result;
+        string fun = "fetch";
         let query = this->_build_select();
         self::_execute(query, this->_values, this->_name);
         let statement = self::getLastStatement();
@@ -2138,7 +2173,20 @@ class Db
         let this->_result_columns = ["*"];
         let this->_using_default_result_columns = true;
         let this->_entity = null;
-        return statement;
+        if this->_as_array {
+            let this->_as_array = false;
+            let result = [];
+            loop {
+                let row = statement->{fun}(\PDO::FETCH_ASSOC);
+                if empty row {
+                    break;
+                }
+                let result[]=row;
+            }
+            return result;
+        } else {
+            return statement;
+        }
     }
 
     /**

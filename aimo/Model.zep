@@ -192,6 +192,11 @@ class Model
         return null;
     }
 
+    public function __isset(string! name)->boolean
+    {
+        return isset this->_data[name];
+    }
+
     /**
      * 获取模型原始数据
      *
