@@ -522,7 +522,7 @@ class Db
     {
         var k,v;
         string operators;
-        if a!=null && b==null && c==null {
+        if b==null && c==null {
             if (typeof a=="string" ) {
                 return this->whereRaw(a);
             } elseif (typeof a == "array") {
@@ -539,7 +539,7 @@ class Db
                 }
                 return this;
             }
-        } elseif a!=null && b!=null && c==null {
+        } elseif b!=null && c==null {
             if (typeof a == "array"){
                 throw "Not support conditon defination";
             } elseif (typeof a == "string") {
@@ -549,7 +549,7 @@ class Db
                     return this->whereEqual(a,b);
                 }
             }
-        } elseif a!=null && b!=null && c!=null {
+        } elseif  b!=null && c!=null {
             let operators = "_=_!=_>_<>_<_>=_<=_LIKE_NOT LIKE_";
             if (typeof b == "string"){
                 let b = strtoupper(b);
@@ -1757,6 +1757,8 @@ class Db
         if type == "where" {
             if (typeof values != "array")  {
                 let temp = [values];
+            }else{
+                let temp = values;
             }
             let this->_where_conditions[]=[
                 self::CONDITION_FRAGMENT : fragment,
@@ -1765,6 +1767,8 @@ class Db
         } elseif type == "having" {
             if (typeof values != "array")  {
                 let temp = [values];
+            }else{
+                let temp = values;
             }
             let this->_having_conditions[]=[
                 self::CONDITION_FRAGMENT : fragment,

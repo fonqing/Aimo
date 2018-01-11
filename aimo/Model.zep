@@ -284,12 +284,24 @@ class Model
      */
     public function validate()
     {
+        if !isset this->validateRules {
+            return true;
+        }
+        if empty this->validateRules {
+            return true;
+        }
+        if !isset this->validateRules["rules"] {
+            throw "模型定义了验证器，但缺少验证规则";
+        }
         var messages,operate,key,value,validateFields,field,pks;
-        var ruleString,rules,rule,v,c,kk,sc,tmp;
+        var ruleString,rules,rule,v,c,kk,sc,tmp,vk;
         array cond;
-        let messages = this->validateRules["msg"];
+        let messages = isset this->validateRules["msg"] ? this->validateRules["msg"] : [];
         let operate  = "update";
         let pks = this->getPk();
+        if empty pks {
+            throw "模型无主键，无法确定新增还是更新";
+        }
         for key in pks {
             let value = "";
             if isset this->_data[key] {
@@ -311,61 +323,65 @@ class Model
         }
         let tmp = (operate == "create") ? this->_data : this->_dirty;
         for field in validateFields {
-            let ruleString = this->validateRules["rules"][field];
+            let ruleString = isset this->validateRules["rules"][field] ? this->validateRules["rules"][field] : "";
+            if empty ruleString {
+                continue;
+            }
             //'field' => 'require|regex:^(a|b)$'
             //TODO:正则表达式验证器中如果存在“|”字符将导致错误，稍后解决
             let rules = explode("|", ruleString);
             let v = isset tmp[field] ? tmp[field] : null;
             for rule in rules {
+                let vk = field.".".rule;
                 let sc = strpos(rule, ":");
                 if sc === false {
                     switch rule {
                         case "require":
                             if empty v && v!==0 && v!=="0" {
-                                let this->_error[]=messages[field.".".rule];
+                                let this->_error[]=isset messages[vk] ? messages[vk] : vk;
                                 return false;
                             }
                             break;
                         case "number":
                             if !is_numeric(v) {
-                                let this->_error[]=messages[field.".".rule];
+                                let this->_error[]=isset messages[vk] ? messages[vk] : vk;
                                 return false;
                             }
                             break;
                         case "integer":
                         case "int":
                             if (typeof v != "integer"){
-                                let this->_error[]=messages[field.".".rule];
+                                let this->_error[]=isset messages[vk] ? messages[vk] : vk;
                                 return false;
                             }
                             break;
                         case "float":
                             if !is_float(v) {
-                                let this->_error[]=messages[field.".".rule];
+                                let this->_error[]=isset messages[vk] ? messages[vk] : vk;
                                 return false;
                             }
                             break;
                         case "email":
                             if !filter_var(v, FILTER_VALIDATE_EMAIL) {
-                                let this->_error[]=messages[field.".".rule];
+                                let this->_error[]=isset messages[vk] ? messages[vk] : vk;
                                 return false;
                             }
                             break;
                         case "alpha":
                             if !preg_match("/^[a-z]+$/i",v) {
-                                let this->_error[]=messages[field.".".rule];
+                                let this->_error[]=isset messages[vk] ? messages[vk] : vk;
                                 return false;
                             }
                             break;
                         case "alphaNum":
                             if !preg_match("/^[a-z0-9]+$/i",v) {
-                                let this->_error[]=messages[field.".".rule];
+                                let this->_error[]=isset messages[vk] ? messages[vk] : vk;
                                 return false;
                             }
                             break;
                         case "alphaDash":
                             if !preg_match("/^[a-z0-9_]+$/i",v) {
-                                let this->_error[]=messages[field.".".rule];
+                                let this->_error[]=isset messages[vk] ? messages[vk] : vk;
                                 return false;
                             }
                             break;
@@ -373,7 +389,7 @@ class Model
                             if operate == "create" {
                                 let c = self::where(field,v)->count();
                                 if c > 0 {
-                                    let this->_error[]=messages[field.".".rule];
+                                    let this->_error[]=isset messages[vk] ? messages[vk] : vk;
                                     return false;
                                 }
                             } elseif operate == "update" {
@@ -383,7 +399,7 @@ class Model
                                 }
                                 let c = self::where(cond)->count();
                                 if c > 0 {
-                                    let this->_error[]=messages[field.".".rule];
+                                    let this->_error[]=isset messages[vk] ? messages[vk] : vk;
                                     return false;
                                 }
                             }
@@ -398,30 +414,30 @@ class Model
                     } else {
                         let params = explode(",", temp);
                     }
-
+                    let vk = field.".".ruleName;
                     switch ruleName
                     {
                         case "in":
                             if !in_array(v, params) {
-                                let this->_error[]=messages[field.".".ruleName];
+                                let this->_error[]=isset messages[vk] ? messages[vk]:vk;
                                 return false;
                             }
                             break;
                         case "notin":
                             if in_array(v, params) {
-                                let this->_error[]=messages[field.".".ruleName];
+                                let this->_error[]=isset messages[vk] ? messages[vk]:vk;
                                 return false;
                             }
                             break;
                         case "between":
                             if v < params[0] || v > params[1] {
-                                let this->_error[]=messages[field.".".ruleName];
+                                let this->_error[]=isset messages[vk] ? messages[vk]:vk;
                                 return false;
                             }
                             break;
                         case "notBetween":
                             if v >= params[0] && v <= params[1] {
-                                let this->_error[]=messages[field.".".ruleName];
+                                let this->_error[]=isset messages[vk] ? messages[vk]:vk;
                                 return false;
                             }
                             break;
@@ -429,27 +445,27 @@ class Model
                             let length = strlen(v);
                             if count(params) == 1 {
                                 if length != intval(params[0]) {
-                                    let this->_error[]=messages[field.".".ruleName];
+                                    let this->_error[]=isset messages[vk] ? messages[vk]:vk;
                                     return false;
                                 }
                             }else{
                                 let minlength = intval(params[0]);
                                 let maxlength = intval(params[1]);
                                 if length < minlength || length > maxlength {
-                                    let this->_error[]=messages[field . "." . ruleName];
+                                    let this->_error[]=isset messages[vk] ? messages[vk]:vk;
                                     return false;
                                 }
                             }
                             break;
                         case "max":
                             if v > params[0] {
-                                let this->_error[]=messages[field.".".ruleName];
+                                let this->_error[]=isset messages[vk] ? messages[vk]:vk;
                                 return false;
                             }
                             break;
                         case "min":
                             if v < params[0]{
-                                let this->_error[]=messages[field.".".ruleName];
+                                let this->_error[]=isset messages[vk] ? messages[vk]:vk;
                                 return false;
                             }
                             break;
@@ -457,7 +473,7 @@ class Model
                             let v = strtotime(v);
                             let valid = strtotime(params[0]);
                             if v < valid {
-                                let this->_error[]=messages[field.".".ruleName];
+                                let this->_error[]=isset messages[vk] ? messages[vk]:vk;
                                 return false;
                             }
                             break;
@@ -465,7 +481,7 @@ class Model
                             let v = strtotime(v);
                             let valid = strtotime(params[0]);
                             if v > valid {
-                                let this->_error[]=messages[field.".".ruleName];
+                                let this->_error[]=isset messages[vk] ? messages[vk]:vk;
                                 return false;
                             }
                             break;
@@ -474,7 +490,7 @@ class Model
                             let begin = strtotime(params[0]);
                             let end   = strtotime(params[1]);
                             if v < begin || v > end {
-                                let this->_error[]=messages[field.".".ruleName];
+                                let this->_error[]=isset messages[vk] ? messages[vk]:vk;
                                 return false;
                             }
                             break;
@@ -482,14 +498,14 @@ class Model
                             let kk = params[0];
                             if isset tmp[kk] {
                                 if v != tmp[kk]{
-                                    let this->_error[]=messages[field.".".ruleName];
+                                    let this->_error[]=isset messages[vk] ? messages[vk]:vk;
                                     return false;
                                 }
                             }
                             break;
                         case "regex":
                             if !preg_match(params[0], v){
-                                let this->_error[]=messages[field.".".ruleName];
+                                let this->_error[]=isset messages[vk] ? messages[vk]:vk;
                                 return false;
                             }
                             break;
