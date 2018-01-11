@@ -139,7 +139,7 @@ class View {
         let viewPath  = isset self::_config["view_path"]       ? rtrim(self::_config["view_path"], "/\\") : "";
         let cachePath = isset self::_config["view_cache_path"] ? rtrim(self::_config["view_cache_path"], "/\\") : "";
         let viewExt   = isset self::_config["view_file_ext"]   ? ltrim(self::_config["view_file_ext"], '.') : "html";
-        let mca       = preg_replace("/[\\/]+/","/", trim(mca,"\\/"));
+        let mca       = (string) preg_replace("/[\\/]+/","/", trim(mca,"\\/"));
         let tmpa      = explode("/", mca);
         let tmp       = implode("_", tmpa);
         let tplfile   = viewPath ."/". mca . "." . viewExt;
@@ -246,12 +246,11 @@ class View {
      */
     public static function render(string! tplPath="", array! data = []) -> void
     {
-        var app;
-        boolean isMultipleModule;
+        var app,isMultipleModule;
         if empty tplPath{
             let app = Application::_instance;
             let isMultipleModule = app->multipleModule;
-            if isMultipleModule {
+            if !!isMultipleModule {
                 let tplPath = app->getModuleName()."/".app->getControllerName()."/".app->getActionName();
             } else {
                 let tplPath = app->getControllerName()."/".app->getActionName();
