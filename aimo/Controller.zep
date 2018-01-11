@@ -30,7 +30,7 @@ class Controller {
         die(json_encode(data));
     }
 
-    public function render(string mca, array data = [])
+    public function render(string! mca="", array! data = [])
     {
         View::render(mca, data);
     }

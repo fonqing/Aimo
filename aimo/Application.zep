@@ -12,7 +12,7 @@ class Application {
     /**
      * @var <\Aimo\Application> 
      */
-    protected static _instance;
+    public static _instance;
 
     protected _config  = [];
 

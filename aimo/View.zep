@@ -110,29 +110,15 @@ class View {
     {
         string viewPath,cachePath,viewExt,tplfile,compiledtplfile,tmp,content;
         var tmpa;
-        int c;
-        var defaultModule;
 
         let viewPath  = isset self::_config["view_path"]       ? rtrim(self::_config["view_path"], "/\\") : "";
         let cachePath = isset self::_config["view_cache_path"] ? rtrim(self::_config["view_cache_path"], "/\\") : "";
-        let viewExt   = isset self::_config["view_file_ext"]   ? trim( self::_config["view_file_ext"], '.') : "html";
-        let defaultModule = isset self::_config["default_module"] ? self::_config["default_module"] : "index";
-        let mca = trim(mca,"\\/");
-
-        
-        let tmpa      = explode("/", str_replace(["\\","/"],"/",mca));
-        let c = count(tmpa);
-        if c==3 {
-            let tmp = implode("_", tmpa);
-            let tplfile   = viewPath ."/". mca . "." . viewExt;
-        } elseif c==2 {
-            let tmp = defaultModule."_".implode("_", tmpa);
-            let tplfile   = viewPath ."/".defaultModule."/". mca . "." . viewExt;
-        } else{
-            throw "Error template params";
-        }
+        let viewExt   = isset self::_config["view_file_ext"]   ? ltrim(self::_config["view_file_ext"], '.') : "html";
+        let mca       = preg_replace("/[\\/]+/","/", trim(mca,"\\/"));
+        let tmpa      = explode("/", mca);
+        let tmp       = implode("_", tmpa);
+        let tplfile   = viewPath ."/". mca . "." . viewExt;
         let compiledtplfile = cachePath."/".tmp.".php";
-        
         if self::check(tplfile, compiledtplfile) {
             return compiledtplfile;
         }
@@ -233,8 +219,19 @@ class View {
      * @param callable func
      * @return void
      */
-    public static function render(string tplPath, array data = []) -> void
+    public static function render(string! tplPath="", array! data = []) -> void
     {
+        var app;
+        boolean isMultipleModule;
+        if empty tplPath{
+            let app = Application::_instance;
+            let isMultipleModule = app->multipleModule;
+            if isMultipleModule {
+                let tplPath = app->getModuleName()."/".app->getControllerName()."/".app->getActionName();
+            } else {
+                let tplPath = app->getControllerName()."/".app->getActionName();
+            }
+        }
         //if func != null {
         //    ob_start(func);
         //}
