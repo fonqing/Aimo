@@ -428,4 +428,9 @@ class Request {
         return preg_replace("/[^a-z0-9]+/i", "", str);
     }
 
+    public function f_number(var str)
+    {
+        return preg_replace("/[^0-9\.\-\+]+/i", "", str);
+    }
+
 }
