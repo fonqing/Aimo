@@ -177,7 +177,7 @@ class Application {
                 throw "Router must return an array";
             }
         }
-
+        Request::instance()->setParams(array_merge(this->params, _REQUEST));
     }
 
     /**
@@ -185,40 +185,41 @@ class Application {
      */
     private function dispacher()
     {
-        var klass,ctl,action;
+        var klass,action,reflection,method,param,params,type,name,count;
+        array args = [];
         let klass = this->getController(this->controllerName);
-        if class_exists(klass) {
-            let ctl = new {klass}();
-            let action = this->actionName."Action";
-            if method_exists(ctl, action) && is_callable([ctl,action]) {
-                call_user_func([ctl,action]);
-            } else {
-                let action = "_empty";
-                if method_exists(ctl, action) && is_callable([ctl,action]) {
-                    call_user_func([ctl,action]);
-                }else{
-                    Controller::notFound();
-                }
+        if !class_exists(klass){
+            let klass = this->getController("Error");
+        }
+        if !class_exists(klass) {
+            Event::trigger("before_notfound");
+            Controller::notFound();
+        }
+
+        let action = this->actionName."Action";
+
+        if !method_exists(klass, action) {
+            let action = "_empty";
+        }
+
+        if !method_exists(klass, action){
+            Controller::notFound();
+        }
+
+        let reflection = new \ReflectionClass(klass);
+        let method = reflection->getMethod(action);
+        let count  = method->getNumberOfParameters();
+        let params = method->getParameters();
+        if count === 1 {
+            let type = params[0]->getType();
+            let name = strtolower(params[0]->getName());
+            if !type->isBuiltin() && name==="request" {
+                let args[]= Request::instance();
             }
         } else {
-            let klass = this->getController("Error");
-            if class_exists(klass) {
-                let ctl = new {klass}();
-                let action = this->actionName."Action";
-                if method_exists(ctl, action) && is_callable([ctl,action]) {
-                    call_user_func([ctl,action]);
-                } else {
-                    let action = "_empty";
-                    if method_exists(ctl, action) && is_callable([ctl,action]) {
-                        call_user_func([ctl,action]);
-                    }else{
-                        Controller::notFound();
-                    }
-                }
-            } else {
-                Controller::notFound();
-            }
+            //TODO:support more params
         }
+        method->invokeArgs(new {klass},args);
     }
 
     /**
@@ -232,7 +233,7 @@ class Application {
         let name = this->_config["namespace"];
         let controllerName = ctl."Controller";
         if this->multipleModule {
-            let klass = name."\\controller\\".this->moduleName."\\".controllerName;
+            let klass = name."\\".this->moduleName."\\controller\\".controllerName;
         } else {
             let klass = name."\\controller\\".controllerName;
         }
@@ -247,8 +248,9 @@ class Application {
     public function run()->void
     {
         var timezone;
-        let timezone = isset this->_config["timezone"] ? this->_config["timezone"] : "Asia/Shanghai";
-        date_default_timezone_set(timezone);
+        if fetch timezone,this->_config["timezone"] {
+            date_default_timezone_set(timezone);
+        }
         if isset this->_config["debug"] && this->_config["debug"] === true {
             error_reporting(E_ALL);
             ini_set("display_errors","On");
@@ -260,6 +262,5 @@ class Application {
         spl_autoload_register("Aimo\\Loader::autoload");
         this->route();
         this->dispacher();
-        Request::instance()->setParams(array_merge(this->params, _REQUEST));
     }
 }

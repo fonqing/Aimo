@@ -1,14 +1,7 @@
 namespace Aimo;
 class Request {
     private static instance;
-    public params   = [] {set,get};
-    public isPost   = false;
-    public isGet    = false;
-    public isAjax   = false;
-    public isPut    = false;
-    public isDelete = false;
-    public isMobile = false;
-
+    public params = [] {set,get};
     /**
      * 实例化Request对象
      *
@@ -41,7 +34,7 @@ class Request {
     public static function instance() -> <Request>
     {
         if self::instance === null {
-            let self::instance = new static();
+            let self::instance = new self();
         }
         return self::instance;
     }
@@ -220,7 +213,7 @@ class Request {
         var params;
         let params = Request::instance()->getParams();
         if empty filter {
-            return isset params[name] ? params[name] : null;;
+            return isset params[name] ? params[name] : null;
         }
         if !isset params[name] {
             return def;

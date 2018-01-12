@@ -7,7 +7,7 @@ class Db
     const LIMIT_STYLE_TOP_N = "top";
     const LIMIT_STYLE_LIMIT = "limit";
     protected static _default_config = [
-        "dsn" : "sqlite::memory:",
+        "dsn" : "",
         "id_column" : "id",
         "id_column_overrides" : [],
         "error_mode" : \PDO::ERRMODE_EXCEPTION,
@@ -176,6 +176,7 @@ class Db
      */
     public static function table(string! table_name, name = "default") -> <Db>
     {
+        self::_setup_db_config(name);
         var identifier_case;
         let identifier_case = self::config("identifier_case");
         if identifier_case == "upper" {
@@ -183,7 +184,7 @@ class Db
         } elseif identifier_case == "lower" {
             let table_name = table_name->lower();
         }
-        self::_setup_db(name);
+        //self::_setup_db(name);
         return new self(table_name, [], name);
     }
 
@@ -201,6 +202,7 @@ class Db
      */
     public static function name(string! table_name, name = "default") -> <Db>
     {
+        self::_setup_db_config(name);
         var prefix,identifier_case;
         let identifier_case = self::config("identifier_case");
         if identifier_case == "upper" {
@@ -208,7 +210,7 @@ class Db
         } elseif identifier_case == "lower" {
             let table_name = table_name->lower();
         }
-        self::_setup_db(name);
+        //self::_setup_db(name);
         let prefix = self::getConfig("prefix",name);
         return new self(prefix.table_name, [], name);
     }
@@ -1381,8 +1383,13 @@ class Db
     */
     protected static function _setup_db_config(string! name) -> void
     {
+        var config;
         if !isset self::_config[name] {
             let self::_config[name] = self::_default_config;
+            let config = Config::get("db");
+            if !empty config && typeof config == "array" {
+                Db::init(config);
+            }
         }
     }
 
