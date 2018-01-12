@@ -132,22 +132,22 @@ class Request {
      * @param mixed filter 过滤器
      * @return mixed
      */
-    public function get(var name,var def=null,var filter="text")
+    public function get(string! name,var def=null,var filter="text")
     {
-        if empty filter {
-            return isset _GET[name] ? _GET[name] : null;
-        }
         if !isset _GET[name] {
             return def;
+        }
+        if empty filter {
+            return isset _GET[name] ? _GET[name] : def;
         }
         var method;
         let method = "f_".filter;
         if method_exists(this, method){
-            return (typeof _GET[name] == "array") ? 
-                array_map([this, method], _GET[name]) : 
+            return (typeof _GET[name] == "array") ?
+                array_map([this, method], _GET[name]) :
                 this->{method}(_GET[name]);
         } elseif function_exists(filter) {
-            return (typeof _GET[name] == "array") ? 
+            return (typeof _GET[name] == "array") ?
                 array_map(filter, _GET[name]) : {filter}(_GET[name]);
         }
     }
@@ -170,22 +170,22 @@ class Request {
      * @param mixed filter 过滤器
      * @return mixed
      */
-    public function post(var name,var def=null,var filter="text")
+    public function post(string! name,var def=null,var filter="text")
     {
-        if empty filter {
-            return isset _POST[name] ? _POST[name] : null;
-        }
         if !isset _POST[name] {
             return def;
+        }
+        if empty filter {
+            return isset _POST[name] ? _POST[name] : def;
         }
         var method;
         let method = "f_".filter;
         if method_exists(this, method){
-            return (typeof _POST[name] == "array") ? 
-                array_map([this, method], _POST[name]) : 
+            return (typeof _POST[name] == "array") ?
+                array_map([this, method], _POST[name]) :
                 this->{method}(_POST[name]);
         } elseif function_exists(filter) {
-            return (typeof _POST[name] == "array") ? 
+            return (typeof _POST[name] == "array") ?
                 array_map(filter, _POST[name]) : {filter}(_POST[name]);
         }
     }
@@ -208,24 +208,25 @@ class Request {
      * @param mixed filter 过滤器
      * @return mixed
      */
-    public function param(var name,var def=null,var filter="text")
+    public function param(string! name,var def=null,var filter="text")
     {
         var params;
         let params = Request::instance()->getParams();
-        if empty filter {
-            return isset params[name] ? params[name] : null;
-        }
         if !isset params[name] {
             return def;
         }
+        if empty filter {
+            return isset params[name] ? params[name] : def;
+        }
+
         var method;
         let method = "f_".filter;
         if method_exists(this, method){
-            return (typeof params[name] == "array") ? 
-                array_map([this, method], params[name]) : 
+            return (typeof params[name] == "array") ?
+                array_map([this, method], params[name]) :
                 this->{method}(params[name]);
         } elseif function_exists(filter) {
-            return (typeof params[name] == "array") ? 
+            return (typeof params[name] == "array") ?
                 array_map(filter, params[name]) : {filter}(params[name]);
         }
     }
@@ -304,7 +305,7 @@ class Request {
             let overridedMethod = this->getHeader("X-HTTP-METHOD-OVERRIDE");
             if !empty overridedMethod {
                 let returnMethod = strtoupper(overridedMethod);
-            } 
+            }
         }
 
         if !this->isValidHttpMethod(returnMethod) {

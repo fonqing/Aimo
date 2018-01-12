@@ -8,9 +8,9 @@ namespace Aimo;
  * @author <Eric,fonqing@gmail.com>
  */
 class Application {
-    
+
     /**
-     * @var <\Aimo\Application> 
+     * @var <\Aimo\Application>
      */
     public static _instance;
 
@@ -26,17 +26,17 @@ class Application {
      * @var boolean
      */
     public multipleModule = false;
-    
+
     /**
      * @var string
      */
     public moduleName = "index" {set,get};
-    
+
     /**
      * @var string
      */
     public controllerName = "index" {set,get};
-    
+
     /**
      * @var string
      */
@@ -53,6 +53,14 @@ class Application {
      */
     public static function init(array! config)-><Application>
     {
+        var events;
+        Loader::addNamespaces(Config::get("namespaces"));
+        spl_autoload_register("Aimo\\Loader::autoload");
+        let events = Config::get("events");
+        if !empty events && (typeof events == "array") {
+            Event::register(events);
+        }
+        Event::trigger("app_init");
         if self::_instance === null {
             let self::_instance = new self();
             self::_instance->loadConfig(config);
@@ -75,7 +83,7 @@ class Application {
         let this->_config = config;
         if isset this->_config["multiple_module"] && this->_config["multiple_module"]===true {
             let this->multipleModule = true;
-        } 
+        }
         return this;
     }
 
@@ -92,7 +100,7 @@ class Application {
      *        'controllerName'=>'',
      *        'actionName'=>'',
      *        'params'=> array_merge($_GET,$_POST),
-     *    ]; 
+     *    ];
      *})->run();
      *</code>
      * @return <Application>
@@ -152,7 +160,7 @@ class Application {
                 }
                 let this->params = params;
             }
-            
+
         } else {
             if !isset this->_routers[name] {
                 throw "Router dose not exists";
@@ -165,9 +173,9 @@ class Application {
             if typeof res != "array" {
                 throw "Router must return an array";
             }
-            if isset res["moduleName"] && 
-                isset res["controllerName"] && 
-                isset res["actionName"] && 
+            if isset res["moduleName"] &&
+                isset res["controllerName"] &&
+                isset res["actionName"] &&
                 isset res["params"] {
                 let this->moduleName = preg_replace("/[^0-9a-z_\-\.]+/i","",res["moduleName"]);
                 let this->controllerName = preg_replace("/[^0-9a-z_\-\.]+/i","",res["controllerName"]);
@@ -185,14 +193,19 @@ class Application {
      */
     private function dispacher()
     {
-        var klass,action,reflection,method,param,params,type,name,count;
+        Event::trigger("before_dispatch", [this]);
+        var klass,action,controller,reflection,method,params,type,name,count;
         array args = [];
-        let klass = this->getController(this->controllerName);
+        let controller = this->controllerName."Controller";
+        let klass = this->getController(ucfirst(controller));
         if !class_exists(klass){
             let klass = this->getController("Error");
         }
         if !class_exists(klass) {
-            Event::trigger("before_notfound");
+            Event::trigger("before_notfound", [
+                this->controllerName,
+                this->actionName
+            ]);
             Controller::notFound();
         }
 
@@ -203,6 +216,10 @@ class Application {
         }
 
         if !method_exists(klass, action){
+            Event::trigger("before_notfound", [
+                this->controllerName,
+                this->actionName
+            ]);
             Controller::notFound();
         }
 
@@ -220,6 +237,7 @@ class Application {
             //TODO:support more params
         }
         method->invokeArgs(new {klass},args);
+        Event::trigger("after_dispatch", [this]);
     }
 
     /**
@@ -229,37 +247,39 @@ class Application {
      */
     private function getController(string! ctl)
     {
-        var controllerName,klass,name;
+        var klass,name;
         let name = this->_config["namespace"];
-        let controllerName = ctl."Controller";
         if this->multipleModule {
-            let klass = name."\\".this->moduleName."\\controller\\".controllerName;
+            let klass = name."\\".this->moduleName."\\controller\\".ctl;
         } else {
-            let klass = name."\\controller\\".controllerName;
+            let klass = name."\\controller\\".ctl;
         }
         return klass;
     }
 
     /**
-     * 启动运行 
+     * 启动运行
      *
      * @return void
      */
     public function run()->void
     {
-        var timezone;
+        var timezone,errorLog;
         if fetch timezone,this->_config["timezone"] {
             date_default_timezone_set(timezone);
         }
         if isset this->_config["debug"] && this->_config["debug"] === true {
             error_reporting(E_ALL);
-            ini_set("display_errors","On");
+            ini_set("display_errors", "On");
+            if fetch errorLog, this->_config["error_log"] {
+                if file_exists(errorLog) {
+                    ini_set("error_log", errorLog);
+                }
+            }
         }else{
             error_reporting(0);
             ini_set("display_errors","off");
         }
-        Loader::addNamespaces(Config::get("namespaces"));
-        spl_autoload_register("Aimo\\Loader::autoload");
         this->route();
         this->dispacher();
     }

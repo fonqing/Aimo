@@ -3,9 +3,9 @@ namespace Aimo;
 class Controller {
     public function __construct()
     {
-        //Event::trigger('Controller_init');
+        Event::trigger("controller_init");
         View::init(Config::get("view"));
-        //Event::trigger('View_init');
+        Event::trigger("view_init");
     }
     public function success(string msg,string url,int wait = 3)->void
     {
@@ -32,6 +32,8 @@ class Controller {
 
     public function render(string! mca="", array! data = [])
     {
+        Event::trigger("before_render", [mca, data]);
         View::render(mca, data);
+        Event::trigger("after_render", [mca, data]);
     }
 }

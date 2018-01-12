@@ -1,6 +1,6 @@
 namespace Aimo;
 use Aimo\Db\Helper;
-class Db 
+class Db
 {
     const CONDITION_FRAGMENT = 0;
     const CONDITION_VALUES = 1;
@@ -82,14 +82,14 @@ class Db
      * @param mixed $value
      * @param string $name 那个链接
      */
-    public static function config(string! key, value = null, name = "default") 
+    public static function config(string! key, value = null, name = "default")
     {
         let self::_config[name][key] = value;
     }
 
     /**
      * 初始化数据库配置
-     * 
+     *
      * PDO数据库配置项
      *
      * <code>
@@ -139,7 +139,7 @@ class Db
      * @param string $key
      * @param string $name Which connection to use
      */
-    public static function getConfig(key = null, name = "default") 
+    public static function getConfig(key = null, name = "default")
     {
         if !empty key {
             return self::_config[name][key];
@@ -161,7 +161,7 @@ class Db
     {
         let self::_config = [];
     }
-    
+
     /**
      * 基于数据表的虚拟模型进行数据访问
      *
@@ -293,7 +293,7 @@ class Db
      * @param string $name 默认数据链接
      * @return bool
      */
-    public static function query(string! query, parameters = [], name = "default") 
+    public static function query(string! query, parameters = [], name = "default")
     {
         self::_setup_db(name);
         return self::_execute(query, parameters, name);
@@ -339,7 +339,7 @@ class Db
      * @param null|string $name Which connection to use
      * @return string
      */
-    public static function getLastQuery(name = null) 
+    public static function getLastQuery(name = null)
     {
         if name === null {
             return self::_last_query;
@@ -375,7 +375,7 @@ class Db
      *
      * @return array
      */
-    public static function getConnectionNames() 
+    public static function getConnectionNames()
     {
         return array_keys(self::_db);
     }
@@ -398,11 +398,11 @@ class Db
 
     /**
      * 指定查询的字段
-     * 
+     *
      * Note that the alias must not be numeric - if you want a
      * numeric alias then prepend it with some alpha chars. eg. a1
-     * 
-     * <code> 
+     *
+     * <code>
      * //Right example
      * Db::table('user')->fields('uid,username,password')->...;
      * Db::table('user')->fields('uid,username,password as hash')->...;
@@ -437,7 +437,7 @@ class Db
                                 }
                             }else{
                                 let field = this->trimField(field);
-                                this->field(field); 
+                                this->field(field);
                             }
                         }
                     }else{
@@ -487,7 +487,7 @@ class Db
      * @param string|array ON条件
      * @param string joinType 链接方式，支持 LEFT,RIGHT,INNER,FULL
      */
-    public function join(string! table,var constraint,joinType="LEFT", table_alias=null) 
+    public function join(string! table,var constraint,joinType="LEFT", table_alias=null)
     {
         string types = "_LEFT_RIGHT_INNER_FULL_";
         let joinType = strtoupper(joinType);
@@ -500,7 +500,7 @@ class Db
     /**
      * Add a RAW JOIN source to the query
      */
-    public function rawJoin(table, constraint, table_alias = null, parameters = []) 
+    public function rawJoin(table, constraint, table_alias = null, parameters = [])
     {
         var first_column,operator,second_column;
         if table_alias != null {
@@ -538,7 +538,7 @@ class Db
      * </code>
      * @access public
      */
-    public function where(a,b=null,c=null) 
+    public function where(a,b=null,c=null)
     {
         var k,v;
         string operators;
@@ -599,7 +599,7 @@ class Db
      * @param string column_name 字段名
      * @param string|int|float value
      */
-    public function whereEqual(string! column_name, value=null) 
+    public function whereEqual(string! column_name, value=null)
     {
         return this->_add_simple_where(column_name, "=", value);
     }
@@ -615,7 +615,7 @@ class Db
      * @param string column_name 字段名
      * @param string|int|float value
      */
-    public function whereNotEqual(string! column_name, value=null) 
+    public function whereNotEqual(string! column_name, value=null)
     {
         return this->_add_simple_where(column_name, "!=", value);
     }
@@ -631,7 +631,7 @@ class Db
      * @param string column_name 字段名
      * @param string|int|float value
      */
-    public function whereIdIs(id) 
+    public function whereIdIs(id)
     {
         return is_array(this->_get_id_column_name()) ?
             this->where(this->_get_compound_id_column_values(id), null) :
@@ -640,8 +640,8 @@ class Db
 
     /**
      * 任意条件命中
-     */        
-    public function whereAnyIs(values, operator="=") 
+     */
+    public function whereAnyIs(values, operator="=")
     {
         array data = [];
         array query = ["(("];
@@ -677,7 +677,7 @@ class Db
      * $data = Db::table('table')->whereIdIn(['uid'=>3,'tagid'=>5]);
      * </code>
      */
-    public function whereIdIn(ids) 
+    public function whereIdIn(ids)
     {
         return is_array(this->_get_id_column_name()) ?
             this->whereAnyIs(this->_get_compound_id_column_values_array(ids)) :
@@ -691,7 +691,7 @@ class Db
      * $data = Db::table('table')->whereLike('name','keyword%');
      * </code>
      */
-    public function whereLike(column_name, value=null) 
+    public function whereLike(column_name, value=null)
     {
         return this->_add_simple_where(column_name, "LIKE", value);
     }
@@ -703,7 +703,7 @@ class Db
      * $data = Db::table('table')->whereNotLike('name','keyword%');
      * </code>
      */
-    public function whereNotLike(column_name, value=null) 
+    public function whereNotLike(column_name, value=null)
     {
         return this->_add_simple_where(column_name, "NOT LIKE", value);
     }
@@ -715,7 +715,7 @@ class Db
      * $data = Db::table('table')->whereGt('score',60);
      * </code>
      */
-    public function whereGt(column_name, value=null) 
+    public function whereGt(column_name, value=null)
     {
         return this->_add_simple_where(column_name, ">", value);
     }
@@ -727,7 +727,7 @@ class Db
      * $data = Db::table('table')->whereLt('score',60);
      * </code>
      */
-    public function whereLt(column_name, value=null) 
+    public function whereLt(column_name, value=null)
     {
         return this->_add_simple_where(column_name, "<", value);
     }
@@ -739,7 +739,7 @@ class Db
      * $data = Db::table('table')->whereGte('score',60);
      * </code>
      */
-    public function whereGte(column_name, value=null) 
+    public function whereGte(column_name, value=null)
     {
         return this->_add_simple_where(column_name, ">=", value);
     }
@@ -751,7 +751,7 @@ class Db
      * $data = Db::table('table')->whereLte('score',60);
      * </code>
      */
-    public function whereLte(column_name, value=null) 
+    public function whereLte(column_name, value=null)
     {
         return this->_add_simple_where(column_name, "<=", value);
     }
@@ -763,7 +763,7 @@ class Db
      * $data = Db::table('table')->whereIn('field',['a','b','c']);
      * </code>
      */
-    public function whereIn(column_name, values) 
+    public function whereIn(column_name, values)
     {
         return this->_add_where_placeholder(column_name, "IN", values);
     }
@@ -775,7 +775,7 @@ class Db
      * $data = Db::table('table')->whereNotIn('field',['a','b','c']);
      * </code>
      */
-    public function whereNotIn(column_name, values) 
+    public function whereNotIn(column_name, values)
     {
         return this->_add_where_placeholder(column_name, "NOT IN", values);
     }
@@ -787,7 +787,7 @@ class Db
      * $data = Db::table('table')->whereIsNull('field');
      * </code>
      */
-    public function whereIsNull(column_name) 
+    public function whereIsNull(column_name)
     {
         return this->_add_where_no_value(column_name, "IS NULL");
     }
@@ -799,7 +799,7 @@ class Db
      * $data = Db::table('table')->whereNotNull('field');
      * </code>
      */
-    public function whereNotNull(column_name) 
+    public function whereNotNull(column_name)
     {
         return this->_add_where_no_value(column_name, "IS NOT NULL");
     }
@@ -813,7 +813,7 @@ class Db
      * $data = Db::table('table')->whereRaw('field1 = ? and field2 <> ?',['value1','value2']);
      * </code>
      */
-    public function whereRaw(clause, parameters=[]) 
+    public function whereRaw(clause, parameters=[])
     {
         return this->_add_where(clause, parameters);
     }
@@ -852,7 +852,7 @@ class Db
      * 添加不被符号包围的表达式排序方式
      *
      *<code>
-     * Db::name('user')->orderByExpr('RAND()')->select();//MySQL RAND() 
+     * Db::name('user')->orderByExpr('RAND()')->select();//MySQL RAND()
      *</code>
      *
      *@access public
@@ -906,7 +906,7 @@ class Db
      * If you use an array in $column_name, a new clause will be
      * added for each element. In this case, $value is ignored.
      */
-    public function having(column_name, value=null) 
+    public function having(column_name, value=null)
     {
         return this->havingEqual(column_name, value);
     }
@@ -915,7 +915,7 @@ class Db
      * More explicitly named version of for the having() method.
      * Can be used if preferred.
      */
-    public function havingEqual(column_name, value=null) 
+    public function havingEqual(column_name, value=null)
     {
         return this->_add_simple_having(column_name, "=", value);
     }
@@ -923,7 +923,7 @@ class Db
     /**
      * Add a HAVING column != value clause to your query.
      */
-    public function havingNotEqual(column_name, value=null) 
+    public function havingNotEqual(column_name, value=null)
     {
         return this->_add_simple_having(column_name, "!=", value);
     }
@@ -934,7 +934,7 @@ class Db
      * If primary key is compound, only the columns that
      * belong to they key will be used for the query
      */
-    public function havingIdIs(id) 
+    public function havingIdIs(id)
     {
         return is_array(this->_get_id_column_name()) ?
             this->having(this->_get_compound_id_column_values(id), null) :
@@ -944,7 +944,7 @@ class Db
     /**
      * Add a HAVING ... LIKE clause to your query.
      */
-    public function havingLike(column_name, value=null) 
+    public function havingLike(column_name, value=null)
     {
         return this->_add_simple_having(column_name, "LIKE", value);
     }
@@ -952,7 +952,7 @@ class Db
     /**
      * Add where HAVING ... NOT LIKE clause to your query.
      */
-    public function havingNotLike(column_name, value=null) 
+    public function havingNotLike(column_name, value=null)
     {
         return this->_add_simple_having(column_name, "NOT LIKE", value);
     }
@@ -960,7 +960,7 @@ class Db
     /**
      * Add a HAVING ... > clause to your query
      */
-    public function havingGt(column_name, value=null) 
+    public function havingGt(column_name, value=null)
     {
         return this->_add_simple_having(column_name, ">", value);
     }
@@ -992,7 +992,7 @@ class Db
     /**
      * Add a HAVING ... IN clause to your query
      */
-    public function havingIn(column_name, values=null) 
+    public function havingIn(column_name, values=null)
     {
         return this->_add_having_placeholder(column_name, "IN", values);
     }
@@ -1008,7 +1008,7 @@ class Db
     /**
      * Add a HAVING column IS NULL clause to your query
      */
-    public function havingNull(column_name) 
+    public function havingNull(column_name)
     {
         return this->_add_having_no_value(column_name, "IS NULL");
     }
@@ -1016,7 +1016,7 @@ class Db
     /**
      * Add a HAVING column IS NOT NULL clause to your query
      */
-    public function havingNotNull(column_name) 
+    public function havingNotNull(column_name)
     {
         return this->_add_having_no_value(column_name, "IS NOT NULL");
     }
@@ -1026,7 +1026,7 @@ class Db
      * contain question mark placeholders, which will be bound
      * to the parameters supplied in the second argument.
      */
-    public function havingRaw(clause, parameters=[]) 
+    public function havingRaw(clause, parameters=[])
     {
         return this->_add_having(clause, parameters);
     }
@@ -1056,7 +1056,7 @@ class Db
     /**
      * 返回数组开关
      * 供绑定模型后返回多条记录使用
-     * 
+     *
      * <code>
      * User::where('1')->asArray()->select();
      * </code>
@@ -1071,7 +1071,7 @@ class Db
 
     /**
      * 获取一条记录并返回
-     * 
+     *
      * <code>
      * Db::name('user')->find(6);//Find by primary key value
      * Db::name('user')->where('uid',6)->find();
@@ -1081,7 +1081,7 @@ class Db
      * @param integer|null
      * @return mixd
      */
-    public function find(id=null) 
+    public function find(id=null)
     {
         var rows;
         string fun = "fetch";
@@ -1107,9 +1107,9 @@ class Db
 
     /**
      * 获取多条记录
-     * 
+     *
      * 执行此方法后，无法再进行链式调用
-     * 
+     *
      *<cdoe>
      *$users = Db::name('user')->select();
      *print_r($users);
@@ -1117,7 +1117,7 @@ class Db
      * @access public
      * @return array
      */
-    public function select() 
+    public function select()
     {
         if this->_entity == null {
             return this->_run();
@@ -1135,9 +1135,9 @@ class Db
      *</code>
      *
      * @access public
-     * @param string 
+     * @param string
      */
-    public function count(column = "*") 
+    public function count(column = "*")
     {
         return this->_call_aggregate_db_function("COUNT", column);
     }
@@ -1150,7 +1150,7 @@ class Db
      *</code>
      *
      * @access public
-     * @param string 
+     * @param string
      */
     public function max(column)
     {
@@ -1165,7 +1165,7 @@ class Db
      *</code>
      *
      * @access public
-     * @param string 
+     * @param string
      */
     public function min(column)
     {
@@ -1180,9 +1180,9 @@ class Db
      *</code>
      *
      * @access public
-     * @param string 
+     * @param string
      */
-    public function avg(column) 
+    public function avg(column)
     {
         return this->_call_aggregate_db_function("AVG", column);
     }
@@ -1195,7 +1195,7 @@ class Db
      *</code>
      *
      * @access public
-     * @param string 
+     * @param string
      */
     public function sum(column)
     {
@@ -1272,7 +1272,7 @@ class Db
      *Db::name('news')->where('newsid',5)->delete());
      *</code>
      */
-    public function delete() 
+    public function delete()
     {
         var query;
         let query = this->_join_if_not_empty(" ", [
@@ -1293,7 +1293,7 @@ class Db
      */
     public static function beginTransaction(string! name = "default")
     {
-        self::getDb(name)->beginTransaction(); 
+        self::getDb(name)->beginTransaction();
     }
 
     /**
@@ -1306,7 +1306,7 @@ class Db
      */
     public static function commit(string! name = "default")
     {
-        self::getDb(name)->commit(); 
+        self::getDb(name)->commit();
     }
 
     /**
@@ -1319,7 +1319,7 @@ class Db
      */
     public static function rollBack(string! name = "default")
     {
-        self::getDb(name)->rollBack(); 
+        self::getDb(name)->rollBack();
     }
 
     /**
@@ -1471,7 +1471,7 @@ class Db
     * @param string $name Which connection to use
     * @return bool Response of PDOStatement::execute()
     */
-    protected static function _execute(query, parameters = [], name = "default") 
+    protected static function _execute(query, parameters = [], name = "default")
     {
         //uncomment to debug
         //print_r(func_get_args());
@@ -1512,7 +1512,7 @@ class Db
      * @param float $query_time Query time
      * @return bool
      */
-    protected static function _log_query(query, parameters, name, query_time) 
+    protected static function _log_query(query, parameters, name, query_time)
     {
         var key,val,bound_query;
         if !(self::_config[name]["logging"]) {
@@ -1542,7 +1542,7 @@ class Db
                 // Replace the question marks in the query with the parameters
                 let bound_query = vsprintf(query, parameters);
             } else {
-                
+
                 for key,val in parameters {
                     let query = str_replace(key, val, query);
                 }
@@ -1551,7 +1551,7 @@ class Db
         }
         let self::_last_query = bound_query;
         let self::_query_log[name][] = bound_query;
-        
+
         if is_callable(self::_config[name]["logger"]) {
             call_user_func_array(self::_config[name]["logger"],[bound_query, query_time]);
         }
@@ -1567,7 +1567,7 @@ class Db
      * @param string $column The column to execute the aggregate query against
      * @return int
      */
-    protected function _call_aggregate_db_function(sql_function, column) 
+    protected function _call_aggregate_db_function(sql_function, column)
     {
         var alias,result_columns,result,v,return_value = 0;
         let alias = strtolower(sql_function);
@@ -1600,7 +1600,7 @@ class Db
      * of columns returned by the SELECT query. The second optional
      * argument is the alias to return the expression as.
      */
-    protected function _add_result_column(expr, alias=null) 
+    protected function _add_result_column(expr, alias=null)
     {
         if !is_null(alias) {
             let expr .= " AS " . this->_quote_identifier(alias);
@@ -1667,12 +1667,12 @@ class Db
      * The final (optional) argument specifies an alias for the joined table.
      * @access protected
      */
-    protected function _add_join_source(join_operator, table, constraint, table_alias=null) 
+    protected function _add_join_source(join_operator, table, constraint, table_alias=null)
     {
         var first_column,operator,second_column,prefix;
         let join_operator = trim(join_operator." JOIN");
         let prefix = this->getConfig("prefix");
-        let prefix = typeof prefix == "string" ? prefix : "";
+        let prefix = (typeof prefix == "string") ? prefix : "";
         let table  = this->_quote_identifier(prefix.table);
 
         // Add table alias if present
@@ -1694,7 +1694,7 @@ class Db
     /**
      * Internal method to add a HAVING condition to the query
      */
-    protected function _add_having(fragment, values=[]) 
+    protected function _add_having(fragment, values=[])
     {
         return this->_add_condition("having", fragment, values);
     }
@@ -1702,7 +1702,7 @@ class Db
     /**
      * Internal method to add a HAVING condition to the query
      */
-    protected function _add_simple_having(column_name, separator, value) 
+    protected function _add_simple_having(column_name, separator, value)
     {
         return this->_add_simple_condition("having", column_name, separator, value);
     }
@@ -1710,7 +1710,7 @@ class Db
     /**
      * Internal method to add a HAVING clause with multiple values (like IN and NOT IN)
      */
-    protected function _add_having_placeholder(column_name, separator, values) 
+    protected function _add_having_placeholder(column_name, separator, values)
     {
         var data,key,val,column,placeholders;
         if (typeof column_name != "array") {
@@ -1721,7 +1721,7 @@ class Db
         for key,val in data {
             let column = this->_quote_identifier(key);
             let placeholders = this->_create_placeholders(val);
-            this->_add_having(column." ".separator." (".placeholders.")", val);    
+            this->_add_having(column." ".separator." (".placeholders.")", val);
         }
         return this;
     }
@@ -1729,7 +1729,7 @@ class Db
     /**
      * Internal method to add a HAVING clause with no parameters(like IS NULL and IS NOT NULL)
      */
-    protected function _add_having_no_value(column_name, operator) 
+    protected function _add_having_no_value(column_name, operator)
     {
         var conditions,column;
         let conditions = (typeof column_name=="array") ? column_name : [column_name];
@@ -1743,7 +1743,7 @@ class Db
     /**
      * Internal method to add a WHERE condition to the query
      */
-    protected function _add_where(fragment, values=[]) 
+    protected function _add_where(fragment, values=[])
     {
         return this->_add_condition("where", fragment, values);
     }
@@ -1751,7 +1751,7 @@ class Db
     /**
      * Internal method to add a WHERE condition to the query
      */
-    protected function _add_simple_where(column_name, separator, value) 
+    protected function _add_simple_where(column_name, separator, value)
     {
         return this->_add_simple_condition("where", column_name, separator, value);
     }
@@ -1770,7 +1770,7 @@ class Db
         for key,val in data {
             let column = this->_quote_identifier(key);
             let placeholders = this->_create_placeholders(val);
-            this->_add_where(column." ".separator." (".placeholders.")", val);    
+            this->_add_where(column." ".separator." (".placeholders.")", val);
         }
         return this;
     }
@@ -1792,25 +1792,16 @@ class Db
     /**
      * Internal method to add a HAVING or WHERE condition to the query
      */
-    protected function _add_condition(type, fragment, values=[]) 
+    protected function _add_condition(type, fragment, values=[])
     {
         var temp;
+        let temp = (typeof values == "array") ? values : [values];
         if type == "where" {
-            if (typeof values != "array")  {
-                let temp = [values];
-            }else{
-                let temp = values;
-            }
             let this->_where_conditions[]=[
                 self::CONDITION_FRAGMENT : fragment,
                 self::CONDITION_VALUES : temp
             ];
         } elseif type == "having" {
-            if (typeof values != "array")  {
-                let temp = [values];
-            }else{
-                let temp = values;
-            }
             let this->_having_conditions[]=[
                 self::CONDITION_FRAGMENT : fragment,
                 self::CONDITION_VALUES : temp
@@ -1822,7 +1813,7 @@ class Db
     /**
      * 内部方法处理where条件和having条件
      */
-    protected function _add_simple_condition(type, column_name, separator, value) 
+    protected function _add_simple_condition(type, column_name, separator, value)
     {
         array multiple;
         var key,val,table;
@@ -1839,12 +1830,12 @@ class Db
             this->_add_condition(type, key." ".separator." ?", val);
         }
         return this;
-    } 
+    }
 
     /**
      * 创建占位符
      */
-    protected function _create_placeholders(fields) 
+    protected function _create_placeholders(fields)
     {
         array db_fields = [];
         var key,value;
@@ -1859,7 +1850,7 @@ class Db
             return db_fields->join(", ");
         }
     }
-    
+
     /**
      * Helper method that filters a column/value array returning only those
      * columns that belong to a compound primary key.
@@ -1867,7 +1858,7 @@ class Db
      * If the key contains a column that does not exist in the given array,
      * a null value will be returned for it.
      */
-    protected function _get_compound_id_column_values(value) 
+    protected function _get_compound_id_column_values(value)
     {
         array filtered = [];
         var key;
@@ -1881,7 +1872,7 @@ class Db
      * Helper method that filters an array containing compound column/value
      * arrays.
      */
-    protected function _get_compound_id_column_values_array(values) 
+    protected function _get_compound_id_column_values_array(values)
     {
         array filtered = [];
         var value;
@@ -1907,7 +1898,7 @@ class Db
      * 组装SELECT
      * @access protected
      */
-    protected function _build_select() 
+    protected function _build_select()
     {
         // If the query is raw, just set the $this->_values to be
         // the raw query parameters and return the raw query
@@ -1933,7 +1924,7 @@ class Db
     /**
      * Build the start of the SELECT statement
      */
-    protected function _build_select_start() 
+    protected function _build_select_start()
     {
         var fragment = "SELECT ",result_columns;
         let result_columns = implode(", ", this->_result_columns);
@@ -1958,19 +1949,18 @@ class Db
     /**
      * Build the JOIN sources
      */
-    protected function _build_join() 
+    protected function _build_join()
     {
         if count(this->_join_sources) === 0 {
             return "";
         }
-
         return join(" ", this->_join_sources);
     }
 
     /**
      * Build the WHERE clause(s)
      */
-    protected function _build_where() 
+    protected function _build_where()
     {
         return this->_build_conditions("where");
     }
@@ -1978,7 +1968,7 @@ class Db
     /**
      * Build the HAVING clause(s)
      */
-    protected function _build_having() 
+    protected function _build_having()
     {
         return this->_build_conditions("having");
     }
@@ -1986,7 +1976,7 @@ class Db
     /**
      * Build GROUP BY
      */
-    protected function _build_group_by() 
+    protected function _build_group_by()
     {
         if count(this->_group_by) === 0 {
             return "";
@@ -1999,7 +1989,7 @@ class Db
      * @param string $type
      * @return string
      */
-    protected function _build_conditions(type)->string 
+    protected function _build_conditions(type)->string
     {
         var condition;
         array conditions = [];
@@ -2028,7 +2018,7 @@ class Db
     /**
      * Build ORDER BY
      */
-    protected function _build_order_by()->string 
+    protected function _build_order_by()->string
     {
         if count(this->_order_by) === 0 {
             return "";
@@ -2039,7 +2029,7 @@ class Db
     /**
      * Build LIMIT
      */
-    protected function _build_limit()->string 
+    protected function _build_limit()->string
     {
         string fragment = "";
         if !is_null(this->_limit) &&
@@ -2073,7 +2063,7 @@ class Db
      * Wrapper around PHP"s join function which
      * only adds the pieces if they are not empty.
      */
-    protected function _join_if_not_empty(glue, pieces) 
+    protected function _join_if_not_empty(glue, pieces)
     {
         array filtered_pieces = [];
         var piece;
@@ -2093,7 +2083,7 @@ class Db
      * (table names, column names etc). This method can
      * also deal with dot-separated identifiers eg table.column
      */
-    protected function _quote_one_identifier(identifier) 
+    protected function _quote_one_identifier(identifier)
     {
         var parts;
         let parts = explode(".", identifier);
@@ -2107,7 +2097,7 @@ class Db
      * multiple identifiers. This method can also deal with
      * dot-separated identifiers eg table.column
      */
-    public function _quote_identifier(identifier) 
+    public function _quote_identifier(identifier)
     {
         var result;
         if (typeof identifier == "array")  {
@@ -2123,7 +2113,7 @@ class Db
      * part of an identifier, using the identifier quote
      * character specified in the config (or autodetected).
      */
-    public function _quote_identifier_part(part)->string 
+    public function _quote_identifier_part(part)->string
     {
         var quote_character;
         if part === "*" {
@@ -2142,12 +2132,11 @@ class Db
      * Execute the SELECT query that has been built up by chaining methods
      * on this class. Return an array of rows as associative arrays.
      */
-    protected function _run() 
+    protected function _run()
     {
         var query,statement,rows,row;
         string fun = "fetch";
         let query = this->_build_select();
-
         self::_execute(query, this->_values, this->_name);
         let statement = self::getLastStatement();
         let rows = [];
@@ -2200,7 +2189,7 @@ class Db
      * Return the name of the column in the database table which contains
      * the primary key ID of the row.
      */
-    protected function _get_id_column_name() 
+    protected function _get_id_column_name()
     {
         if !is_null(this->_instance_id_column) {
             return this->_instance_id_column;
@@ -2214,7 +2203,7 @@ class Db
     /**
      * Build an UPDATE query
      */
-    protected function _build_update(array! data) 
+    protected function _build_update(array! data)
     {
         array query = [];
         var table,key,value,where;
@@ -2240,7 +2229,7 @@ class Db
     /**
      * Build an INSERT query
      */
-    protected function _build_insert(array! data) 
+    protected function _build_insert(array! data)
     {
         array query = [];
         var field_list,placeholders;
