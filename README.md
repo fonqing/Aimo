@@ -59,11 +59,12 @@ use Aimo\Config;
 Config::init([
     'application' => [
         'timezone'        => 'Asia/Shanghai',//时区设置
-        'debug'           => true,     //调试模式
         'app_path'        => APP_PATH, //应用根目录
         'namespace'       => 'app',    //应用命名空间前缀
         'multiple_module' => false,    //多模块支持
         'url_suffix'      => '.html'   //URL地址后缀
+        'debug'           => true,     //开启调试模式
+        'error_log'       => APP_PATH.'runtime/log/php_error.log',//指定脚本错误日志文件
     ],
     'namespaces' => [
         'app' => APP_PATH,             //命名空间注册
@@ -88,6 +89,17 @@ Config::init([
         'view_path' => APP_PATH.'view/',
         'view_cache_path' => APP_PATH.'runtime/cache/tpl/',
         'view_file_ext' => 'html'
+    ],
+    //事件响应配置(钩子)
+    'events' => [
+        'app_init'        => "app\\event\\Handler::onAppInit",
+        'before_dispatch' => '',
+        'after_dispatch'  => '',
+        'before_notfound' => '',
+        'controller_init' => '',
+        'view_init'       => '',
+        'before_render'   => '',
+        'after_render'    => '',
     ]
 ]);
 ```
