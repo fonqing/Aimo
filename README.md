@@ -40,7 +40,6 @@ dll目录目前只编译了PHP7.0版本，
 <?php
 use Aimo\Application;
 use Aimo\Config;
-define('InAimo',true);
 define('APP_PATH', rtrim(realpath(__DIR__."/../"),"\\/")."/");
 require(APP_PATH . 'config/config.php');
 Application::init(Config::get('application'))->run();
@@ -59,6 +58,7 @@ index.php?\_url\_=/module/controller/action/param/value/param1/value1.html //包
 use Aimo\Config;
 Config::init([
     'application' => [
+        'timezone'        => 'Asia/Shanghai',//时区设置
         'debug'           => true,     //调试模式
         'app_path'        => APP_PATH, //应用根目录
         'namespace'       => 'app',    //应用命名空间前缀
@@ -74,6 +74,7 @@ Config::init([
         'username'  => 'username',
         'password'  => 'password',
         'prefix'    => 'pre_',
+        'identifier_case' => 'lower',//表名字段大小写状态 default,lower,upper
         'options'   => [
             \PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8'
         ]
