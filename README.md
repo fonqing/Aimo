@@ -3,11 +3,13 @@ A lightweight PHP framework written in Zephir and build as C-extension.
 ### Why
 Phalcon is powerfull and flexible,But the Volt is a stereotyped View Engine.Some times,when you wan't call customer functions in view file is soooooooo hard.   
 Yaf is too shabby.There is NO ORM and also NO DB layer,And the View Engine is too shabby too.   
-Not in the dll dir,There is only dll extension for php 7.0   
+Now, In the dll directory,There are only dll extensions for php 7.0.   
 The framework is being written, please wait for the release...
 
 ### Runtime Requirements
 * PHP = 7.0
+* openssl extension
+* PDO extension
 
 ## Usage
 [Documention](https://fonqing.github.io/Aimo/)
@@ -49,7 +51,7 @@ Application::init(Config::get('application'))->run();
 ```
 ### Rewrite rules
 
-Implement your Rewrite rules for you web server
+Implement your Rewrite rules for you web server    
 index.php/module/controller/action/param/value/param1/value1.html //With URL suffix    
 
 index.php?\_url\_=/module/controller/action/param/value/param1/value1.html //With URL suffix   
@@ -121,7 +123,7 @@ class IndexController extends Controller {
         View::assign('number',6);
         View::render('index/index',['data' => 'hello world']);
         //Or you can render like bellow line;
-        //Attention: The View in Controller has only one method "render"
+        $this->assign('name','eric');
         $this->render('index/index',[
           'list'   => ['a','b','c'],
           'number' => 6,
