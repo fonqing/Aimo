@@ -1,45 +1,43 @@
 # Aimo Framework
-使用Zephir实现的超轻量级PHP框架扩展。
-### 说明
-为什么要写这个框架？
-    Phalcon功能全面，但是的Volt太死板了、分页也太难用了！
-    Yaf简陋，相当的简陋
-当前进度
-    dll目录目前只编译了PHP7.0版本，
-    框架正在编写阶段，并未出Release版本
+A lightweight PHP framework written in Zephir and build as C-extension.
+### Why
+Phalcon is powerfull and flexible,But the Volt is a stereotyped View Engine.Some times,when you wan't call customer functions in view file is soooooooo hard.   
+Yaf is too shabby.There is NO ORM and also NO DB layer,And the View Engine is too shabby too.   
+Not in the dll dir,There is only dll extension for php 7.0   
+The framework is being written, please wait for the release...
 
-### 运行环境
+### Runtime Requirements
 * PHP = 7.0
 
-## 使用指引
+## Usage
 [Documention](https://fonqing.github.io/Aimo/)
-### 程序架构
-常见并推荐的目录结构如下：
+### Application structure
+Recommended directory structure is as follows：
 ```
 - .htaccess // Rewrite rules for Apache
-+ public //应用WEB根目录
-  | - index.php // 应用入口
++ public //Application WEB ROOT
+  | - index.php // Application Entrance
   | + css
   | + js
   | + img
 + config
-  | - config.php // 配置文件
+  | - config.php // 
 + controller
-  | - Index.php // 默认控制器
+  | - Index.php //  Controller
 + model
-  | - User.php // 模型
+  | - User.php // Model
 + view    
   | - index   
-     | - index.html //模板文件
-+ runtime //缓存目录
+     | - index.html //View file
++ runtime //runtime cache etc.
 + vendor
-  ... 其他自定义目录
+  ... Other
 ```
-### WEB根目录
-绑定上面目录结构的`public`目录.
+### WEB ROOT
+Bind the dir `public`.
 
-### index.php
-`index.php` 入口文件代码大致如下：
+### index.php 
+`index.php` Code sample：
 
 ```php
 <?php
@@ -51,13 +49,13 @@ Application::init(Config::get('application'))->run();
 ```
 ### Rewrite rules
 
-Aimo框架重写支持
-index.php/module/controller/action/param/value/param1/value1.html //包含URL后缀    
+Implement your Rewrite rules for you web server
+index.php/module/controller/action/param/value/param1/value1.html //With URL suffix    
 
-index.php?\_url\_=/module/controller/action/param/value/param1/value1.html //包含URL后缀
+index.php?\_url\_=/module/controller/action/param/value/param1/value1.html //With URL suffix   
 
 ### config.php
-`config.php` 包含应用全部组件配置
+All configuration items in `config.php` .
 ```php
 <?php
 use Aimo\Config;
@@ -108,8 +106,8 @@ Config::init([
     ]
 ]);
 ```
-### 默认控制器
-默认控制器 `IndexController`:
+### Default controller
+Default controller  `IndexController`:
 
 ```php
 <?php
@@ -133,9 +131,9 @@ class IndexController extends Controller {
 }
 ```
 
-### 视图脚本
+### View
 
-模板代码如下：
+Sample code：
 
 ```html
 <!doctype html>
