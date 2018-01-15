@@ -52,8 +52,9 @@ Application::init(Config::get('application'))->run();
 ### Rewrite rules
 
 Implement your Rewrite rules for you web server,Aimo support two kind of url mode like below:    
-index.php/module/controller/action/param/value/param1/value1.html //With URL suffix    
-index.php?\_url\_=/module/controller/action/param/value/param1/value1.html //With URL suffix   
+`index.php/module/controller/action/param/value/param1/value1.html`   
+Or    
+`index.php?\_url\_=/module/controller/action/param/value/param1/value1.html`
 
 ### config.php
 All configuration items in `config.php` .
