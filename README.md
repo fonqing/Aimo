@@ -1,8 +1,8 @@
 # Aimo Framework
 A lightweight PHP framework written in Zephir and build as C-extension.
 ### Why
-Phalcon is powerfull and flexible,But the Volt is a stereotyped View Engine.Some times,when you wan't call customer functions in view file is soooooooo hard.   
-Yaf is too shabby.There is NO ORM and also NO DB layer,And the View Engine is too shabby too.   
+Phalcon is powerfull and flexible,But the `Volt` is a stereotyped View Engine.Some times,when you want to call customer functions in view file is soooooooo hard.   
+Yaf is not rich enough.There is NO `Object Relational Mapping` features and also NO database layer,And the View Engine is too simple.   
 Now, In the dll directory,There are only dll extensions for php 7.0.   
 The framework is being written, please wait for the release...
 
