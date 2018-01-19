@@ -70,7 +70,7 @@ class Controller {
      */
     public function ajaxReturn(array data) 
     {
-        return this->json(data);
+        this->json(data);
     }
 
 
