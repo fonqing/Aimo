@@ -48,6 +48,11 @@ class View {
     private static _data = [];
 
     /**
+     * @var array block区域
+     */
+    public static block = [];
+
+    /**
      * 引擎初始化
      *
      * 初始化模板引擎
@@ -83,7 +88,12 @@ class View {
      * {elseif isset($var2)}
      * {else}
      * {/if}
-     * OriPHP:
+     * Block content
+     * # set block content 
+     * {block name="script"}<script>alert("asdfasdf");</script>{/block}
+     * # get block content
+     * {block name="script"}{/block}
+     * Orignal PHP:
      * {php}{/php}
      *</code>
      *
@@ -182,6 +192,7 @@ class View {
 
         let content = preg_replace ( "/".db."template\s+(.+)".de."/", "<?php include \\Aimo\\View::load(\\1); ?>", content );
         let content = preg_replace ( "/".db."include\s+(.+)".de."/", "<?php include \\1; ?>", content );
+        let content = preg_replace_callback ("/".db."block\s+name=\"(\S+)\"".de."(.*)".db."\/block".de."/is","\\Aimo\\View::setBlock" , content);
         let content = preg_replace ( "/".db."php\s+(.+)".de."/", "<?php \\1?>", content );
         let content = preg_replace ( "/".db."if\s+(.+?)".de."/", "<?php if(\\1) { ?>", content );
         let content = preg_replace ( "/".db."else".de."/", "<?php } else { ?>", content );
@@ -266,6 +277,8 @@ class View {
             }
         }
         extract(self::_data);
+        //用完释放内容
+        let self::_data = [];
         require self::load(tplPath);
         //if func != null {
         //    ob_get_flush();
@@ -308,6 +321,30 @@ class View {
         let str  = preg_replace("/(\.|->)(\w+)/i","['\\2']", obj);
         let args = str_replace("this", str, args);
         return sprintf("<?php echo %s(%s);?>", func, args);
+    }
+
+    /**
+     * 获取block 块
+     */
+    public static function getBlock(string! name)
+    {
+        return isset self::block[name] ? self::block[name] : "";
+    }
+
+
+    /**
+     * 设置block 块
+     */
+    public static function setBlock(array m)->string
+    {
+        var name,content;
+        let name = isset m[1] ? m[1] : "";
+        let content = isset m[2] ? addcslashes(trim(m[2]),"'") : "";
+        if empty content {
+            return "<?php echo \\Aimo\\View::getBlock('".name."');?>";
+        } else {
+            return "<?php \\Aimo\\View::$block['".name."']='".content."';?>";
+        }
     }
     
     /**
