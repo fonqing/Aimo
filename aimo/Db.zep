@@ -1340,7 +1340,7 @@ class Db
             self::commit(name);
         } catch \PDOException,e {
             self::rollBack(name);
-            throw e->getMessage();
+            die(e->getMessage());
         }
     }
 
@@ -1366,7 +1366,7 @@ class Db
                 db->setAttribute(\PDO::ATTR_ERRMODE, self::_config[name]["error_mode"]);
                 self::setDb(db, name);
             } catch \PDOException,e {
-                throw e->getMessage();
+                die(e->getMessage());
             }
         }
     }
@@ -1495,7 +1495,7 @@ class Db
         try{
             let result = statement->execute();
         } catch \PDOException,e {
-            throw e->getMessage();
+            die(e->getMessage());
         }
         //statement->debugDumpParams();
         self::_log_query(query, parameters, name, (microtime(true)-time));
