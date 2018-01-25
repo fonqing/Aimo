@@ -2,10 +2,6 @@ namespace Aimo;
 use Aimo\Db\Helper;
 class Db
 {
-    const CONDITION_FRAGMENT = 0;
-    const CONDITION_VALUES = 1;
-    const LIMIT_STYLE_TOP_N = "top";
-    const LIMIT_STYLE_LIMIT = "limit";
     protected static _default_config = [
         "dsn" : "",
         "id_column" : "id",
@@ -1459,7 +1455,7 @@ class Db
         var driver;
         string drivers = "_sqlsrv_dblib_mssql_";
         let driver = self::getDb(name)->getAttribute(\PDO::ATTR_DRIVER_NAME);
-        return drivers->index("_".driver."_") ? Db::LIMIT_STYLE_TOP_N : Db::LIMIT_STYLE_LIMIT;
+        return drivers->index("_".driver."_") ? "top" : "limit";
     }
 
    /**
@@ -1475,7 +1471,7 @@ class Db
     {
         //uncomment to debug
         //print_r(func_get_args());
-        var statement,time,key,param,type,result,k;
+        var statement,time,key,param,type,result,k,e;
         let statement = self::getDb(name)->prepare(query);
         let self::_last_statement = statement;
         let time = microtime(true);
@@ -1496,7 +1492,11 @@ class Db
                 statement->bindValue(key, param, type);
             }
         }
-        let result = statement->execute();
+        try{
+            let result = statement->execute();
+        } catch \PDOException,e {
+            throw e->getMessage();
+        }
         //statement->debugDumpParams();
         self::_log_query(query, parameters, name, (microtime(true)-time));
         return result;
@@ -1798,13 +1798,13 @@ class Db
         let temp = (typeof values == "array") ? values : [values];
         if type == "where" {
             let this->_where_conditions[]=[
-                self::CONDITION_FRAGMENT : fragment,
-                self::CONDITION_VALUES : temp
+                0 : fragment,
+                1 : temp
             ];
         } elseif type == "having" {
             let this->_having_conditions[]=[
-                self::CONDITION_FRAGMENT : fragment,
-                self::CONDITION_VALUES : temp
+                0 : fragment,
+                1 : temp
             ];
         }
         return this;
@@ -1930,7 +1930,7 @@ class Db
         let result_columns = implode(", ", this->_result_columns);
 
         if !is_null(this->_limit) &&
-            self::_config[this->_name]["limit_clause_style"] === Db::LIMIT_STYLE_TOP_N {
+            self::_config[this->_name]["limit_clause_style"] === "top" {
             let fragment .= "TOP ".this->_limit." ";
         }
 
@@ -1998,8 +1998,8 @@ class Db
                 return "";
             }
             for condition in this->_where_conditions {
-                let conditions[] = condition[self::CONDITION_FRAGMENT];
-                let this->_values = array_merge(this->_values, condition[self::CONDITION_VALUES]);
+                let conditions[] = condition[0];
+                let this->_values = array_merge(this->_values, condition[1]);
             }
             return strtoupper(type) . " " . implode(" AND ", conditions);
         } elseif type == "having" {
@@ -2007,8 +2007,8 @@ class Db
                 return "";
             }
             for condition in this->_having_conditions {
-                let conditions[] = condition[self::CONDITION_FRAGMENT];
-                let this->_values = array_merge(this->_values, condition[self::CONDITION_VALUES]);
+                let conditions[] = condition[0];
+                let this->_values = array_merge(this->_values, condition[1]);
             }
             return strtoupper(type) . " " . implode(" AND ", conditions);
         }
@@ -2033,7 +2033,7 @@ class Db
     {
         string fragment = "";
         if !is_null(this->_limit) &&
-            self::_config[this->_name]["limit_clause_style"] == Db::LIMIT_STYLE_LIMIT {
+            self::_config[this->_name]["limit_clause_style"] == "limit" {
             if self::getDb(this->_name)->getAttribute(\PDO::ATTR_DRIVER_NAME) == "firebird" {
                 let fragment = "ROWS";
             } else {
