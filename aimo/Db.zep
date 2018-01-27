@@ -181,6 +181,7 @@ class Db
                 let table = table->lower();
             }
         }
+        let table = strtolower(table);
         //self::connect(name);
         return new self(table, [], name);
     }
@@ -210,6 +211,7 @@ class Db
                 let table = table->lower();
             }
         }
+        let table = strtolower(table);
         //self::connect(name);
         return new self(prefix.table, [], name);
     }
