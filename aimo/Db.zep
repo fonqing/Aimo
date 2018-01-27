@@ -173,12 +173,13 @@ class Db
     public static function table(string! table,string! name = "default") -> <Db>
     {
         self::initConfig(name);
-        string fcase;
-        let fcase = (string) self::_config["id_case"];
-        if fcase == "upper" {
-            let table = table->upper();
-        } elseif fcase == "lower" {
-            let table = table->lower();
+        var fcase;
+        if fetch fcase, self::_config["id_case"] {
+            if fcase == "upper" {
+                let table = table->upper();
+            } elseif fcase == "lower" {
+                let table = table->lower();
+            }
         }
         //self::connect(name);
         return new self(table, [], name);
@@ -199,15 +200,17 @@ class Db
     public static function name(string! table,string! name = "default") -> <Db>
     {
         self::initConfig(name);
-        string prefix,fcase;
-        let fcase = (string) self::_config["id_case"];
-        if fcase == "upper" {
-            let table = table->upper();
-        } elseif fcase == "lower" {
-            let table = table->lower();
+        string prefix;
+        var fcase;
+        let prefix = (string) self::getConfig("prefix",name);
+        if fetch fcase,self::_config["id_case"] {
+            if fcase == "upper" {
+                let table = table->upper();
+            } elseif fcase == "lower" {
+                let table = table->lower();
+            }
         }
         //self::connect(name);
-        let prefix = (string) self::getConfig("prefix",name);
         return new self(prefix.table, [], name);
     }
 
@@ -356,7 +359,7 @@ class Db
      */
     public static function getQueryLog(string! name = "default")
     {
-        if (isset(self::_query_log[name])) {
+        if isset self::_query_log[name] {
             return self::_query_log[name];
         }
         return [];
@@ -1553,25 +1556,16 @@ class Db
         if empty parameters {
             let bound_query = query;
         } else {
-            // Escape the parameters
             let parameters = array_map([self::getDb(name), "quote"], parameters);
-
             if array_values(parameters) === parameters {
-                // ? placeholders
-                // Avoid %format collision for vsprintf
                 let query = str_replace("%", "%%", query);
-
-                // Replace placeholders in the query for vsprintf
                 if false !== strpos(query, "\"") || false !== strpos(query, "\"") {
                     let query = Helper::str_replace_outside_quotes("?", "%s", query);
                 } else {
                     let query = str_replace("?", "%s", query);
                 }
-
-                // Replace the question marks in the query with the parameters
                 let bound_query = vsprintf(query, parameters);
             } else {
-
                 for key,val in parameters {
                     let query = str_replace(key, val, query);
                 }
@@ -1579,7 +1573,7 @@ class Db
             }
         }
         let self::_last_query = bound_query;
-        let self::_query_log[name][] = bound_query;
+        let self::_query_log[name][] = "[".query_time."] ".bound_query;
 
         if is_callable(self::_config[name]["logger"]) {
             call_user_func_array(self::_config[name]["logger"],[bound_query, query_time]);
