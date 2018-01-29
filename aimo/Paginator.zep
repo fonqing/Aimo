@@ -111,7 +111,7 @@ class Paginator
     /**
      * @var string Pagination html
      */
-    private html;
+    private html        = "";
 
     /**
      * Constructor
@@ -142,11 +142,11 @@ class Paginator
      * Set config variable
      *
      * <code>
-     * pager->set('prevText','Previous');
-     * pager->set('wrapTpl','<div class="pagination">%INNER%</div>');
+     * pager->config('prevText','Previous');
+     * pager->config('wrapTpl','<div class="pagination">%INNER%</div>');
      * </code>
      */
-    public function set(string! name,var value)->void
+    public function config(string! name,var value)->void
     {
         if property_exists(this, name) {
             let this->{name} = value;
@@ -158,9 +158,9 @@ class Paginator
      *
      * <code>
      * pager->init([
-     *    'prevText'    : 'Previous',
-     *    'adjacentNum' : 3,
-     *    'wrapTpl'     : '<div class="pagination">%INNER%</div>'
+     *    'prevText'    => 'Previous',
+     *    'adjacentNum' => 3,
+     *    'wrapTpl'     => '<div class="pagination">%INNER%</div>'
      * ]);
      * </code>
      */
@@ -168,7 +168,7 @@ class Paginator
     {
         var name,value;
         for name,value in configs {
-            this->set(name, value);
+            this->config(name, value);
         }
     }
 
@@ -188,7 +188,7 @@ class Paginator
             unset(params[this->pageParam]);
             let url = parse["path"]."?".http_build_query(params);
         }
-        let url .= strpos(url, "?") ? (strpos(url, "=")?"&":"") : "" ;
+        let url = url.(strpos(url, "?") ? (strpos(url, "=")?"&":"") : "");
         //}
         return (string) url.append;
     }
@@ -221,14 +221,14 @@ class Paginator
     private function firstPage()->void
     {
         if this->page == 1 {
-            let this->html .= self::format(this->itemTpl, [
+            let this->html = this->html.self::format(this->itemTpl, [
                 "%CLASS%" : this->disabledClass,
                 "%TEXT%"  : "<a class=\"".this->anchorClass."\">".this->firstText."</a>"
             ]);
         } else {
             var url;
             let url  = this->getUrl(this->pageParam."=1");
-            let this->html .= self::format(this->itemTpl,[
+            let this->html = this->html.self::format(this->itemTpl, [
                 "%CLASS%" : this->normalClass,
                 "%TEXT%"  : "<a class=\"".this->anchorClass."\" href=\"" . url."\">" . this->firstText . "</a>"
             ]);
@@ -241,14 +241,14 @@ class Paginator
     private function lastPage()->void
     {
         if this->page == this->pageCount {
-            let this->html .= self::format(this->itemTpl, [
+            let this->html = this->html.self::format(this->itemTpl, [
                 "%CLASS%" : this->disabledClass,
                 "%TEXT%"  : "<a class=\"".this->anchorClass."\">".this->lastText."</a>"
             ]);
         } else {
             var url;
             let url = this->getUrl(this->pageParam."=".this->pageCount);
-            let this->html .= self::format(this->itemTpl, [
+            let this->html = this->html.self::format(this->itemTpl, [
                 "%CLASS%" : this->normalClass,
                 "%TEXT%"  : "<a class=\"".this->anchorClass."\" href=\"" . url."\">" . this->lastText . "</a>"
             ]);
@@ -261,14 +261,14 @@ class Paginator
     private function prevPage()->void
     {
         if this->page == 1 {
-            let this->html .= self::format(this->itemTpl, [
+            let this->html = this->html.self::format(this->itemTpl, [
                 "%CLASS%" : this->disabledClass,
                 "%TEXT%"  : "<a class=\"".this->anchorClass."\">".this->prevText."</a>"
             ]);
         } else {
             var url;
             let url = this->getUrl(this->pageParam."=".(this->page - 1));
-            let this->html .= self::format(this->itemTpl, [
+            let this->html = this->html.self::format(this->itemTpl, [
                 "%CLASS%" : this->normalClass,
                 "%TEXT%"  : "<a class=\"".this->anchorClass."\" href=\"" . url."\">" . this->prevText . "</a>"
             ]);
@@ -283,12 +283,12 @@ class Paginator
         if this->page < this->pageCount {
             var url;
             let url = this->getUrl(this->pageParam."=".(this->page+1));
-            let this->html .= self::format(this->itemTpl, [
+            let this->html = this->html.self::format(this->itemTpl, [
                 "%CLASS%" : this->normalClass,
                 "%TEXT%"  : "<a class=\"".this->anchorClass."\" href=\"" . url."\">" . this->nextText . "</a>"
             ]);
         } else {
-            let this->html .= self::format(this->itemTpl, [
+            let this->html = this->html.self::format(this->itemTpl, [
                 "%CLASS%" : this->disabledClass,
                 "%TEXT%"  : "<a class=\"".this->anchorClass."\">".this->nextText."</a>"
             ]);
@@ -297,7 +297,7 @@ class Paginator
 
     private function headBlock()->void
     {
-        let this->html .= self::format(this->infoTpl, [
+        let this->html = this->html.self::format(this->infoTpl, [
             "%TOTAL%"     : this->total,
             "%PAGE%"      : this->page,
             "%PAGECOUNT%" : this->pageCount,
@@ -311,13 +311,13 @@ class Paginator
     private function firstBlock()->void
     {
         if this->page > ( this->adjacentNum+1 )  {
-            let this->html .= self::format(this->itemTpl, [
+            let this->html = this->html.self::format(this->itemTpl, [
                 "%CLASS%" : this->normalClass,
                 "%TEXT%"  : "<a class=\"".this->anchorClass."\" href=\"".this->getUrl(this->pageParam."=1")."\">1</a>"
             ]);
         }
         if this->page > ( this->adjacentNum+2 ) {
-            let this->html .= self::format(this->itemTpl,[
+            let this->html = this->html.self::format(this->itemTpl,[
                 "%CLASS%" : this->disabledClass,
                 "%TEXT%"  : "<a class=\"".this->anchorClass."\">...</a>"
             ]);
@@ -336,12 +336,12 @@ class Paginator
         let url  = this->getUrl();
         while pageMin <= pageMax {
             if( pageMin == this->page ) {
-                let this->html .= self::format(this->itemTpl, [
+                let this->html = this->html.self::format(this->itemTpl, [
                     "%CLASS%" : this->activeClass,
                     "%TEXT%"  : "<a class=\"".this->anchorClass."\">".pageMin."</a>"
                 ]);
             } else {
-                let this->html .= self::format(this->itemTpl, [
+                let this->html = this->html.self::format(this->itemTpl, [
                     "%CLASS%" : this->normalClass,
                     "%TEXT%"  : "<a class=\"".this->anchorClass."\" href=\"" . url .this->pageParam."=" . pageMin . "\">" . pageMin . "</a>"
                 ]);
@@ -357,7 +357,7 @@ class Paginator
     private function lastBlock()->void
     {
         if this->page < (this->pageCount - this->adjacentNum - 1) {
-            let this->html .= self::format(this->itemTpl, [
+            let this->html = this->html.self::format(this->itemTpl, [
                 "%CLASS%" : this->disabledClass,
                 "%TEXT%"  : "<a class=\"".this->anchorClass."\">...</a>"
             ]);
@@ -365,7 +365,7 @@ class Paginator
         if this->page < (this->pageCount-this->adjacentNum ) {
             var url;
             let url = this->getUrl(this->pageParam."=".this->pageCount);
-            let this->html .= self::format(this->itemTpl, [
+            let this->html = this->html.self::format(this->itemTpl, [
                 "%CLASS%" : this->normalClass,
                 "%TEXT%"  : "<a class=\"".this->anchorClass."\" href=\"".url."\">".this->pageCount."</a>"
             ]);
