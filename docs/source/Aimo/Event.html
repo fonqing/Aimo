@@ -89,6 +89,29 @@ class Event
     protected static _events = [];
 
     /**
+     * 批量注册事件
+     *
+     * <code>
+     * user Aimo\Event;
+     * Event::register([
+     *    'app_init'  => 'namespace\\Handler::onAppInit',
+     *    'view_init' => 'namespace\\Handler::onViewInit',
+     * ]);
+     * </code>
+     *
+     * @param array 事件数组
+     */
+    public static function register(array! events)
+    {
+        var eName,func;
+        for eName,func in events {
+            if !empty func {
+                self::on(eName, func);
+            }
+        }
+    }
+
+    /**
      * 注册事件
      *
      * <code>
@@ -99,14 +122,13 @@ class Event
      * </code>
      *
      * @param string eventName 事件名称
-     * @param callable|Closure func 
+     * @param callable|Closure func
      */
     public static function on(string! eventName,func)->void
     {
-        if is_callable(func) || func instanceof \Closure {
+        if !empty eventName && !empty func {
             let self::_events[eventName]=func;
         }
-        throw "Event :".eventName." body must be callable or instanceof Closure";
     }
 
     /**
@@ -118,17 +140,21 @@ class Event
      * </code>
      *
      * @param string eventName 事件名称
-     * @param array args 
+     * @param array args
      * @return mixed
      */
-    public static function trigger(string! eventName,array args = [])
+    public static function trigger(string! eventName,array! args=[])
     {
-        if isset self::_events[eventName] {
-            return call_user_func_array(self::_events[eventName], args);
+        var handler;
+        if fetch handler, self::_events[eventName] {
+            if is_callable(handler) {
+                return call_user_func_array(handler, args);
+            }
         }
         return "$AIMO$";
     }
-}</pre>                </div>
+}
+</pre>                </div>
             </div>
         </div>
     </body>

@@ -84,7 +84,7 @@
 <li class="class-method clearfix">
     <div class="method-summary">
         <div class="method-signature">
-            <span class="method-name"><a href="#method-details-__construct">__construct</a></span>(<span class="param-data-type">string</span> <span class="variable param-name">$table_name</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$data</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$name</span>)
+            <span class="method-name"><a href="#method-details-__construct">__construct</a></span>(<span class="param-data-type">string</span> <span class="variable param-name">$table</span>, <span class="param-data-type">array</span> <span class="variable param-name">$data</span>, <span class="param-data-type">string</span> <span class="variable param-name">$name</span>)
             <span class="method-return">
                 &nbsp;<strong>:</strong>&nbsp;
                                     void
@@ -102,7 +102,7 @@
 <li class="class-method clearfix">
     <div class="method-summary">
         <div class="method-signature">
-            <span class="method-name"><a href="#method-details-config">config</a></span>(<span class="param-data-type">string</span> <span class="variable param-name">$key</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$value</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$name</span>)
+            <span class="method-name"><a href="#method-details-config">config</a></span>(<span class="param-data-type">string</span> <span class="variable param-name">$key</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$value</span>, <span class="param-data-type">string</span> <span class="variable param-name">$name</span>)
             <span class="method-return">
                 &nbsp;<strong>:</strong>&nbsp;
                                     void
@@ -138,7 +138,7 @@
 <li class="class-method clearfix">
     <div class="method-summary">
         <div class="method-signature">
-            <span class="method-name"><a href="#method-details-getConfig">getConfig</a></span>(<span class="param-data-type">variable</span> <span class="variable param-name">$key</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$name</span>)
+            <span class="method-name"><a href="#method-details-getConfig">getConfig</a></span>(<span class="param-data-type">string</span> <span class="variable param-name">$key</span>, <span class="param-data-type">string</span> <span class="variable param-name">$name</span>)
             <span class="method-return">
                 &nbsp;<strong>:</strong>&nbsp;
                                     void
@@ -174,7 +174,7 @@
 <li class="class-method clearfix">
     <div class="method-summary">
         <div class="method-signature">
-            <span class="method-name"><a href="#method-details-table">table</a></span>(<span class="param-data-type">string</span> <span class="variable param-name">$table_name</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$name</span>)
+            <span class="method-name"><a href="#method-details-table">table</a></span>(<span class="param-data-type">string</span> <span class="variable param-name">$table</span>, <span class="param-data-type">string</span> <span class="variable param-name">$name</span>)
             <span class="method-return">
                 &nbsp;<strong>:</strong>&nbsp;
                                     <a href='../../class/Aimo/Db.html'>Aimo\Db</a>                            </span>
@@ -191,7 +191,7 @@
 <li class="class-method clearfix">
     <div class="method-summary">
         <div class="method-signature">
-            <span class="method-name"><a href="#method-details-name">name</a></span>(<span class="param-data-type">string</span> <span class="variable param-name">$table_name</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$name</span>)
+            <span class="method-name"><a href="#method-details-name">name</a></span>(<span class="param-data-type">string</span> <span class="variable param-name">$table</span>, <span class="param-data-type">string</span> <span class="variable param-name">$name</span>)
             <span class="method-return">
                 &nbsp;<strong>:</strong>&nbsp;
                                     <a href='../../class/Aimo/Db.html'>Aimo\Db</a>                            </span>
@@ -208,7 +208,7 @@
 <li class="class-method clearfix">
     <div class="method-summary">
         <div class="method-signature">
-            <span class="method-name"><a href="#method-details-setDb">setDb</a></span>(<span class="param-data-type">variable</span> <span class="variable param-name">$db</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$name</span>)
+            <span class="method-name"><a href="#method-details-setDb">setDb</a></span>(<span class="param-data-type">variable</span> <span class="variable param-name">$db</span>, <span class="param-data-type">string</span> <span class="variable param-name">$name</span>)
             <span class="method-return">
                 &nbsp;<strong>:</strong>&nbsp;
                                     void
@@ -388,7 +388,7 @@
             <span class="method-name"><a href="#method-details-alias">alias</a></span>(<span class="param-data-type">string</span> <span class="variable param-name">$alias</span>)
             <span class="method-return">
                 &nbsp;<strong>:</strong>&nbsp;
-                                    <a href='../../class/Aimo/Query.html'>Aimo\Query</a>                            </span>
+                                    <a href='../../class/Aimo/Db.html'>Aimo\Db</a>                            </span>
         </div>
                     <div class="method-doc">
                 <div class="summary-text">
@@ -405,7 +405,7 @@
             <span class="method-name"><a href="#method-details-fields">fields</a></span>()
             <span class="method-return">
                 &nbsp;<strong>:</strong>&nbsp;
-                                    <a href='../../class/Aimo/Query.html'>Aimo\Query</a>                            </span>
+                                    <a href='../../class/Aimo/Db.html'>Aimo\Db</a>                            </span>
         </div>
                     <div class="method-doc">
                 <div class="summary-text">
@@ -422,7 +422,7 @@
             <span class="method-name"><a href="#method-details-distinct">distinct</a></span>()
             <span class="method-return">
                 &nbsp;<strong>:</strong>&nbsp;
-                                    <a href='../../class/Aimo/Query.html'>Aimo\Query</a>                            </span>
+                                    <a href='../../class/Aimo/Db.html'>Aimo\Db</a>                            </span>
         </div>
                     <div class="method-doc">
                 <div class="summary-text">
@@ -490,7 +490,7 @@
 <li class="class-method clearfix">
     <div class="method-summary">
         <div class="method-signature">
-            <span class="method-name"><a href="#method-details-whereEqual">whereEqual</a></span>(<span class="param-data-type">string</span> <span class="variable param-name">$column_name</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$value</span>)
+            <span class="method-name"><a href="#method-details-whereEqual">whereEqual</a></span>(<span class="param-data-type">variable</span> <span class="variable param-name">$field</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$value</span>)
             <span class="method-return">
                 &nbsp;<strong>:</strong>&nbsp;
                                     void
@@ -508,7 +508,7 @@
 <li class="class-method clearfix">
     <div class="method-summary">
         <div class="method-signature">
-            <span class="method-name"><a href="#method-details-whereNotEqual">whereNotEqual</a></span>(<span class="param-data-type">string</span> <span class="variable param-name">$column_name</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$value</span>)
+            <span class="method-name"><a href="#method-details-whereNotEqual">whereNotEqual</a></span>(<span class="param-data-type">variable</span> <span class="variable param-name">$field</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$value</span>)
             <span class="method-return">
                 &nbsp;<strong>:</strong>&nbsp;
                                     void
@@ -580,7 +580,7 @@
 <li class="class-method clearfix">
     <div class="method-summary">
         <div class="method-signature">
-            <span class="method-name"><a href="#method-details-whereLike">whereLike</a></span>(<span class="param-data-type">variable</span> <span class="variable param-name">$column_name</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$value</span>)
+            <span class="method-name"><a href="#method-details-whereLike">whereLike</a></span>(<span class="param-data-type">variable</span> <span class="variable param-name">$field</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$value</span>)
             <span class="method-return">
                 &nbsp;<strong>:</strong>&nbsp;
                                     void
@@ -598,7 +598,7 @@
 <li class="class-method clearfix">
     <div class="method-summary">
         <div class="method-signature">
-            <span class="method-name"><a href="#method-details-whereNotLike">whereNotLike</a></span>(<span class="param-data-type">variable</span> <span class="variable param-name">$column_name</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$value</span>)
+            <span class="method-name"><a href="#method-details-whereNotLike">whereNotLike</a></span>(<span class="param-data-type">variable</span> <span class="variable param-name">$field</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$value</span>)
             <span class="method-return">
                 &nbsp;<strong>:</strong>&nbsp;
                                     void
@@ -616,7 +616,7 @@
 <li class="class-method clearfix">
     <div class="method-summary">
         <div class="method-signature">
-            <span class="method-name"><a href="#method-details-whereGt">whereGt</a></span>(<span class="param-data-type">variable</span> <span class="variable param-name">$column_name</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$value</span>)
+            <span class="method-name"><a href="#method-details-whereGt">whereGt</a></span>(<span class="param-data-type">variable</span> <span class="variable param-name">$field</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$value</span>)
             <span class="method-return">
                 &nbsp;<strong>:</strong>&nbsp;
                                     void
@@ -634,7 +634,7 @@
 <li class="class-method clearfix">
     <div class="method-summary">
         <div class="method-signature">
-            <span class="method-name"><a href="#method-details-whereLt">whereLt</a></span>(<span class="param-data-type">variable</span> <span class="variable param-name">$column_name</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$value</span>)
+            <span class="method-name"><a href="#method-details-whereLt">whereLt</a></span>(<span class="param-data-type">variable</span> <span class="variable param-name">$field</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$value</span>)
             <span class="method-return">
                 &nbsp;<strong>:</strong>&nbsp;
                                     void
@@ -652,7 +652,7 @@
 <li class="class-method clearfix">
     <div class="method-summary">
         <div class="method-signature">
-            <span class="method-name"><a href="#method-details-whereGte">whereGte</a></span>(<span class="param-data-type">variable</span> <span class="variable param-name">$column_name</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$value</span>)
+            <span class="method-name"><a href="#method-details-whereGte">whereGte</a></span>(<span class="param-data-type">variable</span> <span class="variable param-name">$field</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$value</span>)
             <span class="method-return">
                 &nbsp;<strong>:</strong>&nbsp;
                                     void
@@ -670,7 +670,7 @@
 <li class="class-method clearfix">
     <div class="method-summary">
         <div class="method-signature">
-            <span class="method-name"><a href="#method-details-whereLte">whereLte</a></span>(<span class="param-data-type">variable</span> <span class="variable param-name">$column_name</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$value</span>)
+            <span class="method-name"><a href="#method-details-whereLte">whereLte</a></span>(<span class="param-data-type">variable</span> <span class="variable param-name">$field</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$value</span>)
             <span class="method-return">
                 &nbsp;<strong>:</strong>&nbsp;
                                     void
@@ -688,7 +688,7 @@
 <li class="class-method clearfix">
     <div class="method-summary">
         <div class="method-signature">
-            <span class="method-name"><a href="#method-details-whereIn">whereIn</a></span>(<span class="param-data-type">variable</span> <span class="variable param-name">$column_name</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$values</span>)
+            <span class="method-name"><a href="#method-details-whereIn">whereIn</a></span>(<span class="param-data-type">variable</span> <span class="variable param-name">$field</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$values</span>)
             <span class="method-return">
                 &nbsp;<strong>:</strong>&nbsp;
                                     void
@@ -706,7 +706,7 @@
 <li class="class-method clearfix">
     <div class="method-summary">
         <div class="method-signature">
-            <span class="method-name"><a href="#method-details-whereNotIn">whereNotIn</a></span>(<span class="param-data-type">variable</span> <span class="variable param-name">$column_name</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$values</span>)
+            <span class="method-name"><a href="#method-details-whereNotIn">whereNotIn</a></span>(<span class="param-data-type">variable</span> <span class="variable param-name">$field</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$values</span>)
             <span class="method-return">
                 &nbsp;<strong>:</strong>&nbsp;
                                     void
@@ -724,7 +724,7 @@
 <li class="class-method clearfix">
     <div class="method-summary">
         <div class="method-signature">
-            <span class="method-name"><a href="#method-details-whereIsNull">whereIsNull</a></span>(<span class="param-data-type">variable</span> <span class="variable param-name">$column_name</span>)
+            <span class="method-name"><a href="#method-details-whereIsNull">whereIsNull</a></span>(<span class="param-data-type">variable</span> <span class="variable param-name">$field</span>)
             <span class="method-return">
                 &nbsp;<strong>:</strong>&nbsp;
                                     void
@@ -742,7 +742,7 @@
 <li class="class-method clearfix">
     <div class="method-summary">
         <div class="method-signature">
-            <span class="method-name"><a href="#method-details-whereNotNull">whereNotNull</a></span>(<span class="param-data-type">variable</span> <span class="variable param-name">$column_name</span>)
+            <span class="method-name"><a href="#method-details-whereNotNull">whereNotNull</a></span>(<span class="param-data-type">variable</span> <span class="variable param-name">$field</span>)
             <span class="method-return">
                 &nbsp;<strong>:</strong>&nbsp;
                                     void
@@ -778,7 +778,25 @@
 <li class="class-method clearfix">
     <div class="method-summary">
         <div class="method-signature">
-            <span class="method-name"><a href="#method-details-orderByDesc">orderByDesc</a></span>(<span class="param-data-type">string</span> <span class="variable param-name">$column_name</span>)
+            <span class="method-name"><a href="#method-details-order">order</a></span>(<span class="param-data-type">string</span> <span class="variable param-name">$order</span>, <span class="param-data-type">string</span> <span class="variable param-name">$type</span>)
+            <span class="method-return">
+                &nbsp;<strong>:</strong>&nbsp;
+                                    void
+                            </span>
+        </div>
+                    <div class="method-doc">
+                <div class="summary-text">
+                                    </div>
+            </div>
+            </div>
+</li>
+
+    
+        
+<li class="class-method clearfix">
+    <div class="method-summary">
+        <div class="method-signature">
+            <span class="method-name"><a href="#method-details-orderByDesc">orderByDesc</a></span>(<span class="param-data-type">variable</span> <span class="variable param-name">$field</span>)
             <span class="method-return">
                 &nbsp;<strong>:</strong>&nbsp;
                                     <a href='../../class/Aimo/Db.html'>Aimo\Db</a>                            </span>
@@ -795,7 +813,7 @@
 <li class="class-method clearfix">
     <div class="method-summary">
         <div class="method-signature">
-            <span class="method-name"><a href="#method-details-orderByAsc">orderByAsc</a></span>(<span class="param-data-type">string</span> <span class="variable param-name">$column_name</span>)
+            <span class="method-name"><a href="#method-details-orderByAsc">orderByAsc</a></span>(<span class="param-data-type">variable</span> <span class="variable param-name">$field</span>)
             <span class="method-return">
                 &nbsp;<strong>:</strong>&nbsp;
                                     <a href='../../class/Aimo/Db.html'>Aimo\Db</a>                            </span>
@@ -829,7 +847,7 @@
 <li class="class-method clearfix">
     <div class="method-summary">
         <div class="method-signature">
-            <span class="method-name"><a href="#method-details-groupBy">groupBy</a></span>(<span class="param-data-type">string</span> <span class="variable param-name">$column_name</span>)
+            <span class="method-name"><a href="#method-details-groupBy">groupBy</a></span>(<span class="param-data-type">variable</span> <span class="variable param-name">$field</span>)
             <span class="method-return">
                 &nbsp;<strong>:</strong>&nbsp;
                                     <a href='../../class/Aimo/Db.html'>Aimo\Db</a>                            </span>
@@ -863,7 +881,7 @@
 <li class="class-method clearfix">
     <div class="method-summary">
         <div class="method-signature">
-            <span class="method-name"><a href="#method-details-having">having</a></span>(<span class="param-data-type">variable</span> <span class="variable param-name">$column_name</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$value</span>)
+            <span class="method-name"><a href="#method-details-having">having</a></span>(<span class="param-data-type">variable</span> <span class="variable param-name">$field</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$value</span>)
             <span class="method-return">
                 &nbsp;<strong>:</strong>&nbsp;
                                     void
@@ -881,7 +899,7 @@
 <li class="class-method clearfix">
     <div class="method-summary">
         <div class="method-signature">
-            <span class="method-name"><a href="#method-details-havingEqual">havingEqual</a></span>(<span class="param-data-type">variable</span> <span class="variable param-name">$column_name</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$value</span>)
+            <span class="method-name"><a href="#method-details-havingEqual">havingEqual</a></span>(<span class="param-data-type">variable</span> <span class="variable param-name">$field</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$value</span>)
             <span class="method-return">
                 &nbsp;<strong>:</strong>&nbsp;
                                     void
@@ -899,7 +917,7 @@
 <li class="class-method clearfix">
     <div class="method-summary">
         <div class="method-signature">
-            <span class="method-name"><a href="#method-details-havingNotEqual">havingNotEqual</a></span>(<span class="param-data-type">variable</span> <span class="variable param-name">$column_name</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$value</span>)
+            <span class="method-name"><a href="#method-details-havingNotEqual">havingNotEqual</a></span>(<span class="param-data-type">variable</span> <span class="variable param-name">$field</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$value</span>)
             <span class="method-return">
                 &nbsp;<strong>:</strong>&nbsp;
                                     void
@@ -935,7 +953,7 @@
 <li class="class-method clearfix">
     <div class="method-summary">
         <div class="method-signature">
-            <span class="method-name"><a href="#method-details-havingLike">havingLike</a></span>(<span class="param-data-type">variable</span> <span class="variable param-name">$column_name</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$value</span>)
+            <span class="method-name"><a href="#method-details-havingLike">havingLike</a></span>(<span class="param-data-type">variable</span> <span class="variable param-name">$field</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$value</span>)
             <span class="method-return">
                 &nbsp;<strong>:</strong>&nbsp;
                                     void
@@ -953,7 +971,7 @@
 <li class="class-method clearfix">
     <div class="method-summary">
         <div class="method-signature">
-            <span class="method-name"><a href="#method-details-havingNotLike">havingNotLike</a></span>(<span class="param-data-type">variable</span> <span class="variable param-name">$column_name</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$value</span>)
+            <span class="method-name"><a href="#method-details-havingNotLike">havingNotLike</a></span>(<span class="param-data-type">variable</span> <span class="variable param-name">$field</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$value</span>)
             <span class="method-return">
                 &nbsp;<strong>:</strong>&nbsp;
                                     void
@@ -971,7 +989,7 @@
 <li class="class-method clearfix">
     <div class="method-summary">
         <div class="method-signature">
-            <span class="method-name"><a href="#method-details-havingGt">havingGt</a></span>(<span class="param-data-type">variable</span> <span class="variable param-name">$column_name</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$value</span>)
+            <span class="method-name"><a href="#method-details-havingGt">havingGt</a></span>(<span class="param-data-type">variable</span> <span class="variable param-name">$field</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$value</span>)
             <span class="method-return">
                 &nbsp;<strong>:</strong>&nbsp;
                                     void
@@ -989,7 +1007,7 @@
 <li class="class-method clearfix">
     <div class="method-summary">
         <div class="method-signature">
-            <span class="method-name"><a href="#method-details-havingLt">havingLt</a></span>(<span class="param-data-type">variable</span> <span class="variable param-name">$column_name</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$value</span>)
+            <span class="method-name"><a href="#method-details-havingLt">havingLt</a></span>(<span class="param-data-type">variable</span> <span class="variable param-name">$field</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$value</span>)
             <span class="method-return">
                 &nbsp;<strong>:</strong>&nbsp;
                                     void
@@ -1007,7 +1025,7 @@
 <li class="class-method clearfix">
     <div class="method-summary">
         <div class="method-signature">
-            <span class="method-name"><a href="#method-details-havingGte">havingGte</a></span>(<span class="param-data-type">variable</span> <span class="variable param-name">$column_name</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$value</span>)
+            <span class="method-name"><a href="#method-details-havingGte">havingGte</a></span>(<span class="param-data-type">variable</span> <span class="variable param-name">$field</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$value</span>)
             <span class="method-return">
                 &nbsp;<strong>:</strong>&nbsp;
                                     void
@@ -1025,7 +1043,7 @@
 <li class="class-method clearfix">
     <div class="method-summary">
         <div class="method-signature">
-            <span class="method-name"><a href="#method-details-havingLte">havingLte</a></span>(<span class="param-data-type">variable</span> <span class="variable param-name">$column_name</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$value</span>)
+            <span class="method-name"><a href="#method-details-havingLte">havingLte</a></span>(<span class="param-data-type">variable</span> <span class="variable param-name">$field</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$value</span>)
             <span class="method-return">
                 &nbsp;<strong>:</strong>&nbsp;
                                     void
@@ -1043,7 +1061,7 @@
 <li class="class-method clearfix">
     <div class="method-summary">
         <div class="method-signature">
-            <span class="method-name"><a href="#method-details-havingIn">havingIn</a></span>(<span class="param-data-type">variable</span> <span class="variable param-name">$column_name</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$values</span>)
+            <span class="method-name"><a href="#method-details-havingIn">havingIn</a></span>(<span class="param-data-type">variable</span> <span class="variable param-name">$field</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$values</span>)
             <span class="method-return">
                 &nbsp;<strong>:</strong>&nbsp;
                                     void
@@ -1061,7 +1079,7 @@
 <li class="class-method clearfix">
     <div class="method-summary">
         <div class="method-signature">
-            <span class="method-name"><a href="#method-details-havingNotIn">havingNotIn</a></span>(<span class="param-data-type">variable</span> <span class="variable param-name">$column_name</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$values</span>)
+            <span class="method-name"><a href="#method-details-havingNotIn">havingNotIn</a></span>(<span class="param-data-type">variable</span> <span class="variable param-name">$field</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$values</span>)
             <span class="method-return">
                 &nbsp;<strong>:</strong>&nbsp;
                                     void
@@ -1079,7 +1097,7 @@
 <li class="class-method clearfix">
     <div class="method-summary">
         <div class="method-signature">
-            <span class="method-name"><a href="#method-details-havingNull">havingNull</a></span>(<span class="param-data-type">variable</span> <span class="variable param-name">$column_name</span>)
+            <span class="method-name"><a href="#method-details-havingNull">havingNull</a></span>(<span class="param-data-type">variable</span> <span class="variable param-name">$field</span>)
             <span class="method-return">
                 &nbsp;<strong>:</strong>&nbsp;
                                     void
@@ -1097,7 +1115,7 @@
 <li class="class-method clearfix">
     <div class="method-summary">
         <div class="method-signature">
-            <span class="method-name"><a href="#method-details-havingNotNull">havingNotNull</a></span>(<span class="param-data-type">variable</span> <span class="variable param-name">$column_name</span>)
+            <span class="method-name"><a href="#method-details-havingNotNull">havingNotNull</a></span>(<span class="param-data-type">variable</span> <span class="variable param-name">$field</span>)
             <span class="method-return">
                 &nbsp;<strong>:</strong>&nbsp;
                                     void
@@ -1151,6 +1169,23 @@
     <div class="method-summary">
         <div class="method-signature">
             <span class="method-name"><a href="#method-details-offset">offset</a></span>(<span class="param-data-type">variable</span> <span class="variable param-name">$offset</span>)
+            <span class="method-return">
+                &nbsp;<strong>:</strong>&nbsp;
+                                    <a href='../../class/Aimo/Db.html'>Aimo\Db</a>                            </span>
+        </div>
+                    <div class="method-doc">
+                <div class="summary-text">
+                                    </div>
+            </div>
+            </div>
+</li>
+
+    
+        
+<li class="class-method clearfix">
+    <div class="method-summary">
+        <div class="method-signature">
+            <span class="method-name"><a href="#method-details-asArray">asArray</a></span>()
             <span class="method-return">
                 &nbsp;<strong>:</strong>&nbsp;
                                     <a href='../../class/Aimo/Db.html'>Aimo\Db</a>                            </span>
@@ -1437,7 +1472,7 @@
 <li class="class-method clearfix">
     <div class="method-summary">
         <div class="method-signature">
-            <span class="method-name"><a href="#method-details-_setup_db">_setup_db</a></span>(<span class="param-data-type">string</span> <span class="variable param-name">$name</span>)
+            <span class="method-name"><a href="#method-details-connect">connect</a></span>(<span class="param-data-type">string</span> <span class="variable param-name">$name</span>)
             <span class="method-return">
                 &nbsp;<strong>:</strong>&nbsp;
                                     void
@@ -1455,7 +1490,7 @@
 <li class="class-method clearfix">
     <div class="method-summary">
         <div class="method-signature">
-            <span class="method-name"><a href="#method-details-_setup_db_config">_setup_db_config</a></span>(<span class="param-data-type">string</span> <span class="variable param-name">$name</span>)
+            <span class="method-name"><a href="#method-details-initConfig">initConfig</a></span>(<span class="param-data-type">string</span> <span class="variable param-name">$name</span>)
             <span class="method-return">
                 &nbsp;<strong>:</strong>&nbsp;
                                     void
@@ -1473,7 +1508,7 @@
 <li class="class-method clearfix">
     <div class="method-summary">
         <div class="method-signature">
-            <span class="method-name"><a href="#method-details-_setup_identifier_quote_character">_setup_identifier_quote_character</a></span>(<span class="param-data-type">string</span> <span class="variable param-name">$name</span>)
+            <span class="method-name"><a href="#method-details-setQuote">setQuote</a></span>(<span class="param-data-type">string</span> <span class="variable param-name">$name</span>)
             <span class="method-return">
                 &nbsp;<strong>:</strong>&nbsp;
                                     void
@@ -1491,7 +1526,7 @@
 <li class="class-method clearfix">
     <div class="method-summary">
         <div class="method-signature">
-            <span class="method-name"><a href="#method-details-_setup_limit_clause_style">_setup_limit_clause_style</a></span>(<span class="param-data-type">string</span> <span class="variable param-name">$name</span>)
+            <span class="method-name"><a href="#method-details-setLimitStyle">setLimitStyle</a></span>(<span class="param-data-type">string</span> <span class="variable param-name">$name</span>)
             <span class="method-return">
                 &nbsp;<strong>:</strong>&nbsp;
                                     void
@@ -1509,7 +1544,20 @@
 <li class="class-method clearfix">
     <div class="method-summary">
         <div class="method-signature">
-            <span class="method-name"><a href="#method-details-_detect_identifier_quote_character">_detect_identifier_quote_character</a></span>(<span class="param-data-type">string</span> <span class="variable param-name">$name</span>)
+            <span class="method-name"><a href="#method-details-getPdoDriver">getPdoDriver</a></span>(<span class="param-data-type">string</span> <span class="variable param-name">$name</span>)
+            <span class="method-return">
+                &nbsp;<strong>:</strong>&nbsp;
+                                    string                            </span>
+        </div>
+            </div>
+</li>
+
+    
+        
+<li class="class-method clearfix">
+    <div class="method-summary">
+        <div class="method-signature">
+            <span class="method-name"><a href="#method-details-detectQuoteChar">detectQuoteChar</a></span>(<span class="param-data-type">string</span> <span class="variable param-name">$name</span>)
             <span class="method-return">
                 &nbsp;<strong>:</strong>&nbsp;
                                     void
@@ -1527,7 +1575,7 @@
 <li class="class-method clearfix">
     <div class="method-summary">
         <div class="method-signature">
-            <span class="method-name"><a href="#method-details-_detect_limit_clause_style">_detect_limit_clause_style</a></span>(<span class="param-data-type">string</span> <span class="variable param-name">$name</span>)
+            <span class="method-name"><a href="#method-details-getLimitStyle">getLimitStyle</a></span>(<span class="param-data-type">string</span> <span class="variable param-name">$name</span>)
             <span class="method-return">
                 &nbsp;<strong>:</strong>&nbsp;
                                     string                            </span>
@@ -1580,7 +1628,7 @@
 <li class="class-method clearfix">
     <div class="method-summary">
         <div class="method-signature">
-            <span class="method-name"><a href="#method-details-_call_aggregate_db_function">_call_aggregate_db_function</a></span>(<span class="param-data-type">variable</span> <span class="variable param-name">$sql_function</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$column</span>)
+            <span class="method-name"><a href="#method-details-aggregate">aggregate</a></span>(<span class="param-data-type">variable</span> <span class="variable param-name">$func</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$column</span>)
             <span class="method-return">
                 &nbsp;<strong>:</strong>&nbsp;
                                     void
@@ -1616,7 +1664,7 @@
 <li class="class-method clearfix">
     <div class="method-summary">
         <div class="method-signature">
-            <span class="method-name"><a href="#method-details-field">field</a></span>(<span class="param-data-type">variable</span> <span class="variable param-name">$column</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$alias</span>)
+            <span class="method-name"><a href="#method-details-field">field</a></span>(<span class="param-data-type">string</span> <span class="variable param-name">$column</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$alias</span>)
             <span class="method-return">
                 &nbsp;<strong>:</strong>&nbsp;
                                     void
@@ -1634,7 +1682,7 @@
 <li class="class-method clearfix">
     <div class="method-summary">
         <div class="method-signature">
-            <span class="method-name"><a href="#method-details-fieldExpr">fieldExpr</a></span>(<span class="param-data-type">variable</span> <span class="variable param-name">$expr</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$alias</span>)
+            <span class="method-name"><a href="#method-details-fieldExpr">fieldExpr</a></span>(<span class="param-data-type">string</span> <span class="variable param-name">$expr</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$alias</span>)
             <span class="method-return">
                 &nbsp;<strong>:</strong>&nbsp;
                                     void
@@ -1655,8 +1703,7 @@
             <span class="method-name"><a href="#method-details-trimField">trimField</a></span>(<span class="param-data-type">string</span> <span class="variable param-name">$field</span>)
             <span class="method-return">
                 &nbsp;<strong>:</strong>&nbsp;
-                                    void
-                            </span>
+                                    string                            </span>
         </div>
                     <div class="method-doc">
                 <div class="summary-text">
@@ -1706,7 +1753,7 @@
 <li class="class-method clearfix">
     <div class="method-summary">
         <div class="method-signature">
-            <span class="method-name"><a href="#method-details-_add_simple_having">_add_simple_having</a></span>(<span class="param-data-type">variable</span> <span class="variable param-name">$column_name</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$separator</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$value</span>)
+            <span class="method-name"><a href="#method-details-simpleHaving">simpleHaving</a></span>(<span class="param-data-type">variable</span> <span class="variable param-name">$field</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$separator</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$value</span>)
             <span class="method-return">
                 &nbsp;<strong>:</strong>&nbsp;
                                     void
@@ -1724,7 +1771,7 @@
 <li class="class-method clearfix">
     <div class="method-summary">
         <div class="method-signature">
-            <span class="method-name"><a href="#method-details-_add_having_placeholder">_add_having_placeholder</a></span>(<span class="param-data-type">variable</span> <span class="variable param-name">$column_name</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$separator</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$values</span>)
+            <span class="method-name"><a href="#method-details-_add_having_placeholder">_add_having_placeholder</a></span>(<span class="param-data-type">variable</span> <span class="variable param-name">$field</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$separator</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$values</span>)
             <span class="method-return">
                 &nbsp;<strong>:</strong>&nbsp;
                                     void
@@ -1742,7 +1789,7 @@
 <li class="class-method clearfix">
     <div class="method-summary">
         <div class="method-signature">
-            <span class="method-name"><a href="#method-details-_add_having_no_value">_add_having_no_value</a></span>(<span class="param-data-type">variable</span> <span class="variable param-name">$column_name</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$operator</span>)
+            <span class="method-name"><a href="#method-details-_add_having_no_value">_add_having_no_value</a></span>(<span class="param-data-type">variable</span> <span class="variable param-name">$field</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$operator</span>)
             <span class="method-return">
                 &nbsp;<strong>:</strong>&nbsp;
                                     void
@@ -1778,7 +1825,7 @@
 <li class="class-method clearfix">
     <div class="method-summary">
         <div class="method-signature">
-            <span class="method-name"><a href="#method-details-_add_simple_where">_add_simple_where</a></span>(<span class="param-data-type">variable</span> <span class="variable param-name">$column_name</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$separator</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$value</span>)
+            <span class="method-name"><a href="#method-details-simpleWhere">simpleWhere</a></span>(<span class="param-data-type">variable</span> <span class="variable param-name">$field</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$separator</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$value</span>)
             <span class="method-return">
                 &nbsp;<strong>:</strong>&nbsp;
                                     void
@@ -1796,7 +1843,7 @@
 <li class="class-method clearfix">
     <div class="method-summary">
         <div class="method-signature">
-            <span class="method-name"><a href="#method-details-_add_where_placeholder">_add_where_placeholder</a></span>(<span class="param-data-type">variable</span> <span class="variable param-name">$column_name</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$separator</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$values</span>)
+            <span class="method-name"><a href="#method-details-_add_where_placeholder">_add_where_placeholder</a></span>(<span class="param-data-type">variable</span> <span class="variable param-name">$field</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$separator</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$values</span>)
             <span class="method-return">
                 &nbsp;<strong>:</strong>&nbsp;
                                     void
@@ -1814,7 +1861,7 @@
 <li class="class-method clearfix">
     <div class="method-summary">
         <div class="method-signature">
-            <span class="method-name"><a href="#method-details-_add_where_no_value">_add_where_no_value</a></span>(<span class="param-data-type">variable</span> <span class="variable param-name">$column_name</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$operator</span>)
+            <span class="method-name"><a href="#method-details-_add_where_no_value">_add_where_no_value</a></span>(<span class="param-data-type">variable</span> <span class="variable param-name">$field</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$operator</span>)
             <span class="method-return">
                 &nbsp;<strong>:</strong>&nbsp;
                                     void
@@ -1850,7 +1897,7 @@
 <li class="class-method clearfix">
     <div class="method-summary">
         <div class="method-signature">
-            <span class="method-name"><a href="#method-details-_add_simple_condition">_add_simple_condition</a></span>(<span class="param-data-type">variable</span> <span class="variable param-name">$type</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$column_name</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$separator</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$value</span>)
+            <span class="method-name"><a href="#method-details-_add_simple_condition">_add_simple_condition</a></span>(<span class="param-data-type">variable</span> <span class="variable param-name">$type</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$field</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$separator</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$value</span>)
             <span class="method-return">
                 &nbsp;<strong>:</strong>&nbsp;
                                     void
@@ -1886,7 +1933,7 @@
 <li class="class-method clearfix">
     <div class="method-summary">
         <div class="method-signature">
-            <span class="method-name"><a href="#method-details-_get_compound_id_column_values">_get_compound_id_column_values</a></span>(<span class="param-data-type">variable</span> <span class="variable param-name">$value</span>)
+            <span class="method-name"><a href="#method-details-getPkValue">getPkValue</a></span>(<span class="param-data-type">variable</span> <span class="variable param-name">$value</span>)
             <span class="method-return">
                 &nbsp;<strong>:</strong>&nbsp;
                                     void
@@ -1904,7 +1951,7 @@
 <li class="class-method clearfix">
     <div class="method-summary">
         <div class="method-signature">
-            <span class="method-name"><a href="#method-details-_get_compound_id_column_values_array">_get_compound_id_column_values_array</a></span>(<span class="param-data-type">variable</span> <span class="variable param-name">$values</span>)
+            <span class="method-name"><a href="#method-details-getPkValues">getPkValues</a></span>(<span class="param-data-type">variable</span> <span class="variable param-name">$values</span>)
             <span class="method-return">
                 &nbsp;<strong>:</strong>&nbsp;
                                     void
@@ -1922,7 +1969,7 @@
 <li class="class-method clearfix">
     <div class="method-summary">
         <div class="method-signature">
-            <span class="method-name"><a href="#method-details-_add_order_by">_add_order_by</a></span>(<span class="param-data-type">variable</span> <span class="variable param-name">$column_name</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$ordering</span>)
+            <span class="method-name"><a href="#method-details-_add_order_by">_add_order_by</a></span>(<span class="param-data-type">variable</span> <span class="variable param-name">$field</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$ordering</span>)
             <span class="method-return">
                 &nbsp;<strong>:</strong>&nbsp;
                                     <a href='../../class/Aimo/Db.html'>Aimo\Db</a>                            </span>
@@ -2133,7 +2180,7 @@
 <li class="class-method clearfix">
     <div class="method-summary">
         <div class="method-signature">
-            <span class="method-name"><a href="#method-details-_quote_one_identifier">_quote_one_identifier</a></span>(<span class="param-data-type">variable</span> <span class="variable param-name">$identifier</span>)
+            <span class="method-name"><a href="#method-details-quoteOne">quoteOne</a></span>(<span class="param-data-type">variable</span> <span class="variable param-name">$identifier</span>)
             <span class="method-return">
                 &nbsp;<strong>:</strong>&nbsp;
                                     void
@@ -2151,7 +2198,7 @@
 <li class="class-method clearfix">
     <div class="method-summary">
         <div class="method-signature">
-            <span class="method-name"><a href="#method-details-_quote_identifier">_quote_identifier</a></span>(<span class="param-data-type">variable</span> <span class="variable param-name">$identifier</span>)
+            <span class="method-name"><a href="#method-details-quoteId">quoteId</a></span>(<span class="param-data-type">variable</span> <span class="variable param-name">$identifier</span>)
             <span class="method-return">
                 &nbsp;<strong>:</strong>&nbsp;
                                     void
@@ -2169,7 +2216,7 @@
 <li class="class-method clearfix">
     <div class="method-summary">
         <div class="method-signature">
-            <span class="method-name"><a href="#method-details-_quote_identifier_part">_quote_identifier_part</a></span>(<span class="param-data-type">variable</span> <span class="variable param-name">$part</span>)
+            <span class="method-name"><a href="#method-details-quoteIdPart">quoteIdPart</a></span>(<span class="param-data-type">variable</span> <span class="variable param-name">$part</span>)
             <span class="method-return">
                 &nbsp;<strong>:</strong>&nbsp;
                                     string                            </span>
@@ -2186,7 +2233,7 @@
 <li class="class-method clearfix">
     <div class="method-summary">
         <div class="method-signature">
-            <span class="method-name"><a href="#method-details-_run">_run</a></span>()
+            <span class="method-name"><a href="#method-details-run">run</a></span>()
             <span class="method-return">
                 &nbsp;<strong>:</strong>&nbsp;
                                     void
@@ -2204,10 +2251,10 @@
 <li class="class-method clearfix">
     <div class="method-summary">
         <div class="method-signature">
-            <span class="method-name"><a href="#method-details-_run_by_model">_run_by_model</a></span>()
+            <span class="method-name"><a href="#method-details-runForModel">runForModel</a></span>()
             <span class="method-return">
                 &nbsp;<strong>:</strong>&nbsp;
-                                    PDOStatement                            </span>
+                                    PDOStatement | array                            </span>
         </div>
                     <div class="method-doc">
                 <div class="summary-text">
@@ -2221,7 +2268,7 @@
 <li class="class-method clearfix">
     <div class="method-summary">
         <div class="method-signature">
-            <span class="method-name"><a href="#method-details-_get_id_column_name">_get_id_column_name</a></span>()
+            <span class="method-name"><a href="#method-details-getPk">getPk</a></span>()
             <span class="method-return">
                 &nbsp;<strong>:</strong>&nbsp;
                                     void
@@ -2260,8 +2307,7 @@
             <span class="method-name"><a href="#method-details-_build_insert">_build_insert</a></span>(<span class="param-data-type">array</span> <span class="variable param-name">$data</span>)
             <span class="method-return">
                 &nbsp;<strong>:</strong>&nbsp;
-                                    void
-                            </span>
+                                    string                            </span>
         </div>
                     <div class="method-doc">
                 <div class="summary-text">
@@ -2311,7 +2357,7 @@
         <div class="method-details-details">
             <div class="method-signature">
                                     <span class="visibility-protected keyword">protected</span>
-                                <span class="keyword">function</span>&nbsp;<span class="method-name">__construct</span>(<span class="param-data-type">string</span> <span class="variable param-name">$table_name</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$data</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$name</span>)
+                                <span class="keyword">function</span>&nbsp;<span class="method-name">__construct</span>(<span class="param-data-type">string</span> <span class="variable param-name">$table</span>, <span class="param-data-type">array</span> <span class="variable param-name">$data</span>, <span class="param-data-type">string</span> <span class="variable param-name">$name</span>)
             </div>
             <div class="method-doc">
                                     <div class="summary">
@@ -2332,7 +2378,7 @@
             <div class="method-signature">
                                     <span class="visibility-public keyword">public</span>
                                     <span class="visibility-static keyword">static</span>
-                                <span class="keyword">function</span>&nbsp;<span class="method-name">config</span>(<span class="param-data-type">string</span> <span class="variable param-name">$key</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$value</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$name</span>)
+                                <span class="keyword">function</span>&nbsp;<span class="method-name">config</span>(<span class="param-data-type">string</span> <span class="variable param-name">$key</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$value</span>, <span class="param-data-type">string</span> <span class="variable param-name">$name</span>)
             </div>
             <div class="method-doc">
                                     <div class="summary">
@@ -2418,7 +2464,7 @@
             <div class="method-signature">
                                     <span class="visibility-public keyword">public</span>
                                     <span class="visibility-static keyword">static</span>
-                                <span class="keyword">function</span>&nbsp;<span class="method-name">getConfig</span>(<span class="param-data-type">variable</span> <span class="variable param-name">$key</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$name</span>)
+                                <span class="keyword">function</span>&nbsp;<span class="method-name">getConfig</span>(<span class="param-data-type">string</span> <span class="variable param-name">$key</span>, <span class="param-data-type">string</span> <span class="variable param-name">$name</span>)
             </div>
             <div class="method-doc">
                                     <div class="summary">
@@ -2482,7 +2528,7 @@
             <div class="method-signature">
                                     <span class="visibility-public keyword">public</span>
                                     <span class="visibility-static keyword">static</span>
-                                <span class="keyword">function</span>&nbsp;<span class="method-name">table</span>(<span class="param-data-type">string</span> <span class="variable param-name">$table_name</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$name</span>)
+                                <span class="keyword">function</span>&nbsp;<span class="method-name">table</span>(<span class="param-data-type">string</span> <span class="variable param-name">$table</span>, <span class="param-data-type">string</span> <span class="variable param-name">$name</span>)
             </div>
             <div class="method-doc">
                                     <div class="summary">
@@ -2511,7 +2557,7 @@
             <div class="method-signature">
                                     <span class="visibility-public keyword">public</span>
                                     <span class="visibility-static keyword">static</span>
-                                <span class="keyword">function</span>&nbsp;<span class="method-name">name</span>(<span class="param-data-type">string</span> <span class="variable param-name">$table_name</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$name</span>)
+                                <span class="keyword">function</span>&nbsp;<span class="method-name">name</span>(<span class="param-data-type">string</span> <span class="variable param-name">$table</span>, <span class="param-data-type">string</span> <span class="variable param-name">$name</span>)
             </div>
             <div class="method-doc">
                                     <div class="summary">
@@ -2540,7 +2586,7 @@
             <div class="method-signature">
                                     <span class="visibility-public keyword">public</span>
                                     <span class="visibility-static keyword">static</span>
-                                <span class="keyword">function</span>&nbsp;<span class="method-name">setDb</span>(<span class="param-data-type">variable</span> <span class="variable param-name">$db</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$name</span>)
+                                <span class="keyword">function</span>&nbsp;<span class="method-name">setDb</span>(<span class="param-data-type">variable</span> <span class="variable param-name">$db</span>, <span class="param-data-type">string</span> <span class="variable param-name">$name</span>)
             </div>
             <div class="method-doc">
                                     <div class="summary">
@@ -2849,7 +2895,7 @@
 
      
 
-     <code> 
+     <code>
 
      //Right example
 
@@ -2995,7 +3041,7 @@
         <div class="method-details-details">
             <div class="method-signature">
                                     <span class="visibility-public keyword">public</span>
-                                <span class="keyword">function</span>&nbsp;<span class="method-name">whereEqual</span>(<span class="param-data-type">string</span> <span class="variable param-name">$column_name</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$value</span>)
+                                <span class="keyword">function</span>&nbsp;<span class="method-name">whereEqual</span>(<span class="param-data-type">variable</span> <span class="variable param-name">$field</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$value</span>)
             </div>
             <div class="method-doc">
                                     <div class="summary">
@@ -3023,7 +3069,7 @@
         <div class="method-details-details">
             <div class="method-signature">
                                     <span class="visibility-public keyword">public</span>
-                                <span class="keyword">function</span>&nbsp;<span class="method-name">whereNotEqual</span>(<span class="param-data-type">string</span> <span class="variable param-name">$column_name</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$value</span>)
+                                <span class="keyword">function</span>&nbsp;<span class="method-name">whereNotEqual</span>(<span class="param-data-type">variable</span> <span class="variable param-name">$field</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$value</span>)
             </div>
             <div class="method-doc">
                                     <div class="summary">
@@ -3127,7 +3173,7 @@
         <div class="method-details-details">
             <div class="method-signature">
                                     <span class="visibility-public keyword">public</span>
-                                <span class="keyword">function</span>&nbsp;<span class="method-name">whereLike</span>(<span class="param-data-type">variable</span> <span class="variable param-name">$column_name</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$value</span>)
+                                <span class="keyword">function</span>&nbsp;<span class="method-name">whereLike</span>(<span class="param-data-type">variable</span> <span class="variable param-name">$field</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$value</span>)
             </div>
             <div class="method-doc">
                                     <div class="summary">
@@ -3155,7 +3201,7 @@
         <div class="method-details-details">
             <div class="method-signature">
                                     <span class="visibility-public keyword">public</span>
-                                <span class="keyword">function</span>&nbsp;<span class="method-name">whereNotLike</span>(<span class="param-data-type">variable</span> <span class="variable param-name">$column_name</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$value</span>)
+                                <span class="keyword">function</span>&nbsp;<span class="method-name">whereNotLike</span>(<span class="param-data-type">variable</span> <span class="variable param-name">$field</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$value</span>)
             </div>
             <div class="method-doc">
                                     <div class="summary">
@@ -3183,7 +3229,7 @@
         <div class="method-details-details">
             <div class="method-signature">
                                     <span class="visibility-public keyword">public</span>
-                                <span class="keyword">function</span>&nbsp;<span class="method-name">whereGt</span>(<span class="param-data-type">variable</span> <span class="variable param-name">$column_name</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$value</span>)
+                                <span class="keyword">function</span>&nbsp;<span class="method-name">whereGt</span>(<span class="param-data-type">variable</span> <span class="variable param-name">$field</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$value</span>)
             </div>
             <div class="method-doc">
                                     <div class="summary">
@@ -3211,7 +3257,7 @@
         <div class="method-details-details">
             <div class="method-signature">
                                     <span class="visibility-public keyword">public</span>
-                                <span class="keyword">function</span>&nbsp;<span class="method-name">whereLt</span>(<span class="param-data-type">variable</span> <span class="variable param-name">$column_name</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$value</span>)
+                                <span class="keyword">function</span>&nbsp;<span class="method-name">whereLt</span>(<span class="param-data-type">variable</span> <span class="variable param-name">$field</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$value</span>)
             </div>
             <div class="method-doc">
                                     <div class="summary">
@@ -3239,7 +3285,7 @@
         <div class="method-details-details">
             <div class="method-signature">
                                     <span class="visibility-public keyword">public</span>
-                                <span class="keyword">function</span>&nbsp;<span class="method-name">whereGte</span>(<span class="param-data-type">variable</span> <span class="variable param-name">$column_name</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$value</span>)
+                                <span class="keyword">function</span>&nbsp;<span class="method-name">whereGte</span>(<span class="param-data-type">variable</span> <span class="variable param-name">$field</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$value</span>)
             </div>
             <div class="method-doc">
                                     <div class="summary">
@@ -3267,7 +3313,7 @@
         <div class="method-details-details">
             <div class="method-signature">
                                     <span class="visibility-public keyword">public</span>
-                                <span class="keyword">function</span>&nbsp;<span class="method-name">whereLte</span>(<span class="param-data-type">variable</span> <span class="variable param-name">$column_name</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$value</span>)
+                                <span class="keyword">function</span>&nbsp;<span class="method-name">whereLte</span>(<span class="param-data-type">variable</span> <span class="variable param-name">$field</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$value</span>)
             </div>
             <div class="method-doc">
                                     <div class="summary">
@@ -3295,7 +3341,7 @@
         <div class="method-details-details">
             <div class="method-signature">
                                     <span class="visibility-public keyword">public</span>
-                                <span class="keyword">function</span>&nbsp;<span class="method-name">whereIn</span>(<span class="param-data-type">variable</span> <span class="variable param-name">$column_name</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$values</span>)
+                                <span class="keyword">function</span>&nbsp;<span class="method-name">whereIn</span>(<span class="param-data-type">variable</span> <span class="variable param-name">$field</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$values</span>)
             </div>
             <div class="method-doc">
                                     <div class="summary">
@@ -3323,7 +3369,7 @@
         <div class="method-details-details">
             <div class="method-signature">
                                     <span class="visibility-public keyword">public</span>
-                                <span class="keyword">function</span>&nbsp;<span class="method-name">whereNotIn</span>(<span class="param-data-type">variable</span> <span class="variable param-name">$column_name</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$values</span>)
+                                <span class="keyword">function</span>&nbsp;<span class="method-name">whereNotIn</span>(<span class="param-data-type">variable</span> <span class="variable param-name">$field</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$values</span>)
             </div>
             <div class="method-doc">
                                     <div class="summary">
@@ -3351,7 +3397,7 @@
         <div class="method-details-details">
             <div class="method-signature">
                                     <span class="visibility-public keyword">public</span>
-                                <span class="keyword">function</span>&nbsp;<span class="method-name">whereIsNull</span>(<span class="param-data-type">variable</span> <span class="variable param-name">$column_name</span>)
+                                <span class="keyword">function</span>&nbsp;<span class="method-name">whereIsNull</span>(<span class="param-data-type">variable</span> <span class="variable param-name">$field</span>)
             </div>
             <div class="method-doc">
                                     <div class="summary">
@@ -3379,7 +3425,7 @@
         <div class="method-details-details">
             <div class="method-signature">
                                     <span class="visibility-public keyword">public</span>
-                                <span class="keyword">function</span>&nbsp;<span class="method-name">whereNotNull</span>(<span class="param-data-type">variable</span> <span class="variable param-name">$column_name</span>)
+                                <span class="keyword">function</span>&nbsp;<span class="method-name">whereNotNull</span>(<span class="param-data-type">variable</span> <span class="variable param-name">$field</span>)
             </div>
             <div class="method-doc">
                                     <div class="summary">
@@ -3434,12 +3480,44 @@
     
         
 <li class="class-method clearfix">
+    <div class="hidden-anchor" id="method-details-order"></div>
+    <div class="method-details">
+        <div class="method-details-details">
+            <div class="method-signature">
+                                    <span class="visibility-public keyword">public</span>
+                                <span class="keyword">function</span>&nbsp;<span class="method-name">order</span>(<span class="param-data-type">string</span> <span class="variable param-name">$order</span>, <span class="param-data-type">string</span> <span class="variable param-name">$type</span>)
+            </div>
+            <div class="method-doc">
+                                    <div class="summary">
+                                            </div>
+                    <div class="description">
+                        排序
+
+     
+
+     <code>
+
+     Db::name('user')->order('uid','DESC')->select();
+
+     //Quote idenfider your self
+
+     Db::name('user')->order('`uid` asc,`gid` DESC')->select();
+
+     </code>                    </div>
+                            </div>
+        </div>
+    </div>
+</li>
+
+    
+        
+<li class="class-method clearfix">
     <div class="hidden-anchor" id="method-details-orderByDesc"></div>
     <div class="method-details">
         <div class="method-details-details">
             <div class="method-signature">
                                     <span class="visibility-public keyword">public</span>
-                                <span class="keyword">function</span>&nbsp;<span class="method-name">orderByDesc</span>(<span class="param-data-type">string</span> <span class="variable param-name">$column_name</span>)
+                                <span class="keyword">function</span>&nbsp;<span class="method-name">orderByDesc</span>(<span class="param-data-type">variable</span> <span class="variable param-name">$field</span>)
             </div>
             <div class="method-doc">
                                     <div class="summary">
@@ -3467,7 +3545,7 @@
         <div class="method-details-details">
             <div class="method-signature">
                                     <span class="visibility-public keyword">public</span>
-                                <span class="keyword">function</span>&nbsp;<span class="method-name">orderByAsc</span>(<span class="param-data-type">string</span> <span class="variable param-name">$column_name</span>)
+                                <span class="keyword">function</span>&nbsp;<span class="method-name">orderByAsc</span>(<span class="param-data-type">variable</span> <span class="variable param-name">$field</span>)
             </div>
             <div class="method-doc">
                                     <div class="summary">
@@ -3507,7 +3585,7 @@
 
      <code>
 
-     Db::name('user')->orderByExpr('RAND()')->select();//MySQL RAND() 
+     Db::name('user')->orderByExpr('RAND()')->select();//MySQL RAND()
 
      </code>                    </div>
                             </div>
@@ -3523,7 +3601,7 @@
         <div class="method-details-details">
             <div class="method-signature">
                                     <span class="visibility-public keyword">public</span>
-                                <span class="keyword">function</span>&nbsp;<span class="method-name">groupBy</span>(<span class="param-data-type">string</span> <span class="variable param-name">$column_name</span>)
+                                <span class="keyword">function</span>&nbsp;<span class="method-name">groupBy</span>(<span class="param-data-type">variable</span> <span class="variable param-name">$field</span>)
             </div>
             <div class="method-doc">
                                     <div class="summary">
@@ -3579,7 +3657,7 @@
         <div class="method-details-details">
             <div class="method-signature">
                                     <span class="visibility-public keyword">public</span>
-                                <span class="keyword">function</span>&nbsp;<span class="method-name">having</span>(<span class="param-data-type">variable</span> <span class="variable param-name">$column_name</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$value</span>)
+                                <span class="keyword">function</span>&nbsp;<span class="method-name">having</span>(<span class="param-data-type">variable</span> <span class="variable param-name">$field</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$value</span>)
             </div>
             <div class="method-doc">
                                     <div class="summary">
@@ -3595,7 +3673,7 @@
 
      
 
-     If you use an array in $column_name, a new clause will be
+     If you use an array in $field, a new clause will be
 
      added for each element. In this case, $value is ignored.                    </div>
                             </div>
@@ -3611,7 +3689,7 @@
         <div class="method-details-details">
             <div class="method-signature">
                                     <span class="visibility-public keyword">public</span>
-                                <span class="keyword">function</span>&nbsp;<span class="method-name">havingEqual</span>(<span class="param-data-type">variable</span> <span class="variable param-name">$column_name</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$value</span>)
+                                <span class="keyword">function</span>&nbsp;<span class="method-name">havingEqual</span>(<span class="param-data-type">variable</span> <span class="variable param-name">$field</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$value</span>)
             </div>
             <div class="method-doc">
                                     <div class="summary">
@@ -3633,7 +3711,7 @@
         <div class="method-details-details">
             <div class="method-signature">
                                     <span class="visibility-public keyword">public</span>
-                                <span class="keyword">function</span>&nbsp;<span class="method-name">havingNotEqual</span>(<span class="param-data-type">variable</span> <span class="variable param-name">$column_name</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$value</span>)
+                                <span class="keyword">function</span>&nbsp;<span class="method-name">havingNotEqual</span>(<span class="param-data-type">variable</span> <span class="variable param-name">$field</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$value</span>)
             </div>
             <div class="method-doc">
                                     <div class="summary">
@@ -3679,7 +3757,7 @@
         <div class="method-details-details">
             <div class="method-signature">
                                     <span class="visibility-public keyword">public</span>
-                                <span class="keyword">function</span>&nbsp;<span class="method-name">havingLike</span>(<span class="param-data-type">variable</span> <span class="variable param-name">$column_name</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$value</span>)
+                                <span class="keyword">function</span>&nbsp;<span class="method-name">havingLike</span>(<span class="param-data-type">variable</span> <span class="variable param-name">$field</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$value</span>)
             </div>
             <div class="method-doc">
                                     <div class="summary">
@@ -3699,7 +3777,7 @@
         <div class="method-details-details">
             <div class="method-signature">
                                     <span class="visibility-public keyword">public</span>
-                                <span class="keyword">function</span>&nbsp;<span class="method-name">havingNotLike</span>(<span class="param-data-type">variable</span> <span class="variable param-name">$column_name</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$value</span>)
+                                <span class="keyword">function</span>&nbsp;<span class="method-name">havingNotLike</span>(<span class="param-data-type">variable</span> <span class="variable param-name">$field</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$value</span>)
             </div>
             <div class="method-doc">
                                     <div class="summary">
@@ -3719,7 +3797,7 @@
         <div class="method-details-details">
             <div class="method-signature">
                                     <span class="visibility-public keyword">public</span>
-                                <span class="keyword">function</span>&nbsp;<span class="method-name">havingGt</span>(<span class="param-data-type">variable</span> <span class="variable param-name">$column_name</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$value</span>)
+                                <span class="keyword">function</span>&nbsp;<span class="method-name">havingGt</span>(<span class="param-data-type">variable</span> <span class="variable param-name">$field</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$value</span>)
             </div>
             <div class="method-doc">
                                     <div class="summary">
@@ -3739,7 +3817,7 @@
         <div class="method-details-details">
             <div class="method-signature">
                                     <span class="visibility-public keyword">public</span>
-                                <span class="keyword">function</span>&nbsp;<span class="method-name">havingLt</span>(<span class="param-data-type">variable</span> <span class="variable param-name">$column_name</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$value</span>)
+                                <span class="keyword">function</span>&nbsp;<span class="method-name">havingLt</span>(<span class="param-data-type">variable</span> <span class="variable param-name">$field</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$value</span>)
             </div>
             <div class="method-doc">
                                     <div class="summary">
@@ -3759,7 +3837,7 @@
         <div class="method-details-details">
             <div class="method-signature">
                                     <span class="visibility-public keyword">public</span>
-                                <span class="keyword">function</span>&nbsp;<span class="method-name">havingGte</span>(<span class="param-data-type">variable</span> <span class="variable param-name">$column_name</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$value</span>)
+                                <span class="keyword">function</span>&nbsp;<span class="method-name">havingGte</span>(<span class="param-data-type">variable</span> <span class="variable param-name">$field</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$value</span>)
             </div>
             <div class="method-doc">
                                     <div class="summary">
@@ -3779,7 +3857,7 @@
         <div class="method-details-details">
             <div class="method-signature">
                                     <span class="visibility-public keyword">public</span>
-                                <span class="keyword">function</span>&nbsp;<span class="method-name">havingLte</span>(<span class="param-data-type">variable</span> <span class="variable param-name">$column_name</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$value</span>)
+                                <span class="keyword">function</span>&nbsp;<span class="method-name">havingLte</span>(<span class="param-data-type">variable</span> <span class="variable param-name">$field</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$value</span>)
             </div>
             <div class="method-doc">
                                     <div class="summary">
@@ -3799,7 +3877,7 @@
         <div class="method-details-details">
             <div class="method-signature">
                                     <span class="visibility-public keyword">public</span>
-                                <span class="keyword">function</span>&nbsp;<span class="method-name">havingIn</span>(<span class="param-data-type">variable</span> <span class="variable param-name">$column_name</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$values</span>)
+                                <span class="keyword">function</span>&nbsp;<span class="method-name">havingIn</span>(<span class="param-data-type">variable</span> <span class="variable param-name">$field</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$values</span>)
             </div>
             <div class="method-doc">
                                     <div class="summary">
@@ -3819,7 +3897,7 @@
         <div class="method-details-details">
             <div class="method-signature">
                                     <span class="visibility-public keyword">public</span>
-                                <span class="keyword">function</span>&nbsp;<span class="method-name">havingNotIn</span>(<span class="param-data-type">variable</span> <span class="variable param-name">$column_name</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$values</span>)
+                                <span class="keyword">function</span>&nbsp;<span class="method-name">havingNotIn</span>(<span class="param-data-type">variable</span> <span class="variable param-name">$field</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$values</span>)
             </div>
             <div class="method-doc">
                                     <div class="summary">
@@ -3839,7 +3917,7 @@
         <div class="method-details-details">
             <div class="method-signature">
                                     <span class="visibility-public keyword">public</span>
-                                <span class="keyword">function</span>&nbsp;<span class="method-name">havingNull</span>(<span class="param-data-type">variable</span> <span class="variable param-name">$column_name</span>)
+                                <span class="keyword">function</span>&nbsp;<span class="method-name">havingNull</span>(<span class="param-data-type">variable</span> <span class="variable param-name">$field</span>)
             </div>
             <div class="method-doc">
                                     <div class="summary">
@@ -3859,7 +3937,7 @@
         <div class="method-details-details">
             <div class="method-signature">
                                     <span class="visibility-public keyword">public</span>
-                                <span class="keyword">function</span>&nbsp;<span class="method-name">havingNotNull</span>(<span class="param-data-type">variable</span> <span class="variable param-name">$column_name</span>)
+                                <span class="keyword">function</span>&nbsp;<span class="method-name">havingNotNull</span>(<span class="param-data-type">variable</span> <span class="variable param-name">$field</span>)
             </div>
             <div class="method-doc">
                                     <div class="summary">
@@ -3938,6 +4016,36 @@
     
         
 <li class="class-method clearfix">
+    <div class="hidden-anchor" id="method-details-asArray"></div>
+    <div class="method-details">
+        <div class="method-details-details">
+            <div class="method-signature">
+                                    <span class="visibility-public keyword">public</span>
+                                <span class="keyword">function</span>&nbsp;<span class="method-name">asArray</span>()
+            </div>
+            <div class="method-doc">
+                                    <div class="summary">
+                                            </div>
+                    <div class="description">
+                        返回数组开关
+
+     供绑定模型后返回多条记录使用
+
+     
+
+     <code>
+
+     User::where('1')->asArray()->select();
+
+     </code>                    </div>
+                            </div>
+        </div>
+    </div>
+</li>
+
+    
+        
+<li class="class-method clearfix">
     <div class="hidden-anchor" id="method-details-find"></div>
     <div class="method-details">
         <div class="method-details-details">
@@ -3949,7 +4057,7 @@
                                     <div class="summary">
                                             </div>
                     <div class="description">
-                        获取一条记录并返回数组
+                        获取一条记录并返回
 
      
 
@@ -4402,13 +4510,13 @@
     
         
 <li class="class-method clearfix">
-    <div class="hidden-anchor" id="method-details-_setup_db"></div>
+    <div class="hidden-anchor" id="method-details-connect"></div>
     <div class="method-details">
         <div class="method-details-details">
             <div class="method-signature">
                                     <span class="visibility-protected keyword">protected</span>
                                     <span class="visibility-static keyword">static</span>
-                                <span class="keyword">function</span>&nbsp;<span class="method-name">_setup_db</span>(<span class="param-data-type">string</span> <span class="variable param-name">$name</span>)
+                                <span class="keyword">function</span>&nbsp;<span class="method-name">connect</span>(<span class="param-data-type">string</span> <span class="variable param-name">$name</span>)
             </div>
             <div class="method-doc">
                                     <div class="summary">
@@ -4423,13 +4531,13 @@
     
         
 <li class="class-method clearfix">
-    <div class="hidden-anchor" id="method-details-_setup_db_config"></div>
+    <div class="hidden-anchor" id="method-details-initConfig"></div>
     <div class="method-details">
         <div class="method-details-details">
             <div class="method-signature">
                                     <span class="visibility-protected keyword">protected</span>
                                     <span class="visibility-static keyword">static</span>
-                                <span class="keyword">function</span>&nbsp;<span class="method-name">_setup_db_config</span>(<span class="param-data-type">string</span> <span class="variable param-name">$name</span>)
+                                <span class="keyword">function</span>&nbsp;<span class="method-name">initConfig</span>(<span class="param-data-type">string</span> <span class="variable param-name">$name</span>)
             </div>
             <div class="method-doc">
                                     <div class="summary">
@@ -4444,13 +4552,13 @@
     
         
 <li class="class-method clearfix">
-    <div class="hidden-anchor" id="method-details-_setup_identifier_quote_character"></div>
+    <div class="hidden-anchor" id="method-details-setQuote"></div>
     <div class="method-details">
         <div class="method-details-details">
             <div class="method-signature">
                                     <span class="visibility-protected keyword">protected</span>
                                     <span class="visibility-static keyword">static</span>
-                                <span class="keyword">function</span>&nbsp;<span class="method-name">_setup_identifier_quote_character</span>(<span class="param-data-type">string</span> <span class="variable param-name">$name</span>)
+                                <span class="keyword">function</span>&nbsp;<span class="method-name">setQuote</span>(<span class="param-data-type">string</span> <span class="variable param-name">$name</span>)
             </div>
             <div class="method-doc">
                                     <div class="summary">
@@ -4465,13 +4573,13 @@
     
         
 <li class="class-method clearfix">
-    <div class="hidden-anchor" id="method-details-_setup_limit_clause_style"></div>
+    <div class="hidden-anchor" id="method-details-setLimitStyle"></div>
     <div class="method-details">
         <div class="method-details-details">
             <div class="method-signature">
                                     <span class="visibility-protected keyword">protected</span>
                                     <span class="visibility-static keyword">static</span>
-                                <span class="keyword">function</span>&nbsp;<span class="method-name">_setup_limit_clause_style</span>(<span class="param-data-type">string</span> <span class="variable param-name">$name</span>)
+                                <span class="keyword">function</span>&nbsp;<span class="method-name">setLimitStyle</span>(<span class="param-data-type">string</span> <span class="variable param-name">$name</span>)
             </div>
             <div class="method-doc">
                                     <div class="summary">
@@ -4479,7 +4587,7 @@
                     <div class="description">
                         设置查询条数限制(Limit in mysql,TOP in MSSql)
 
-     如果通过 Db::config("limit_clause_style", "top"),进行了设置，那么本函数将不起作用                    </div>
+     如果通过 Db::config("limit_style", "top"),进行了设置，那么本函数将不起作用                    </div>
                             </div>
         </div>
     </div>
@@ -4488,13 +4596,30 @@
     
         
 <li class="class-method clearfix">
-    <div class="hidden-anchor" id="method-details-_detect_identifier_quote_character"></div>
+    <div class="hidden-anchor" id="method-details-getPdoDriver"></div>
+    <div class="method-details">
+        <div class="method-details-details">
+            <div class="method-signature">
+                                    <span class="visibility-private keyword">private</span>
+                                    <span class="visibility-static keyword">static</span>
+                                <span class="keyword">function</span>&nbsp;<span class="method-name">getPdoDriver</span>(<span class="param-data-type">string</span> <span class="variable param-name">$name</span>)
+            </div>
+            <div class="method-doc">
+                            </div>
+        </div>
+    </div>
+</li>
+
+    
+        
+<li class="class-method clearfix">
+    <div class="hidden-anchor" id="method-details-detectQuoteChar"></div>
     <div class="method-details">
         <div class="method-details-details">
             <div class="method-signature">
                                     <span class="visibility-protected keyword">protected</span>
                                     <span class="visibility-static keyword">static</span>
-                                <span class="keyword">function</span>&nbsp;<span class="method-name">_detect_identifier_quote_character</span>(<span class="param-data-type">string</span> <span class="variable param-name">$name</span>)
+                                <span class="keyword">function</span>&nbsp;<span class="method-name">detectQuoteChar</span>(<span class="param-data-type">string</span> <span class="variable param-name">$name</span>)
             </div>
             <div class="method-doc">
                                     <div class="summary">
@@ -4509,13 +4634,13 @@
     
         
 <li class="class-method clearfix">
-    <div class="hidden-anchor" id="method-details-_detect_limit_clause_style"></div>
+    <div class="hidden-anchor" id="method-details-getLimitStyle"></div>
     <div class="method-details">
         <div class="method-details-details">
             <div class="method-signature">
                                     <span class="visibility-protected keyword">protected</span>
                                     <span class="visibility-static keyword">static</span>
-                                <span class="keyword">function</span>&nbsp;<span class="method-name">_detect_limit_clause_style</span>(<span class="param-data-type">string</span> <span class="variable param-name">$name</span>)
+                                <span class="keyword">function</span>&nbsp;<span class="method-name">getLimitStyle</span>(<span class="param-data-type">string</span> <span class="variable param-name">$name</span>)
             </div>
             <div class="method-doc">
                                     <div class="summary">
@@ -4572,12 +4697,12 @@
     
         
 <li class="class-method clearfix">
-    <div class="hidden-anchor" id="method-details-_call_aggregate_db_function"></div>
+    <div class="hidden-anchor" id="method-details-aggregate"></div>
     <div class="method-details">
         <div class="method-details-details">
             <div class="method-signature">
                                     <span class="visibility-protected keyword">protected</span>
-                                <span class="keyword">function</span>&nbsp;<span class="method-name">_call_aggregate_db_function</span>(<span class="param-data-type">variable</span> <span class="variable param-name">$sql_function</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$column</span>)
+                                <span class="keyword">function</span>&nbsp;<span class="method-name">aggregate</span>(<span class="param-data-type">variable</span> <span class="variable param-name">$func</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$column</span>)
             </div>
             <div class="method-doc">
                                     <div class="summary">
@@ -4621,7 +4746,7 @@
         <div class="method-details-details">
             <div class="method-signature">
                                     <span class="visibility-protected keyword">protected</span>
-                                <span class="keyword">function</span>&nbsp;<span class="method-name">field</span>(<span class="param-data-type">variable</span> <span class="variable param-name">$column</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$alias</span>)
+                                <span class="keyword">function</span>&nbsp;<span class="method-name">field</span>(<span class="param-data-type">string</span> <span class="variable param-name">$column</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$alias</span>)
             </div>
             <div class="method-doc">
                                     <div class="summary">
@@ -4645,7 +4770,7 @@
         <div class="method-details-details">
             <div class="method-signature">
                                     <span class="visibility-protected keyword">protected</span>
-                                <span class="keyword">function</span>&nbsp;<span class="method-name">fieldExpr</span>(<span class="param-data-type">variable</span> <span class="variable param-name">$expr</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$alias</span>)
+                                <span class="keyword">function</span>&nbsp;<span class="method-name">fieldExpr</span>(<span class="param-data-type">string</span> <span class="variable param-name">$expr</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$alias</span>)
             </div>
             <div class="method-doc">
                                     <div class="summary">
@@ -4758,12 +4883,12 @@
     
         
 <li class="class-method clearfix">
-    <div class="hidden-anchor" id="method-details-_add_simple_having"></div>
+    <div class="hidden-anchor" id="method-details-simpleHaving"></div>
     <div class="method-details">
         <div class="method-details-details">
             <div class="method-signature">
                                     <span class="visibility-protected keyword">protected</span>
-                                <span class="keyword">function</span>&nbsp;<span class="method-name">_add_simple_having</span>(<span class="param-data-type">variable</span> <span class="variable param-name">$column_name</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$separator</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$value</span>)
+                                <span class="keyword">function</span>&nbsp;<span class="method-name">simpleHaving</span>(<span class="param-data-type">variable</span> <span class="variable param-name">$field</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$separator</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$value</span>)
             </div>
             <div class="method-doc">
                                     <div class="summary">
@@ -4783,7 +4908,7 @@
         <div class="method-details-details">
             <div class="method-signature">
                                     <span class="visibility-protected keyword">protected</span>
-                                <span class="keyword">function</span>&nbsp;<span class="method-name">_add_having_placeholder</span>(<span class="param-data-type">variable</span> <span class="variable param-name">$column_name</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$separator</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$values</span>)
+                                <span class="keyword">function</span>&nbsp;<span class="method-name">_add_having_placeholder</span>(<span class="param-data-type">variable</span> <span class="variable param-name">$field</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$separator</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$values</span>)
             </div>
             <div class="method-doc">
                                     <div class="summary">
@@ -4803,7 +4928,7 @@
         <div class="method-details-details">
             <div class="method-signature">
                                     <span class="visibility-protected keyword">protected</span>
-                                <span class="keyword">function</span>&nbsp;<span class="method-name">_add_having_no_value</span>(<span class="param-data-type">variable</span> <span class="variable param-name">$column_name</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$operator</span>)
+                                <span class="keyword">function</span>&nbsp;<span class="method-name">_add_having_no_value</span>(<span class="param-data-type">variable</span> <span class="variable param-name">$field</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$operator</span>)
             </div>
             <div class="method-doc">
                                     <div class="summary">
@@ -4838,12 +4963,12 @@
     
         
 <li class="class-method clearfix">
-    <div class="hidden-anchor" id="method-details-_add_simple_where"></div>
+    <div class="hidden-anchor" id="method-details-simpleWhere"></div>
     <div class="method-details">
         <div class="method-details-details">
             <div class="method-signature">
                                     <span class="visibility-protected keyword">protected</span>
-                                <span class="keyword">function</span>&nbsp;<span class="method-name">_add_simple_where</span>(<span class="param-data-type">variable</span> <span class="variable param-name">$column_name</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$separator</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$value</span>)
+                                <span class="keyword">function</span>&nbsp;<span class="method-name">simpleWhere</span>(<span class="param-data-type">variable</span> <span class="variable param-name">$field</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$separator</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$value</span>)
             </div>
             <div class="method-doc">
                                     <div class="summary">
@@ -4863,7 +4988,7 @@
         <div class="method-details-details">
             <div class="method-signature">
                                     <span class="visibility-protected keyword">protected</span>
-                                <span class="keyword">function</span>&nbsp;<span class="method-name">_add_where_placeholder</span>(<span class="param-data-type">variable</span> <span class="variable param-name">$column_name</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$separator</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$values</span>)
+                                <span class="keyword">function</span>&nbsp;<span class="method-name">_add_where_placeholder</span>(<span class="param-data-type">variable</span> <span class="variable param-name">$field</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$separator</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$values</span>)
             </div>
             <div class="method-doc">
                                     <div class="summary">
@@ -4883,7 +5008,7 @@
         <div class="method-details-details">
             <div class="method-signature">
                                     <span class="visibility-protected keyword">protected</span>
-                                <span class="keyword">function</span>&nbsp;<span class="method-name">_add_where_no_value</span>(<span class="param-data-type">variable</span> <span class="variable param-name">$column_name</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$operator</span>)
+                                <span class="keyword">function</span>&nbsp;<span class="method-name">_add_where_no_value</span>(<span class="param-data-type">variable</span> <span class="variable param-name">$field</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$operator</span>)
             </div>
             <div class="method-doc">
                                     <div class="summary">
@@ -4923,7 +5048,7 @@
         <div class="method-details-details">
             <div class="method-signature">
                                     <span class="visibility-protected keyword">protected</span>
-                                <span class="keyword">function</span>&nbsp;<span class="method-name">_add_simple_condition</span>(<span class="param-data-type">variable</span> <span class="variable param-name">$type</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$column_name</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$separator</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$value</span>)
+                                <span class="keyword">function</span>&nbsp;<span class="method-name">_add_simple_condition</span>(<span class="param-data-type">variable</span> <span class="variable param-name">$type</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$field</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$separator</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$value</span>)
             </div>
             <div class="method-doc">
                                     <div class="summary">
@@ -4958,12 +5083,12 @@
     
         
 <li class="class-method clearfix">
-    <div class="hidden-anchor" id="method-details-_get_compound_id_column_values"></div>
+    <div class="hidden-anchor" id="method-details-getPkValue"></div>
     <div class="method-details">
         <div class="method-details-details">
             <div class="method-signature">
                                     <span class="visibility-protected keyword">protected</span>
-                                <span class="keyword">function</span>&nbsp;<span class="method-name">_get_compound_id_column_values</span>(<span class="param-data-type">variable</span> <span class="variable param-name">$value</span>)
+                                <span class="keyword">function</span>&nbsp;<span class="method-name">getPkValue</span>(<span class="param-data-type">variable</span> <span class="variable param-name">$value</span>)
             </div>
             <div class="method-doc">
                                     <div class="summary">
@@ -4986,12 +5111,12 @@
     
         
 <li class="class-method clearfix">
-    <div class="hidden-anchor" id="method-details-_get_compound_id_column_values_array"></div>
+    <div class="hidden-anchor" id="method-details-getPkValues"></div>
     <div class="method-details">
         <div class="method-details-details">
             <div class="method-signature">
                                     <span class="visibility-protected keyword">protected</span>
-                                <span class="keyword">function</span>&nbsp;<span class="method-name">_get_compound_id_column_values_array</span>(<span class="param-data-type">variable</span> <span class="variable param-name">$values</span>)
+                                <span class="keyword">function</span>&nbsp;<span class="method-name">getPkValues</span>(<span class="param-data-type">variable</span> <span class="variable param-name">$values</span>)
             </div>
             <div class="method-doc">
                                     <div class="summary">
@@ -5013,7 +5138,7 @@
         <div class="method-details-details">
             <div class="method-signature">
                                     <span class="visibility-protected keyword">protected</span>
-                                <span class="keyword">function</span>&nbsp;<span class="method-name">_add_order_by</span>(<span class="param-data-type">variable</span> <span class="variable param-name">$column_name</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$ordering</span>)
+                                <span class="keyword">function</span>&nbsp;<span class="method-name">_add_order_by</span>(<span class="param-data-type">variable</span> <span class="variable param-name">$field</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$ordering</span>)
             </div>
             <div class="method-doc">
                                     <div class="summary">
@@ -5250,12 +5375,12 @@
     
         
 <li class="class-method clearfix">
-    <div class="hidden-anchor" id="method-details-_quote_one_identifier"></div>
+    <div class="hidden-anchor" id="method-details-quoteOne"></div>
     <div class="method-details">
         <div class="method-details-details">
             <div class="method-signature">
                                     <span class="visibility-protected keyword">protected</span>
-                                <span class="keyword">function</span>&nbsp;<span class="method-name">_quote_one_identifier</span>(<span class="param-data-type">variable</span> <span class="variable param-name">$identifier</span>)
+                                <span class="keyword">function</span>&nbsp;<span class="method-name">quoteOne</span>(<span class="param-data-type">variable</span> <span class="variable param-name">$identifier</span>)
             </div>
             <div class="method-doc">
                                     <div class="summary">
@@ -5274,12 +5399,12 @@
     
         
 <li class="class-method clearfix">
-    <div class="hidden-anchor" id="method-details-_quote_identifier"></div>
+    <div class="hidden-anchor" id="method-details-quoteId"></div>
     <div class="method-details">
         <div class="method-details-details">
             <div class="method-signature">
                                     <span class="visibility-public keyword">public</span>
-                                <span class="keyword">function</span>&nbsp;<span class="method-name">_quote_identifier</span>(<span class="param-data-type">variable</span> <span class="variable param-name">$identifier</span>)
+                                <span class="keyword">function</span>&nbsp;<span class="method-name">quoteId</span>(<span class="param-data-type">variable</span> <span class="variable param-name">$identifier</span>)
             </div>
             <div class="method-doc">
                                     <div class="summary">
@@ -5300,12 +5425,12 @@
     
         
 <li class="class-method clearfix">
-    <div class="hidden-anchor" id="method-details-_quote_identifier_part"></div>
+    <div class="hidden-anchor" id="method-details-quoteIdPart"></div>
     <div class="method-details">
         <div class="method-details-details">
             <div class="method-signature">
                                     <span class="visibility-public keyword">public</span>
-                                <span class="keyword">function</span>&nbsp;<span class="method-name">_quote_identifier_part</span>(<span class="param-data-type">variable</span> <span class="variable param-name">$part</span>)
+                                <span class="keyword">function</span>&nbsp;<span class="method-name">quoteIdPart</span>(<span class="param-data-type">variable</span> <span class="variable param-name">$part</span>)
             </div>
             <div class="method-doc">
                                     <div class="summary">
@@ -5324,12 +5449,12 @@
     
         
 <li class="class-method clearfix">
-    <div class="hidden-anchor" id="method-details-_run"></div>
+    <div class="hidden-anchor" id="method-details-run"></div>
     <div class="method-details">
         <div class="method-details-details">
             <div class="method-signature">
                                     <span class="visibility-protected keyword">protected</span>
-                                <span class="keyword">function</span>&nbsp;<span class="method-name">_run</span>()
+                                <span class="keyword">function</span>&nbsp;<span class="method-name">run</span>()
             </div>
             <div class="method-doc">
                                     <div class="summary">
@@ -5346,12 +5471,12 @@
     
         
 <li class="class-method clearfix">
-    <div class="hidden-anchor" id="method-details-_run_by_model"></div>
+    <div class="hidden-anchor" id="method-details-runForModel"></div>
     <div class="method-details">
         <div class="method-details-details">
             <div class="method-signature">
                                     <span class="visibility-protected keyword">protected</span>
-                                <span class="keyword">function</span>&nbsp;<span class="method-name">_run_by_model</span>()
+                                <span class="keyword">function</span>&nbsp;<span class="method-name">runForModel</span>()
             </div>
             <div class="method-doc">
                                     <div class="summary">
@@ -5368,12 +5493,12 @@
     
         
 <li class="class-method clearfix">
-    <div class="hidden-anchor" id="method-details-_get_id_column_name"></div>
+    <div class="hidden-anchor" id="method-details-getPk"></div>
     <div class="method-details">
         <div class="method-details-details">
             <div class="method-signature">
                                     <span class="visibility-protected keyword">protected</span>
-                                <span class="keyword">function</span>&nbsp;<span class="method-name">_get_id_column_name</span>()
+                                <span class="keyword">function</span>&nbsp;<span class="method-name">getPk</span>()
             </div>
             <div class="method-doc">
                                     <div class="summary">

@@ -84,6 +84,24 @@
 <li class="class-method clearfix">
     <div class="method-summary">
         <div class="method-signature">
+            <span class="method-name"><a href="#method-details-register">register</a></span>(<span class="param-data-type">array</span> <span class="variable param-name">$events</span>)
+            <span class="method-return">
+                &nbsp;<strong>:</strong>&nbsp;
+                                    void
+                            </span>
+        </div>
+                    <div class="method-doc">
+                <div class="summary-text">
+                                    </div>
+            </div>
+            </div>
+</li>
+
+    
+        
+<li class="class-method clearfix">
+    <div class="method-summary">
+        <div class="method-signature">
             <span class="method-name"><a href="#method-details-on">on</a></span>(<span class="param-data-type">string</span> <span class="variable param-name">$eventName</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$func</span>)
             <span class="method-return">
                 &nbsp;<strong>:</strong>&nbsp;
@@ -134,6 +152,43 @@
 <div class="hidden-anchor"  id="methods-details"></div>
 <div class="methods-summary standard-bandeau">Methods Details</div>
 <ul class="method-details-list">
+    
+        
+<li class="class-method clearfix">
+    <div class="hidden-anchor" id="method-details-register"></div>
+    <div class="method-details">
+        <div class="method-details-details">
+            <div class="method-signature">
+                                    <span class="visibility-public keyword">public</span>
+                                    <span class="visibility-static keyword">static</span>
+                                <span class="keyword">function</span>&nbsp;<span class="method-name">register</span>(<span class="param-data-type">array</span> <span class="variable param-name">$events</span>)
+            </div>
+            <div class="method-doc">
+                                    <div class="summary">
+                                            </div>
+                    <div class="description">
+                        批量注册事件
+
+     
+
+     <code>
+
+     user Aimo\Event;
+
+     Event::register([
+
+        'app_init'  => 'namespace\\Handler::onAppInit',
+
+        'view_init' => 'namespace\\Handler::onViewInit',
+
+     ]);
+
+     </code>                    </div>
+                            </div>
+        </div>
+    </div>
+</li>
+
     
         
 <li class="class-method clearfix">

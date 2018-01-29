@@ -104,6 +104,10 @@
                                     void
                             </span>
         </div>
+                    <div class="method-doc">
+                <div class="summary-text">
+                                    </div>
+            </div>
             </div>
 </li>
 
@@ -118,6 +122,10 @@
                                     void
                             </span>
         </div>
+                    <div class="method-doc">
+                <div class="summary-text">
+                                    </div>
+            </div>
             </div>
 </li>
 
@@ -132,6 +140,10 @@
                                     void
                             </span>
         </div>
+                    <div class="method-doc">
+                <div class="summary-text">
+                                    </div>
+            </div>
             </div>
 </li>
 
@@ -146,6 +158,46 @@
                                     void
                             </span>
         </div>
+                    <div class="method-doc">
+                <div class="summary-text">
+                                    </div>
+            </div>
+            </div>
+</li>
+
+    
+        
+<li class="class-method clearfix">
+    <div class="method-summary">
+        <div class="method-signature">
+            <span class="method-name"><a href="#method-details-ajaxReturn">ajaxReturn</a></span>(<span class="param-data-type">array</span> <span class="variable param-name">$data</span>)
+            <span class="method-return">
+                &nbsp;<strong>:</strong>&nbsp;
+                                    void
+                            </span>
+        </div>
+                    <div class="method-doc">
+                <div class="summary-text">
+                                    </div>
+            </div>
+            </div>
+</li>
+
+    
+        
+<li class="class-method clearfix">
+    <div class="method-summary">
+        <div class="method-signature">
+            <span class="method-name"><a href="#method-details-assign">assign</a></span>(<span class="param-data-type">string</span> <span class="variable param-name">$name</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$data</span>)
+            <span class="method-return">
+                &nbsp;<strong>:</strong>&nbsp;
+                                    void
+                            </span>
+        </div>
+                    <div class="method-doc">
+                <div class="summary-text">
+                                    </div>
+            </div>
             </div>
 </li>
 
@@ -160,6 +212,10 @@
                                     void
                             </span>
         </div>
+                    <div class="method-doc">
+                <div class="summary-text">
+                                    </div>
+            </div>
             </div>
 </li>
 
@@ -195,6 +251,18 @@
                                 <span class="keyword">function</span>&nbsp;<span class="method-name">success</span>(<span class="param-data-type">string</span> <span class="variable param-name">$msg</span>, <span class="param-data-type">string</span> <span class="variable param-name">$url</span>, <span class="param-data-type">int</span> <span class="variable param-name">$wait</span>)
             </div>
             <div class="method-doc">
+                                    <div class="summary">
+                                            </div>
+                    <div class="description">
+                        Show success page in Controller
+
+     
+
+     <code>
+
+     $this->success('Operation success!','/admin/login.php');
+
+     </code>                    </div>
                             </div>
         </div>
     </div>
@@ -212,6 +280,18 @@
                                 <span class="keyword">function</span>&nbsp;<span class="method-name">notFound</span>()
             </div>
             <div class="method-doc">
+                                    <div class="summary">
+                                            </div>
+                    <div class="description">
+                        Cause HTTP 404 Controller
+
+     
+
+     <code>
+
+     self::notFound();
+
+     </code>                    </div>
                             </div>
         </div>
     </div>
@@ -228,6 +308,18 @@
                                 <span class="keyword">function</span>&nbsp;<span class="method-name">error</span>(<span class="param-data-type">string</span> <span class="variable param-name">$msg</span>, <span class="param-data-type">string</span> <span class="variable param-name">$url</span>)
             </div>
             <div class="method-doc">
+                                    <div class="summary">
+                                            </div>
+                    <div class="description">
+                        Show Error page in Controller
+
+     
+
+     <code>
+
+     $this->error('Operation failed!','/error_detail.php');
+
+     </code>                    </div>
                             </div>
         </div>
     </div>
@@ -244,6 +336,74 @@
                                 <span class="keyword">function</span>&nbsp;<span class="method-name">json</span>(<span class="param-data-type">array</span> <span class="variable param-name">$data</span>)
             </div>
             <div class="method-doc">
+                                    <div class="summary">
+                                            </div>
+                    <div class="description">
+                        Response JSON data in controller
+
+     
+
+     <code>
+
+     $this->json(['status'=>1,'msg'=>'infomation']);
+
+     </code>                    </div>
+                            </div>
+        </div>
+    </div>
+</li>
+
+    
+        
+<li class="class-method clearfix">
+    <div class="hidden-anchor" id="method-details-ajaxReturn"></div>
+    <div class="method-details">
+        <div class="method-details-details">
+            <div class="method-signature">
+                                    <span class="visibility-public keyword">public</span>
+                                <span class="keyword">function</span>&nbsp;<span class="method-name">ajaxReturn</span>(<span class="param-data-type">array</span> <span class="variable param-name">$data</span>)
+            </div>
+            <div class="method-doc">
+                                    <div class="summary">
+                                            </div>
+                    <div class="description">
+                        Response JSON data in controller
+
+     
+
+     <code>
+
+     $this->ajaxReturn(['status'=>1,'msg'=>'infomation']);
+
+     </code>                    </div>
+                            </div>
+        </div>
+    </div>
+</li>
+
+    
+        
+<li class="class-method clearfix">
+    <div class="hidden-anchor" id="method-details-assign"></div>
+    <div class="method-details">
+        <div class="method-details-details">
+            <div class="method-signature">
+                                    <span class="visibility-public keyword">public</span>
+                                <span class="keyword">function</span>&nbsp;<span class="method-name">assign</span>(<span class="param-data-type">string</span> <span class="variable param-name">$name</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$data</span>)
+            </div>
+            <div class="method-doc">
+                                    <div class="summary">
+                                            </div>
+                    <div class="description">
+                        Assign variables to View
+
+     
+
+     <code>
+
+     $this->assign('name','value');
+
+     </code>                    </div>
                             </div>
         </div>
     </div>
@@ -260,6 +420,32 @@
                                 <span class="keyword">function</span>&nbsp;<span class="method-name">render</span>(<span class="param-data-type">string</span> <span class="variable param-name">$mca</span>, <span class="param-data-type">array</span> <span class="variable param-name">$data</span>)
             </div>
             <div class="method-doc">
+                                    <div class="summary">
+                                            </div>
+                    <div class="description">
+                        Show page files
+
+     
+
+     <code>
+
+     $this->render();
+
+     //or
+
+     $this->render('news/view');
+
+     //or
+
+     $this->render('news/view',[
+
+         'title' => 'title',
+
+         'content' => 'content',
+
+     ]);
+
+     </code>                    </div>
                             </div>
         </div>
     </div>

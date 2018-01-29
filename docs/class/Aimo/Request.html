@@ -232,7 +232,7 @@
 <li class="class-method clearfix">
     <div class="method-summary">
         <div class="method-signature">
-            <span class="method-name"><a href="#method-details-get">get</a></span>(<span class="param-data-type">variable</span> <span class="variable param-name">$name</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$def</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$filter</span>)
+            <span class="method-name"><a href="#method-details-get">get</a></span>(<span class="param-data-type">string</span> <span class="variable param-name">$name</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$def</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$filter</span>)
             <span class="method-return">
                 &nbsp;<strong>:</strong>&nbsp;
                                     void
@@ -250,7 +250,7 @@
 <li class="class-method clearfix">
     <div class="method-summary">
         <div class="method-signature">
-            <span class="method-name"><a href="#method-details-post">post</a></span>(<span class="param-data-type">variable</span> <span class="variable param-name">$name</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$def</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$filter</span>)
+            <span class="method-name"><a href="#method-details-post">post</a></span>(<span class="param-data-type">string</span> <span class="variable param-name">$name</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$def</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$filter</span>)
             <span class="method-return">
                 &nbsp;<strong>:</strong>&nbsp;
                                     void
@@ -268,7 +268,25 @@
 <li class="class-method clearfix">
     <div class="method-summary">
         <div class="method-signature">
-            <span class="method-name"><a href="#method-details-param">param</a></span>(<span class="param-data-type">variable</span> <span class="variable param-name">$name</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$def</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$filter</span>)
+            <span class="method-name"><a href="#method-details-request">request</a></span>(<span class="param-data-type">string</span> <span class="variable param-name">$name</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$def</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$filter</span>)
+            <span class="method-return">
+                &nbsp;<strong>:</strong>&nbsp;
+                                    void
+                            </span>
+        </div>
+                    <div class="method-doc">
+                <div class="summary-text">
+                                    </div>
+            </div>
+            </div>
+</li>
+
+    
+        
+<li class="class-method clearfix">
+    <div class="method-summary">
+        <div class="method-signature">
+            <span class="method-name"><a href="#method-details-param">param</a></span>(<span class="param-data-type">string</span> <span class="variable param-name">$name</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$def</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$filter</span>)
             <span class="method-return">
                 &nbsp;<strong>:</strong>&nbsp;
                                     void
@@ -478,6 +496,20 @@
     <div class="method-summary">
         <div class="method-signature">
             <span class="method-name"><a href="#method-details-f_alphanum">f_alphanum</a></span>(<span class="param-data-type">variable</span> <span class="variable param-name">$str</span>)
+            <span class="method-return">
+                &nbsp;<strong>:</strong>&nbsp;
+                                    void
+                            </span>
+        </div>
+            </div>
+</li>
+
+    
+        
+<li class="class-method clearfix">
+    <div class="method-summary">
+        <div class="method-signature">
+            <span class="method-name"><a href="#method-details-f_number">f_number</a></span>(<span class="param-data-type">variable</span> <span class="variable param-name">$str</span>)
             <span class="method-return">
                 &nbsp;<strong>:</strong>&nbsp;
                                     void
@@ -764,7 +796,7 @@
         <div class="method-details-details">
             <div class="method-signature">
                                     <span class="visibility-public keyword">public</span>
-                                <span class="keyword">function</span>&nbsp;<span class="method-name">get</span>(<span class="param-data-type">variable</span> <span class="variable param-name">$name</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$def</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$filter</span>)
+                                <span class="keyword">function</span>&nbsp;<span class="method-name">get</span>(<span class="param-data-type">string</span> <span class="variable param-name">$name</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$def</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$filter</span>)
             </div>
             <div class="method-doc">
                                     <div class="summary">
@@ -804,7 +836,7 @@
         <div class="method-details-details">
             <div class="method-signature">
                                     <span class="visibility-public keyword">public</span>
-                                <span class="keyword">function</span>&nbsp;<span class="method-name">post</span>(<span class="param-data-type">variable</span> <span class="variable param-name">$name</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$def</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$filter</span>)
+                                <span class="keyword">function</span>&nbsp;<span class="method-name">post</span>(<span class="param-data-type">string</span> <span class="variable param-name">$name</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$def</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$filter</span>)
             </div>
             <div class="method-doc">
                                     <div class="summary">
@@ -839,12 +871,52 @@
     
         
 <li class="class-method clearfix">
+    <div class="hidden-anchor" id="method-details-request"></div>
+    <div class="method-details">
+        <div class="method-details-details">
+            <div class="method-signature">
+                                    <span class="visibility-public keyword">public</span>
+                                <span class="keyword">function</span>&nbsp;<span class="method-name">request</span>(<span class="param-data-type">string</span> <span class="variable param-name">$name</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$def</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$filter</span>)
+            </div>
+            <div class="method-doc">
+                                    <div class="summary">
+                                            </div>
+                    <div class="description">
+                        获取REQUEST数据
+
+     
+
+     <code>
+
+     $request = Request::instance();
+
+     var_dump($request->request('page',1,'int'));
+
+     var_dump($request->request('email','','email'));
+
+     var_dump($request->request('url','','url'));
+
+     var_dump($request->request('float',0.0,'float'));
+
+     var_dump($request->request('chars','','alpha'));//a-zA-Z
+
+     var_dump($request->request('aphnum','','alphanum'));//a-zA-Z0-9
+
+     </code>                    </div>
+                            </div>
+        </div>
+    </div>
+</li>
+
+    
+        
+<li class="class-method clearfix">
     <div class="hidden-anchor" id="method-details-param"></div>
     <div class="method-details">
         <div class="method-details-details">
             <div class="method-signature">
                                     <span class="visibility-public keyword">public</span>
-                                <span class="keyword">function</span>&nbsp;<span class="method-name">param</span>(<span class="param-data-type">variable</span> <span class="variable param-name">$name</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$def</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$filter</span>)
+                                <span class="keyword">function</span>&nbsp;<span class="method-name">param</span>(<span class="param-data-type">string</span> <span class="variable param-name">$name</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$def</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$filter</span>)
             </div>
             <div class="method-doc">
                                     <div class="summary">
@@ -1063,7 +1135,7 @@
     <div class="method-details">
         <div class="method-details-details">
             <div class="method-signature">
-                                    <span class="visibility-private keyword">private</span>
+                                    <span class="visibility-public keyword">public</span>
                                 <span class="keyword">function</span>&nbsp;<span class="method-name">f_text</span>(<span class="param-data-type">variable</span> <span class="variable param-name">$str</span>)
             </div>
             <div class="method-doc">
@@ -1083,7 +1155,7 @@
     <div class="method-details">
         <div class="method-details-details">
             <div class="method-signature">
-                                    <span class="visibility-private keyword">private</span>
+                                    <span class="visibility-public keyword">public</span>
                                 <span class="keyword">function</span>&nbsp;<span class="method-name">f_int</span>(<span class="param-data-type">variable</span> <span class="variable param-name">$val</span>)
             </div>
             <div class="method-doc">
@@ -1099,7 +1171,7 @@
     <div class="method-details">
         <div class="method-details-details">
             <div class="method-signature">
-                                    <span class="visibility-private keyword">private</span>
+                                    <span class="visibility-public keyword">public</span>
                                 <span class="keyword">function</span>&nbsp;<span class="method-name">f_float</span>(<span class="param-data-type">variable</span> <span class="variable param-name">$val</span>)
             </div>
             <div class="method-doc">
@@ -1115,7 +1187,7 @@
     <div class="method-details">
         <div class="method-details-details">
             <div class="method-signature">
-                                    <span class="visibility-private keyword">private</span>
+                                    <span class="visibility-public keyword">public</span>
                                 <span class="keyword">function</span>&nbsp;<span class="method-name">f_url</span>(<span class="param-data-type">variable</span> <span class="variable param-name">$val</span>)
             </div>
             <div class="method-doc">
@@ -1131,7 +1203,7 @@
     <div class="method-details">
         <div class="method-details-details">
             <div class="method-signature">
-                                    <span class="visibility-private keyword">private</span>
+                                    <span class="visibility-public keyword">public</span>
                                 <span class="keyword">function</span>&nbsp;<span class="method-name">f_email</span>(<span class="param-data-type">variable</span> <span class="variable param-name">$val</span>)
             </div>
             <div class="method-doc">
@@ -1147,7 +1219,7 @@
     <div class="method-details">
         <div class="method-details-details">
             <div class="method-signature">
-                                    <span class="visibility-private keyword">private</span>
+                                    <span class="visibility-public keyword">public</span>
                                 <span class="keyword">function</span>&nbsp;<span class="method-name">f_alpha</span>(<span class="param-data-type">variable</span> <span class="variable param-name">$str</span>)
             </div>
             <div class="method-doc">
@@ -1163,8 +1235,24 @@
     <div class="method-details">
         <div class="method-details-details">
             <div class="method-signature">
-                                    <span class="visibility-private keyword">private</span>
+                                    <span class="visibility-public keyword">public</span>
                                 <span class="keyword">function</span>&nbsp;<span class="method-name">f_alphanum</span>(<span class="param-data-type">variable</span> <span class="variable param-name">$str</span>)
+            </div>
+            <div class="method-doc">
+                            </div>
+        </div>
+    </div>
+</li>
+
+    
+        
+<li class="class-method clearfix">
+    <div class="hidden-anchor" id="method-details-f_number"></div>
+    <div class="method-details">
+        <div class="method-details-details">
+            <div class="method-signature">
+                                    <span class="visibility-public keyword">public</span>
+                                <span class="keyword">function</span>&nbsp;<span class="method-name">f_number</span>(<span class="param-data-type">variable</span> <span class="variable param-name">$str</span>)
             </div>
             <div class="method-doc">
                             </div>

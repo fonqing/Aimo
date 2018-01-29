@@ -79,14 +79,7 @@
 <pre class="zephir-source-file prettyprint linenums">namespace Aimo;
 class Request {
     private static instance;
-    public params   = [] {set,get};
-    public isPost   = false;
-    public isGet    = false;
-    public isAjax   = false;
-    public isPut    = false;
-    public isDelete = false;
-    public isMobile = false;
-
+    public params = [] {set,get};
     /**
      * 实例化Request对象
      *
@@ -217,23 +210,25 @@ class Request {
      * @param mixed filter 过滤器
      * @return mixed
      */
-    public function get(var name,var def="",var filter="text")
+    public function get(string! name,var def=null,var filter="text")
     {
-        if empty filter {
-            return isset _GET[name] ? _GET[name] : null;
-        }
         if !isset _GET[name] {
             return def;
+        }
+        if empty filter {
+            return isset _GET[name] ? _GET[name] : def;
         }
         var method;
         let method = "f_".filter;
         if method_exists(this, method){
-            return (typeof _GET[name] == "array") ? 
-                array_map([this, method], _GET[name]) : 
+            return (typeof _GET[name] == "array") ?
+                array_map([this, method], _GET[name]) :
                 this->{method}(_GET[name]);
         } elseif function_exists(filter) {
-            return (typeof _GET[name] == "array") ? 
+            return (typeof _GET[name] == "array") ?
                 array_map(filter, _GET[name]) : {filter}(_GET[name]);
+        } elseif is_callable(filter) {
+            return call_user_func(filter, _GET[name]);
         }
     }
 
@@ -255,23 +250,65 @@ class Request {
      * @param mixed filter 过滤器
      * @return mixed
      */
-    public function post(var name,var def="",var filter="text")
+    public function post(string! name,var def=null,var filter="text")
     {
-        if empty filter {
-            return isset _POST[name] ? _POST[name] : null;
-        }
         if !isset _POST[name] {
             return def;
+        }
+        if empty filter {
+            return isset _POST[name] ? _POST[name] : def;
         }
         var method;
         let method = "f_".filter;
         if method_exists(this, method){
-            return (typeof _POST[name] == "array") ? 
-                array_map([this, method], _POST[name]) : 
+            return (typeof _POST[name] == "array") ?
+                array_map([this, method], _POST[name]) :
                 this->{method}(_POST[name]);
         } elseif function_exists(filter) {
-            return (typeof _POST[name] == "array") ? 
+            return (typeof _POST[name] == "array") ?
                 array_map(filter, _POST[name]) : {filter}(_POST[name]);
+        } elseif is_callable(filter) {
+            return call_user_func(filter, _POST[name]);
+        }
+    }
+
+    /**
+     * 获取REQUEST数据
+     *
+     * <code>
+     * $request = Request::instance();
+     * var_dump($request->request('page',1,'int'));
+     * var_dump($request->request('email','','email'));
+     * var_dump($request->request('url','','url'));
+     * var_dump($request->request('float',0.0,'float'));
+     * var_dump($request->request('chars','','alpha'));//a-zA-Z
+     * var_dump($request->request('aphnum','','alphanum'));//a-zA-Z0-9
+     * </code>
+     *
+     * @param string name 索引名
+     * @param mixed def  默认值
+     * @param mixed filter 过滤器
+     * @return mixed
+     */
+    public function request(string! name,var def=null,var filter="text")
+    {
+        if !isset _REQUEST[name] {
+            return def;
+        }
+        if empty filter {
+            return isset _REQUEST[name] ? _REQUEST[name] : def;
+        }
+        var method;
+        let method = "f_".filter;
+        if method_exists(this, method){
+            return (typeof _REQUEST[name] == "array") ?
+                array_map([this, method], _REQUEST[name]) :
+                this->{method}(_REQUEST[name]);
+        } elseif function_exists(filter) {
+            return (typeof _REQUEST[name] == "array") ?
+                array_map(filter, _REQUEST[name]) : {filter}(_REQUEST[name]);
+        } elseif is_callable(filter) {
+            return call_user_func(filter, _REQUEST[name]);
         }
     }
 
@@ -293,25 +330,28 @@ class Request {
      * @param mixed filter 过滤器
      * @return mixed
      */
-    public function param(var name,var def="",var filter="text")
+    public function param(string! name,var def=null,var filter="text")
     {
         var params;
         let params = Request::instance()->getParams();
-        if empty filter {
-            return isset params[name] ? params[name] : null;;
-        }
         if !isset params[name] {
             return def;
         }
+        if empty filter {
+            return isset params[name] ? params[name] : def;
+        }
+
         var method;
         let method = "f_".filter;
         if method_exists(this, method){
-            return (typeof params[name] == "array") ? 
-                array_map([this, method], params[name]) : 
+            return (typeof params[name] == "array") ?
+                array_map([this, method], params[name]) :
                 this->{method}(params[name]);
         } elseif function_exists(filter) {
-            return (typeof params[name] == "array") ? 
+            return (typeof params[name] == "array") ?
                 array_map(filter, params[name]) : {filter}(params[name]);
+        } elseif is_callable(filter) {
+            return call_user_func(filter, params[name]);
         }
     }
 
@@ -389,7 +429,7 @@ class Request {
             let overridedMethod = this->getHeader("X-HTTP-METHOD-OVERRIDE");
             if !empty overridedMethod {
                 let returnMethod = strtoupper(overridedMethod);
-            } 
+            }
         }
 
         if !this->isValidHttpMethod(returnMethod) {
@@ -477,42 +517,48 @@ class Request {
     /**
      * Data filters
      */
-    private function f_text(var str)
+    public function f_text(var str)
     {
         return filter_var(str, FILTER_SANITIZE_SPECIAL_CHARS);
     }
 
-    private function f_int(var val)
+    public function f_int(var val)
     {
         return filter_var(val, FILTER_SANITIZE_NUMBER_INT);
     }
 
-    private function f_float(var val)
+    public function f_float(var val)
     {
         return filter_var(val, FILTER_SANITIZE_NUMBER_FLOAT);
     }
 
-    private function f_url(var val)
+    public function f_url(var val)
     {
         return filter_var(val, FILTER_SANITIZE_URL);
     }
 
-    private function f_email(var val)
+    public function f_email(var val)
     {
         return filter_var(val, FILTER_SANITIZE_EMAIL);
     }
 
-    private function f_alpha(var str)
+    public function f_alpha(var str)
     {
         return preg_replace("/[^a-z]+/i", "", str);
     }
 
-    private function f_alphanum(var str)
+    public function f_alphanum(var str)
     {
         return preg_replace("/[^a-z0-9]+/i", "", str);
     }
 
-}</pre>                </div>
+    public function f_number(var str)
+    {
+        return preg_replace("/[^0-9\.\-\+]+/i", "", str);
+    }
+
+}
+</pre>                </div>
             </div>
         </div>
     </body>

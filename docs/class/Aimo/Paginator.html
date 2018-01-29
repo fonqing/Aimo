@@ -50,7 +50,7 @@
         <li><a href="../../index.html">Home</a></li>
         
                 <li><a href="../../classes.html">Classes</a></li>
-                <li><a >Aimo\View</a></li>
+                <li><a >Aimo\Paginator</a></li>
                 
     </ul>
     
@@ -59,7 +59,7 @@
     
     
     <div class="access-buttons">
-        <a class="zep-button" href="../../source/Aimo/View.html">Source</a>
+        <a class="zep-button" href="../../source/Aimo/Paginator.html">Source</a>
 
             </div>
     
@@ -70,7 +70,7 @@
                 <span class="namespace-piece">
             <a href="../../namespace/Aimo.html">Aimo</a>
         </span>
-                <h1 class="class-name">View</h1>
+                <h1 class="class-name">Paginator</h1>
     </div>
 
 </div>
@@ -84,7 +84,7 @@
 <li class="class-method clearfix">
     <div class="method-summary">
         <div class="method-signature">
-            <span class="method-name"><a href="#method-details-init">init</a></span>(<span class="param-data-type">array</span> <span class="variable param-name">$config</span>)
+            <span class="method-name"><a href="#method-details-__construct">__construct</a></span>(<span class="param-data-type">int</span> <span class="variable param-name">$pageSize</span>, <span class="param-data-type">int</span> <span class="variable param-name">$total</span>)
             <span class="method-return">
                 &nbsp;<strong>:</strong>&nbsp;
                                     void
@@ -102,7 +102,77 @@
 <li class="class-method clearfix">
     <div class="method-summary">
         <div class="method-signature">
-            <span class="method-name"><a href="#method-details-check">check</a></span>(<span class="param-data-type">string</span> <span class="variable param-name">$tpl</span>, <span class="param-data-type">string</span> <span class="variable param-name">$cache</span>)
+            <span class="method-name"><a href="#method-details-config">config</a></span>(<span class="param-data-type">string</span> <span class="variable param-name">$name</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$value</span>)
+            <span class="method-return">
+                &nbsp;<strong>:</strong>&nbsp;
+                                    void
+                            </span>
+        </div>
+                    <div class="method-doc">
+                <div class="summary-text">
+                                    </div>
+            </div>
+            </div>
+</li>
+
+    
+        
+<li class="class-method clearfix">
+    <div class="method-summary">
+        <div class="method-signature">
+            <span class="method-name"><a href="#method-details-init">init</a></span>(<span class="param-data-type">array</span> <span class="variable param-name">$configs</span>)
+            <span class="method-return">
+                &nbsp;<strong>:</strong>&nbsp;
+                                    void
+                            </span>
+        </div>
+                    <div class="method-doc">
+                <div class="summary-text">
+                                    </div>
+            </div>
+            </div>
+</li>
+
+    
+        
+<li class="class-method clearfix">
+    <div class="method-summary">
+        <div class="method-signature">
+            <span class="method-name"><a href="#method-details-getUrl">getUrl</a></span>(<span class="param-data-type">string</span> <span class="variable param-name">$append</span>)
+            <span class="method-return">
+                &nbsp;<strong>:</strong>&nbsp;
+                                    string                            </span>
+        </div>
+                    <div class="method-doc">
+                <div class="summary-text">
+                                    </div>
+            </div>
+            </div>
+</li>
+
+    
+        
+<li class="class-method clearfix">
+    <div class="method-summary">
+        <div class="method-signature">
+            <span class="method-name"><a href="#method-details-format">format</a></span>(<span class="param-data-type">string</span> <span class="variable param-name">$tpl</span>, <span class="param-data-type">array</span> <span class="variable param-name">$data</span>)
+            <span class="method-return">
+                &nbsp;<strong>:</strong>&nbsp;
+                                    string                            </span>
+        </div>
+                    <div class="method-doc">
+                <div class="summary-text">
+                                    </div>
+            </div>
+            </div>
+</li>
+
+    
+        
+<li class="class-method clearfix">
+    <div class="method-summary">
+        <div class="method-signature">
+            <span class="method-name"><a href="#method-details-isMobile">isMobile</a></span>()
             <span class="method-return">
                 &nbsp;<strong>:</strong>&nbsp;
                                     bool                            </span>
@@ -119,41 +189,7 @@
 <li class="class-method clearfix">
     <div class="method-summary">
         <div class="method-signature">
-            <span class="method-name"><a href="#method-details-load">load</a></span>(<span class="param-data-type">string</span> <span class="variable param-name">$mca</span>)
-            <span class="method-return">
-                &nbsp;<strong>:</strong>&nbsp;
-                                    string                            </span>
-        </div>
-                    <div class="method-doc">
-                <div class="summary-text">
-                                    </div>
-            </div>
-            </div>
-</li>
-
-    
-        
-<li class="class-method clearfix">
-    <div class="method-summary">
-        <div class="method-signature">
-            <span class="method-name"><a href="#method-details-parse">parse</a></span>(<span class="param-data-type">string</span> <span class="variable param-name">$content</span>)
-            <span class="method-return">
-                &nbsp;<strong>:</strong>&nbsp;
-                                    string                            </span>
-        </div>
-                    <div class="method-doc">
-                <div class="summary-text">
-                                    </div>
-            </div>
-            </div>
-</li>
-
-    
-        
-<li class="class-method clearfix">
-    <div class="method-summary">
-        <div class="method-signature">
-            <span class="method-name"><a href="#method-details-assign">assign</a></span>(<span class="param-data-type">string</span> <span class="variable param-name">$key</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$value</span>)
+            <span class="method-name"><a href="#method-details-firstPage">firstPage</a></span>()
             <span class="method-return">
                 &nbsp;<strong>:</strong>&nbsp;
                                     void
@@ -171,7 +207,7 @@
 <li class="class-method clearfix">
     <div class="method-summary">
         <div class="method-signature">
-            <span class="method-name"><a href="#method-details-render">render</a></span>(<span class="param-data-type">string</span> <span class="variable param-name">$tplPath</span>, <span class="param-data-type">array</span> <span class="variable param-name">$data</span>)
+            <span class="method-name"><a href="#method-details-lastPage">lastPage</a></span>()
             <span class="method-return">
                 &nbsp;<strong>:</strong>&nbsp;
                                     void
@@ -189,58 +225,7 @@
 <li class="class-method clearfix">
     <div class="method-summary">
         <div class="method-signature">
-            <span class="method-name"><a href="#method-details-addquote">addquote</a></span>(<span class="param-data-type">array</span> <span class="variable param-name">$m</span>)
-            <span class="method-return">
-                &nbsp;<strong>:</strong>&nbsp;
-                                    string                            </span>
-        </div>
-                    <div class="method-doc">
-                <div class="summary-text">
-                                    </div>
-            </div>
-            </div>
-</li>
-
-    
-        
-<li class="class-method clearfix">
-    <div class="method-summary">
-        <div class="method-signature">
-            <span class="method-name"><a href="#method-details-fixvar">fixvar</a></span>(<span class="param-data-type">array</span> <span class="variable param-name">$m</span>)
-            <span class="method-return">
-                &nbsp;<strong>:</strong>&nbsp;
-                                    string                            </span>
-        </div>
-                    <div class="method-doc">
-                <div class="summary-text">
-                                    </div>
-            </div>
-            </div>
-</li>
-
-    
-        
-<li class="class-method clearfix">
-    <div class="method-summary">
-        <div class="method-signature">
-            <span class="method-name"><a href="#method-details-fixfunction">fixfunction</a></span>(<span class="param-data-type">array</span> <span class="variable param-name">$m</span>)
-            <span class="method-return">
-                &nbsp;<strong>:</strong>&nbsp;
-                                    string                            </span>
-        </div>
-                    <div class="method-doc">
-                <div class="summary-text">
-                                    </div>
-            </div>
-            </div>
-</li>
-
-    
-        
-<li class="class-method clearfix">
-    <div class="method-summary">
-        <div class="method-signature">
-            <span class="method-name"><a href="#method-details-getBlock">getBlock</a></span>(<span class="param-data-type">string</span> <span class="variable param-name">$name</span>)
+            <span class="method-name"><a href="#method-details-prevPage">prevPage</a></span>()
             <span class="method-return">
                 &nbsp;<strong>:</strong>&nbsp;
                                     void
@@ -258,80 +243,105 @@
 <li class="class-method clearfix">
     <div class="method-summary">
         <div class="method-signature">
-            <span class="method-name"><a href="#method-details-setBlock">setBlock</a></span>(<span class="param-data-type">array</span> <span class="variable param-name">$m</span>)
-            <span class="method-return">
-                &nbsp;<strong>:</strong>&nbsp;
-                                    string                            </span>
-        </div>
-                    <div class="method-doc">
-                <div class="summary-text">
-                                    </div>
-            </div>
-            </div>
-</li>
-
-    
-        
-<li class="class-method clearfix">
-    <div class="method-summary">
-        <div class="method-signature">
-            <span class="method-name"><a href="#method-details-tag">tag</a></span>(<span class="param-data-type">array</span> <span class="variable param-name">$m</span>)
-            <span class="method-return">
-                &nbsp;<strong>:</strong>&nbsp;
-                                    string                            </span>
-        </div>
-                    <div class="method-doc">
-                <div class="summary-text">
-                                    </div>
-            </div>
-            </div>
-</li>
-
-    
-        
-<li class="class-method clearfix">
-    <div class="method-summary">
-        <div class="method-signature">
-            <span class="method-name"><a href="#method-details-end_tag">end_tag</a></span>()
-            <span class="method-return">
-                &nbsp;<strong>:</strong>&nbsp;
-                                    string                            </span>
-        </div>
-                    <div class="method-doc">
-                <div class="summary-text">
-                                    </div>
-            </div>
-            </div>
-</li>
-
-    
-        
-<li class="class-method clearfix">
-    <div class="method-summary">
-        <div class="method-signature">
-            <span class="method-name"><a href="#method-details-arr_to_html">arr_to_html</a></span>(<span class="param-data-type">array</span> <span class="variable param-name">$data</span>)
-            <span class="method-return">
-                &nbsp;<strong>:</strong>&nbsp;
-                                    string                            </span>
-        </div>
-                    <div class="method-doc">
-                <div class="summary-text">
-                                    </div>
-            </div>
-            </div>
-</li>
-
-    
-        
-<li class="class-method clearfix">
-    <div class="method-summary">
-        <div class="method-signature">
-            <span class="method-name"><a href="#method-details-zephir_init_static_properties_Aimo_View">zephir_init_static_properties_Aimo_View</a></span>()
+            <span class="method-name"><a href="#method-details-nextPage">nextPage</a></span>()
             <span class="method-return">
                 &nbsp;<strong>:</strong>&nbsp;
                                     void
                             </span>
         </div>
+                    <div class="method-doc">
+                <div class="summary-text">
+                                    </div>
+            </div>
+            </div>
+</li>
+
+    
+        
+<li class="class-method clearfix">
+    <div class="method-summary">
+        <div class="method-signature">
+            <span class="method-name"><a href="#method-details-headBlock">headBlock</a></span>()
+            <span class="method-return">
+                &nbsp;<strong>:</strong>&nbsp;
+                                    void
+                            </span>
+        </div>
+                    <div class="method-doc">
+                <div class="summary-text">
+                                    </div>
+            </div>
+            </div>
+</li>
+
+    
+        
+<li class="class-method clearfix">
+    <div class="method-summary">
+        <div class="method-signature">
+            <span class="method-name"><a href="#method-details-firstBlock">firstBlock</a></span>()
+            <span class="method-return">
+                &nbsp;<strong>:</strong>&nbsp;
+                                    void
+                            </span>
+        </div>
+                    <div class="method-doc">
+                <div class="summary-text">
+                                    </div>
+            </div>
+            </div>
+</li>
+
+    
+        
+<li class="class-method clearfix">
+    <div class="method-summary">
+        <div class="method-signature">
+            <span class="method-name"><a href="#method-details-middleBlock">middleBlock</a></span>()
+            <span class="method-return">
+                &nbsp;<strong>:</strong>&nbsp;
+                                    void
+                            </span>
+        </div>
+                    <div class="method-doc">
+                <div class="summary-text">
+                                    </div>
+            </div>
+            </div>
+</li>
+
+    
+        
+<li class="class-method clearfix">
+    <div class="method-summary">
+        <div class="method-signature">
+            <span class="method-name"><a href="#method-details-lastBlock">lastBlock</a></span>()
+            <span class="method-return">
+                &nbsp;<strong>:</strong>&nbsp;
+                                    void
+                            </span>
+        </div>
+                    <div class="method-doc">
+                <div class="summary-text">
+                                    </div>
+            </div>
+            </div>
+</li>
+
+    
+        
+<li class="class-method clearfix">
+    <div class="method-summary">
+        <div class="method-signature">
+            <span class="method-name"><a href="#method-details-getPageHtml">getPageHtml</a></span>()
+            <span class="method-return">
+                &nbsp;<strong>:</strong>&nbsp;
+                                    string                            </span>
+        </div>
+                    <div class="method-doc">
+                <div class="summary-text">
+                                    </div>
+            </div>
             </div>
 </li>
 
@@ -343,238 +353,94 @@
     
         
 <li class="class-method clearfix">
+    <div class="hidden-anchor" id="method-details-__construct"></div>
+    <div class="method-details">
+        <div class="method-details-details">
+            <div class="method-signature">
+                                    <span class="visibility-public keyword">public</span>
+                                <span class="keyword">function</span>&nbsp;<span class="method-name">__construct</span>(<span class="param-data-type">int</span> <span class="variable param-name">$pageSize</span>, <span class="param-data-type">int</span> <span class="variable param-name">$total</span>)
+            </div>
+            <div class="method-doc">
+                                    <div class="summary">
+                                            </div>
+                    <div class="description">
+                        Constructor
+
+     
+
+     <code>
+
+     $pageSize = 20;
+
+     $totalRecords = 376;
+
+     $pager = new Aimo\Paginator($pageSize, $totalRecords);
+
+     $pagehtml = $pager->getPageHtml();
+
+     </code>                    </div>
+                            </div>
+        </div>
+    </div>
+</li>
+
+    
+        
+<li class="class-method clearfix">
+    <div class="hidden-anchor" id="method-details-config"></div>
+    <div class="method-details">
+        <div class="method-details-details">
+            <div class="method-signature">
+                                    <span class="visibility-public keyword">public</span>
+                                <span class="keyword">function</span>&nbsp;<span class="method-name">config</span>(<span class="param-data-type">string</span> <span class="variable param-name">$name</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$value</span>)
+            </div>
+            <div class="method-doc">
+                                    <div class="summary">
+                                            </div>
+                    <div class="description">
+                        Set config variable
+
+     
+
+     <code>
+
+     $pager->config('prevText','Previous');
+
+     $pager->config('wrapTpl','<div class="pagination">%INNER%</div>');
+
+     </code>                    </div>
+                            </div>
+        </div>
+    </div>
+</li>
+
+    
+        
+<li class="class-method clearfix">
     <div class="hidden-anchor" id="method-details-init"></div>
     <div class="method-details">
         <div class="method-details-details">
             <div class="method-signature">
                                     <span class="visibility-public keyword">public</span>
-                                    <span class="visibility-static keyword">static</span>
-                                <span class="keyword">function</span>&nbsp;<span class="method-name">init</span>(<span class="param-data-type">array</span> <span class="variable param-name">$config</span>)
+                                <span class="keyword">function</span>&nbsp;<span class="method-name">init</span>(<span class="param-data-type">array</span> <span class="variable param-name">$configs</span>)
             </div>
             <div class="method-doc">
                                     <div class="summary">
                                             </div>
                     <div class="description">
-                        引擎初始化
-
-     
-
-     初始化模板引擎
+                        More config to set
 
      
 
      <code>
 
-     \Aimo\View::init([
+     $pager->init([
 
-          'view_path'       => './_view/',  //模板文件目录
+        'prevText'    => 'Previous',
 
-          'view_cache_path' => './_cache/', //模板编译缓存目录
+        'adjacentNum' => 3,
 
-          'view_file_ext'   => '.html',     //模板文件扩展名
-
-          'delimiter_begin' => '{',         //模板标记开始定界符
-
-          'delimiter_end'   => '}'          //模板标记结束定界符
-
-     ]);
-
-     </code>
-
-     <code>
-
-     
-
-     Template syntax:
-
-     Variable output: {$name} {$data[name]} {$data.name} {$data->name} {PHP_VERSION}
-
-     Call global function: {print_r($data)}
-
-     Loop: {loop $items $item} {/loop} 
-
-           {loop $items $k $item} {/loop}
-
-           {foreach $items $item} {/foreach}
-
-           {foreach $items $k $item} {/foreach}
-
-     For:  {for $i=0;$i<10;$i++} {/for}
-
-     Subtemplate: {template "index/public/header"}
-
-     Include: {include "vars.php"}
-
-     Taglib: 
-
-     {Aimo::news action="getlist" name="infos" ttl="3600"}
-
-       {loop $infos $info} 
-
-       {/loop} 
-
-     {/Aimo}
-
-     Condition:
-
-     {if isset($var)}
-
-     {elseif isset($var2)}
-
-     {else}
-
-     {/if}
-
-     Block content
-
-     # set block content 
-
-     {block name="script"}<script>alert("asdfasdf");</script>{/block}
-
-     # get block content
-
-     {block name="script"}{/block}
-
-     Orignal PHP:
-
-     {php}{/php}
-
-     </code>                    </div>
-                            </div>
-        </div>
-    </div>
-</li>
-
-    
-        
-<li class="class-method clearfix">
-    <div class="hidden-anchor" id="method-details-check"></div>
-    <div class="method-details">
-        <div class="method-details-details">
-            <div class="method-signature">
-                                    <span class="visibility-private keyword">private</span>
-                                    <span class="visibility-static keyword">static</span>
-                                <span class="keyword">function</span>&nbsp;<span class="method-name">check</span>(<span class="param-data-type">string</span> <span class="variable param-name">$tpl</span>, <span class="param-data-type">string</span> <span class="variable param-name">$cache</span>)
-            </div>
-            <div class="method-doc">
-                                    <div class="summary">
-                                            </div>
-                    <div class="description">
-                        检查模板状态                    </div>
-                            </div>
-        </div>
-    </div>
-</li>
-
-    
-        
-<li class="class-method clearfix">
-    <div class="hidden-anchor" id="method-details-load"></div>
-    <div class="method-details">
-        <div class="method-details-details">
-            <div class="method-signature">
-                                    <span class="visibility-public keyword">public</span>
-                                    <span class="visibility-static keyword">static</span>
-                                <span class="keyword">function</span>&nbsp;<span class="method-name">load</span>(<span class="param-data-type">string</span> <span class="variable param-name">$mca</span>)
-            </div>
-            <div class="method-doc">
-                                    <div class="summary">
-                                            </div>
-                    <div class="description">
-                        载入视图文件
-
-     
-
-     <code>
-
-     \Aimo\View::load('news/view');//默认module/controller/action
-
-     \Aimo\View::load('admin/news/view');//module/controller/action
-
-     </code>                    </div>
-                            </div>
-        </div>
-    </div>
-</li>
-
-    
-        
-<li class="class-method clearfix">
-    <div class="hidden-anchor" id="method-details-parse"></div>
-    <div class="method-details">
-        <div class="method-details-details">
-            <div class="method-signature">
-                                    <span class="visibility-private keyword">private</span>
-                                    <span class="visibility-static keyword">static</span>
-                                <span class="keyword">function</span>&nbsp;<span class="method-name">parse</span>(<span class="param-data-type">string</span> <span class="variable param-name">$content</span>)
-            </div>
-            <div class="method-doc">
-                                    <div class="summary">
-                                            </div>
-                    <div class="description">
-                        解析视图语法
-
-     
-
-     解析视图语法                    </div>
-                            </div>
-        </div>
-    </div>
-</li>
-
-    
-        
-<li class="class-method clearfix">
-    <div class="hidden-anchor" id="method-details-assign"></div>
-    <div class="method-details">
-        <div class="method-details-details">
-            <div class="method-signature">
-                                    <span class="visibility-public keyword">public</span>
-                                    <span class="visibility-static keyword">static</span>
-                                <span class="keyword">function</span>&nbsp;<span class="method-name">assign</span>(<span class="param-data-type">string</span> <span class="variable param-name">$key</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$value</span>)
-            </div>
-            <div class="method-doc">
-                                    <div class="summary">
-                                            </div>
-                    <div class="description">
-                        注册数据变量到视图作用域
-
-     
-
-     <code>
-
-     \Aimo\View::assign('name','eric');
-
-     </code>                    </div>
-                            </div>
-        </div>
-    </div>
-</li>
-
-    
-        
-<li class="class-method clearfix">
-    <div class="hidden-anchor" id="method-details-render"></div>
-    <div class="method-details">
-        <div class="method-details-details">
-            <div class="method-signature">
-                                    <span class="visibility-public keyword">public</span>
-                                    <span class="visibility-static keyword">static</span>
-                                <span class="keyword">function</span>&nbsp;<span class="method-name">render</span>(<span class="param-data-type">string</span> <span class="variable param-name">$tplPath</span>, <span class="param-data-type">array</span> <span class="variable param-name">$data</span>)
-            </div>
-            <div class="method-doc">
-                                    <div class="summary">
-                                            </div>
-                    <div class="description">
-                        渲染视图
-
-     
-
-     <code>
-
-     \Aimo\View::render('news/list',[
-
-          'news' => [['title'=>'title','content'=>'content']]
+        'wrapTpl'     => '<div class="pagination">%INNER%</div>'
 
      ]);
 
@@ -587,19 +453,18 @@
     
         
 <li class="class-method clearfix">
-    <div class="hidden-anchor" id="method-details-addquote"></div>
+    <div class="hidden-anchor" id="method-details-getUrl"></div>
     <div class="method-details">
         <div class="method-details-details">
             <div class="method-signature">
-                                    <span class="visibility-public keyword">public</span>
-                                    <span class="visibility-static keyword">static</span>
-                                <span class="keyword">function</span>&nbsp;<span class="method-name">addquote</span>(<span class="param-data-type">array</span> <span class="variable param-name">$m</span>)
+                                    <span class="visibility-private keyword">private</span>
+                                <span class="keyword">function</span>&nbsp;<span class="method-name">getUrl</span>(<span class="param-data-type">string</span> <span class="variable param-name">$append</span>)
             </div>
             <div class="method-doc">
                                     <div class="summary">
                                             </div>
                     <div class="description">
-                        转义 // 为 /                    </div>
+                        Prepare for building Url                    </div>
                             </div>
         </div>
     </div>
@@ -608,124 +473,19 @@
     
         
 <li class="class-method clearfix">
-    <div class="hidden-anchor" id="method-details-fixvar"></div>
-    <div class="method-details">
-        <div class="method-details-details">
-            <div class="method-signature">
-                                    <span class="visibility-public keyword">public</span>
-                                    <span class="visibility-static keyword">static</span>
-                                <span class="keyword">function</span>&nbsp;<span class="method-name">fixvar</span>(<span class="param-data-type">array</span> <span class="variable param-name">$m</span>)
-            </div>
-            <div class="method-doc">
-                                    <div class="summary">
-                                            </div>
-                    <div class="description">
-                        修复语法特殊用法                    </div>
-                            </div>
-        </div>
-    </div>
-</li>
-
-    
-        
-<li class="class-method clearfix">
-    <div class="hidden-anchor" id="method-details-fixfunction"></div>
-    <div class="method-details">
-        <div class="method-details-details">
-            <div class="method-signature">
-                                    <span class="visibility-public keyword">public</span>
-                                    <span class="visibility-static keyword">static</span>
-                                <span class="keyword">function</span>&nbsp;<span class="method-name">fixfunction</span>(<span class="param-data-type">array</span> <span class="variable param-name">$m</span>)
-            </div>
-            <div class="method-doc">
-                                    <div class="summary">
-                                            </div>
-                    <div class="description">
-                        解析function标签                    </div>
-                            </div>
-        </div>
-    </div>
-</li>
-
-    
-        
-<li class="class-method clearfix">
-    <div class="hidden-anchor" id="method-details-getBlock"></div>
-    <div class="method-details">
-        <div class="method-details-details">
-            <div class="method-signature">
-                                    <span class="visibility-public keyword">public</span>
-                                    <span class="visibility-static keyword">static</span>
-                                <span class="keyword">function</span>&nbsp;<span class="method-name">getBlock</span>(<span class="param-data-type">string</span> <span class="variable param-name">$name</span>)
-            </div>
-            <div class="method-doc">
-                                    <div class="summary">
-                                            </div>
-                    <div class="description">
-                        获取block 块                    </div>
-                            </div>
-        </div>
-    </div>
-</li>
-
-    
-        
-<li class="class-method clearfix">
-    <div class="hidden-anchor" id="method-details-setBlock"></div>
-    <div class="method-details">
-        <div class="method-details-details">
-            <div class="method-signature">
-                                    <span class="visibility-public keyword">public</span>
-                                    <span class="visibility-static keyword">static</span>
-                                <span class="keyword">function</span>&nbsp;<span class="method-name">setBlock</span>(<span class="param-data-type">array</span> <span class="variable param-name">$m</span>)
-            </div>
-            <div class="method-doc">
-                                    <div class="summary">
-                                            </div>
-                    <div class="description">
-                        设置block 块                    </div>
-                            </div>
-        </div>
-    </div>
-</li>
-
-    
-        
-<li class="class-method clearfix">
-    <div class="hidden-anchor" id="method-details-tag"></div>
-    <div class="method-details">
-        <div class="method-details-details">
-            <div class="method-signature">
-                                    <span class="visibility-public keyword">public</span>
-                                    <span class="visibility-static keyword">static</span>
-                                <span class="keyword">function</span>&nbsp;<span class="method-name">tag</span>(<span class="param-data-type">array</span> <span class="variable param-name">$m</span>)
-            </div>
-            <div class="method-doc">
-                                    <div class="summary">
-                                            </div>
-                    <div class="description">
-                        解析标签Taglib                    </div>
-                            </div>
-        </div>
-    </div>
-</li>
-
-    
-        
-<li class="class-method clearfix">
-    <div class="hidden-anchor" id="method-details-end_tag"></div>
+    <div class="hidden-anchor" id="method-details-format"></div>
     <div class="method-details">
         <div class="method-details-details">
             <div class="method-signature">
                                     <span class="visibility-private keyword">private</span>
                                     <span class="visibility-static keyword">static</span>
-                                <span class="keyword">function</span>&nbsp;<span class="method-name">end_tag</span>()
+                                <span class="keyword">function</span>&nbsp;<span class="method-name">format</span>(<span class="param-data-type">string</span> <span class="variable param-name">$tpl</span>, <span class="param-data-type">array</span> <span class="variable param-name">$data</span>)
             </div>
             <div class="method-doc">
                                     <div class="summary">
                                             </div>
                     <div class="description">
-                        标签结束                    </div>
+                        Format string to create html                    </div>
                             </div>
         </div>
     </div>
@@ -734,19 +494,19 @@
     
         
 <li class="class-method clearfix">
-    <div class="hidden-anchor" id="method-details-arr_to_html"></div>
+    <div class="hidden-anchor" id="method-details-isMobile"></div>
     <div class="method-details">
         <div class="method-details-details">
             <div class="method-signature">
                                     <span class="visibility-private keyword">private</span>
                                     <span class="visibility-static keyword">static</span>
-                                <span class="keyword">function</span>&nbsp;<span class="method-name">arr_to_html</span>(<span class="param-data-type">array</span> <span class="variable param-name">$data</span>)
+                                <span class="keyword">function</span>&nbsp;<span class="method-name">isMobile</span>()
             </div>
             <div class="method-doc">
                                     <div class="summary">
                                             </div>
                     <div class="description">
-                        转换数据为HTML代码                    </div>
+                        Detect browser user agent                    </div>
                             </div>
         </div>
     </div>
@@ -755,14 +515,178 @@
     
         
 <li class="class-method clearfix">
-    <div class="hidden-anchor" id="method-details-zephir_init_static_properties_Aimo_View"></div>
+    <div class="hidden-anchor" id="method-details-firstPage"></div>
     <div class="method-details">
         <div class="method-details-details">
             <div class="method-signature">
-                                    <span class="visibility-internal keyword">internal</span>
-                                <span class="keyword">function</span>&nbsp;<span class="method-name">zephir_init_static_properties_Aimo_View</span>()
+                                    <span class="visibility-private keyword">private</span>
+                                <span class="keyword">function</span>&nbsp;<span class="method-name">firstPage</span>()
             </div>
             <div class="method-doc">
+                                    <div class="summary">
+                                            </div>
+                    <div class="description">
+                        Parse the first page                    </div>
+                            </div>
+        </div>
+    </div>
+</li>
+
+    
+        
+<li class="class-method clearfix">
+    <div class="hidden-anchor" id="method-details-lastPage"></div>
+    <div class="method-details">
+        <div class="method-details-details">
+            <div class="method-signature">
+                                    <span class="visibility-private keyword">private</span>
+                                <span class="keyword">function</span>&nbsp;<span class="method-name">lastPage</span>()
+            </div>
+            <div class="method-doc">
+                                    <div class="summary">
+                                            </div>
+                    <div class="description">
+                        Parse the last page                    </div>
+                            </div>
+        </div>
+    </div>
+</li>
+
+    
+        
+<li class="class-method clearfix">
+    <div class="hidden-anchor" id="method-details-prevPage"></div>
+    <div class="method-details">
+        <div class="method-details-details">
+            <div class="method-signature">
+                                    <span class="visibility-private keyword">private</span>
+                                <span class="keyword">function</span>&nbsp;<span class="method-name">prevPage</span>()
+            </div>
+            <div class="method-doc">
+                                    <div class="summary">
+                                            </div>
+                    <div class="description">
+                        Parse the previous page                    </div>
+                            </div>
+        </div>
+    </div>
+</li>
+
+    
+        
+<li class="class-method clearfix">
+    <div class="hidden-anchor" id="method-details-nextPage"></div>
+    <div class="method-details">
+        <div class="method-details-details">
+            <div class="method-signature">
+                                    <span class="visibility-private keyword">private</span>
+                                <span class="keyword">function</span>&nbsp;<span class="method-name">nextPage</span>()
+            </div>
+            <div class="method-doc">
+                                    <div class="summary">
+                                            </div>
+                    <div class="description">
+                        Parse the next page                    </div>
+                            </div>
+        </div>
+    </div>
+</li>
+
+    
+        
+<li class="class-method clearfix">
+    <div class="hidden-anchor" id="method-details-headBlock"></div>
+    <div class="method-details">
+        <div class="method-details-details">
+            <div class="method-signature">
+                                    <span class="visibility-private keyword">private</span>
+                                <span class="keyword">function</span>&nbsp;<span class="method-name">headBlock</span>()
+            </div>
+            <div class="method-doc">
+                                    <div class="summary">
+                                            </div>
+                    <div class="description">
+                        Parse the pagination infomation block                    </div>
+                            </div>
+        </div>
+    </div>
+</li>
+
+    
+        
+<li class="class-method clearfix">
+    <div class="hidden-anchor" id="method-details-firstBlock"></div>
+    <div class="method-details">
+        <div class="method-details-details">
+            <div class="method-signature">
+                                    <span class="visibility-private keyword">private</span>
+                                <span class="keyword">function</span>&nbsp;<span class="method-name">firstBlock</span>()
+            </div>
+            <div class="method-doc">
+                                    <div class="summary">
+                                            </div>
+                    <div class="description">
+                        Parse the first block                    </div>
+                            </div>
+        </div>
+    </div>
+</li>
+
+    
+        
+<li class="class-method clearfix">
+    <div class="hidden-anchor" id="method-details-middleBlock"></div>
+    <div class="method-details">
+        <div class="method-details-details">
+            <div class="method-signature">
+                                    <span class="visibility-private keyword">private</span>
+                                <span class="keyword">function</span>&nbsp;<span class="method-name">middleBlock</span>()
+            </div>
+            <div class="method-doc">
+                                    <div class="summary">
+                                            </div>
+                    <div class="description">
+                        Parse the middle part                    </div>
+                            </div>
+        </div>
+    </div>
+</li>
+
+    
+        
+<li class="class-method clearfix">
+    <div class="hidden-anchor" id="method-details-lastBlock"></div>
+    <div class="method-details">
+        <div class="method-details-details">
+            <div class="method-signature">
+                                    <span class="visibility-private keyword">private</span>
+                                <span class="keyword">function</span>&nbsp;<span class="method-name">lastBlock</span>()
+            </div>
+            <div class="method-doc">
+                                    <div class="summary">
+                                            </div>
+                    <div class="description">
+                        Render last part                    </div>
+                            </div>
+        </div>
+    </div>
+</li>
+
+    
+        
+<li class="class-method clearfix">
+    <div class="hidden-anchor" id="method-details-getPageHtml"></div>
+    <div class="method-details">
+        <div class="method-details-details">
+            <div class="method-signature">
+                                    <span class="visibility-public keyword">public</span>
+                                <span class="keyword">function</span>&nbsp;<span class="method-name">getPageHtml</span>()
+            </div>
+            <div class="method-doc">
+                                    <div class="summary">
+                                            </div>
+                    <div class="description">
+                        Build page HTML code                    </div>
                             </div>
         </div>
     </div>
