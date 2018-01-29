@@ -149,6 +149,8 @@ class Request {
         } elseif function_exists(filter) {
             return (typeof _GET[name] == "array") ?
                 array_map(filter, _GET[name]) : {filter}(_GET[name]);
+        } elseif is_callable(filter) {
+            return call_user_func(filter, _GET[name]);
         }
     }
 
@@ -187,6 +189,48 @@ class Request {
         } elseif function_exists(filter) {
             return (typeof _POST[name] == "array") ?
                 array_map(filter, _POST[name]) : {filter}(_POST[name]);
+        } elseif is_callable(filter) {
+            return call_user_func(filter, _POST[name]);
+        }
+    }
+
+    /**
+     * 获取REQUEST数据
+     *
+     * <code>
+     * $request = Request::instance();
+     * var_dump($request->request('page',1,'int'));
+     * var_dump($request->request('email','','email'));
+     * var_dump($request->request('url','','url'));
+     * var_dump($request->request('float',0.0,'float'));
+     * var_dump($request->request('chars','','alpha'));//a-zA-Z
+     * var_dump($request->request('aphnum','','alphanum'));//a-zA-Z0-9
+     * </code>
+     *
+     * @param string name 索引名
+     * @param mixed def  默认值
+     * @param mixed filter 过滤器
+     * @return mixed
+     */
+    public function request(string! name,var def=null,var filter="text")
+    {
+        if !isset _REQUEST[name] {
+            return def;
+        }
+        if empty filter {
+            return isset _REQUEST[name] ? _REQUEST[name] : def;
+        }
+        var method;
+        let method = "f_".filter;
+        if method_exists(this, method){
+            return (typeof _REQUEST[name] == "array") ?
+                array_map([this, method], _REQUEST[name]) :
+                this->{method}(_REQUEST[name]);
+        } elseif function_exists(filter) {
+            return (typeof _REQUEST[name] == "array") ?
+                array_map(filter, _REQUEST[name]) : {filter}(_REQUEST[name]);
+        } elseif is_callable(filter) {
+            return call_user_func(filter, _REQUEST[name]);
         }
     }
 
@@ -228,6 +272,8 @@ class Request {
         } elseif function_exists(filter) {
             return (typeof params[name] == "array") ?
                 array_map(filter, params[name]) : {filter}(params[name]);
+        } elseif is_callable(filter) {
+            return call_user_func(filter, params[name]);
         }
     }
 
