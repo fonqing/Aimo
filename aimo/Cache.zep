@@ -13,8 +13,8 @@ abstract class Cache {
      */
     protected static _instance = [];
 
-	/**
-	 * 缓存工厂
+    /**
+     * 缓存工厂
      *
      * <code>
      * Cache::init('Memcache', [
@@ -31,25 +31,25 @@ abstract class Cache {
      *     'cache_compress' => false,   //是否开启数据压缩，开启后影响性能，默认关闭
      * ],'htmlCache');
      * </code>
-	 *
-	 * @param string driver
-	 * @param mixed config
+     *
+     * @param string driver
+     * @param mixed config
      * @param string name
-	 * @return Aimo\Cache\CacheInterface
-	 */
-	public static function init(string! driver,array config=[],string key="default")
-	{
-		if !isset self::_instance[key] {
-			string klass;
+     * @return Aimo\Cache\CacheInterface
+     */
+    public static function init(string! driver,array config=[],string key="default")
+    {
+        if !isset self::_instance[key] {
+            string klass;
             let driver = ucfirst(driver);
-			let klass = "Aimo\\Cache\\".driver;
+            let klass = "Aimo\\Cache\\".driver;
             if !class_exists(klass){
                 throw "Cache Driver:".klass."dose not exists!";
             }
-			let self::_instance[key] = new {klass}(config);
-		}
-		return self::_instance[key];
-	}
+            let self::_instance[key] = new {klass}(config);
+        }
+        return self::_instance[key];
+    }
 
     /**
      * 使用名称获取缓存实例 
