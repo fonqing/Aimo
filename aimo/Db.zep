@@ -4,16 +4,16 @@ class Db
 {
     protected static _default_config = [
         "dsn" : "",
-        "id_column" : "id",
-        "id_column_overrides" : [],
+        "primary" : "id",
+        "primary_map" : [],
         "error_mode" : \PDO::ERRMODE_EXCEPTION,
         "username" : null,
         "password" : null,
         "options" : null,
         "prefix" : "",
-        "identifier_quote_character" : null,
-        "identifier_case" : "default",//lower,upper,default
-        "limit_clause_style" : null,
+        "quote" : null,
+        "id_case" : "lower",//lower,upper,default
+        "limit_style" : null,
         "logging" : false,
         "logger" : null
     ];
@@ -29,8 +29,8 @@ class Db
     protected _table_name;
     protected _table_alias = null;
     protected _values = [];
-    protected _result_columns = ["*"];
-    protected _using_default_result_columns = true;
+    protected _fields = ["*"];
+    protected _using_default_fields = true;
     protected _join_sources = [];
     protected _distinct = false;
     protected _is_raw_query = false;
@@ -44,7 +44,7 @@ class Db
     protected _having_conditions = [];
     protected _data = [];
     protected _expr_fields = [];
-    protected _instance_id_column = null;
+    protected _instance_pk = null;
 
     //强制返回数组结果
     protected _as_array = false;
@@ -54,12 +54,12 @@ class Db
     /**
      * 避免DB被直接实例化
      */
-    protected function __construct(string! table_name, data = [], name = "default")
+    protected function __construct(string! table,array! data = [],string! name = "default")
     {
-        let this->_table_name = table_name;
+        let this->_table_name = table;
         let this->_data = data;
         let this->_name = name;
-        self::_setup_db_config(name);
+        self::initConfig(name);
     }
 
     /**
@@ -78,7 +78,7 @@ class Db
      * @param mixed $value
      * @param string $name 那个链接
      */
-    public static function config(string! key, value = null, name = "default")
+    public static function config(string! key, value = null,string! name = "default")
     {
         let self::_config[name][key] = value;
     }
@@ -112,7 +112,7 @@ class Db
         if (typeof config != "array") {
             throw "Db config must be a array";
         }
-        self::_setup_db_config(name);
+        self::initConfig(name);
         var k,v;
         for k,v in config {
             if isset self::_config[name][k] {
@@ -135,7 +135,7 @@ class Db
      * @param string $key
      * @param string $name Which connection to use
      */
-    public static function getConfig(key = null, name = "default")
+    public static function getConfig(string! key = null,string! name = "default")
     {
         if !empty key {
             return self::_config[name][key];
@@ -170,18 +170,20 @@ class Db
      * @param string $name Which connection to use
      * @return Db
      */
-    public static function table(string! table_name, name = "default") -> <Db>
+    public static function table(string! table,string! name = "default") -> <Db>
     {
-        self::_setup_db_config(name);
-        var identifier_case;
-        let identifier_case = self::config("identifier_case");
-        if identifier_case == "upper" {
-            let table_name = table_name->upper();
-        } elseif identifier_case == "lower" {
-            let table_name = table_name->lower();
+        self::initConfig(name);
+        var fcase;
+        if fetch fcase, self::_config["id_case"] {
+            if fcase == "upper" {
+                let table = table->upper();
+            } elseif fcase == "lower" {
+                let table = table->lower();
+            }
         }
-        //self::_setup_db(name);
-        return new self(table_name, [], name);
+        let table = strtolower(table);
+        //self::connect(name);
+        return new self(table, [], name);
     }
 
     /**
@@ -196,19 +198,22 @@ class Db
      * @param string $name Which connection to use
      * @return Db
      */
-    public static function name(string! table_name, name = "default") -> <Db>
+    public static function name(string! table,string! name = "default") -> <Db>
     {
-        self::_setup_db_config(name);
-        var prefix,identifier_case;
-        let identifier_case = self::config("identifier_case");
-        if identifier_case == "upper" {
-            let table_name = table_name->upper();
-        } elseif identifier_case == "lower" {
-            let table_name = table_name->lower();
+        self::initConfig(name);
+        string prefix;
+        var fcase;
+        let prefix = (string) self::getConfig("prefix",name);
+        if fetch fcase,self::_config["id_case"] {
+            if fcase == "upper" {
+                let table = table->upper();
+            } elseif fcase == "lower" {
+                let table = table->lower();
+            }
         }
-        //self::_setup_db(name);
-        let prefix = self::getConfig("prefix",name);
-        return new self(prefix.table_name, [], name);
+        let table = strtolower(table);
+        //self::connect(name);
+        return new self(prefix.table, [], name);
     }
 
     /**
@@ -218,13 +223,13 @@ class Db
      * @param PDO $db
      * @param string $name Which connection to use
      */
-    public static function setDb(<\PDO> db, name = "default") -> void
+    public static function setDb(<\PDO> db,string! name = "default") -> void
     {
-        self::_setup_db_config(name);
+        self::initConfig(name);
         let self::_db[name] = db;
-        if !is_null(self::_db[name]) {
-            self::_setup_identifier_quote_character(name);
-            self::_setup_limit_clause_style(name);
+        if (typeof self::_db[name] != "null") {
+            self::setQuote(name);
+            self::setLimitStyle(name);
         }
     }
 
@@ -242,7 +247,7 @@ class Db
      */
     public static function getDb(string! name = "default") -> <\PDO>
     {
-        self::_setup_db(name); // required in case this is called before ORM is instantiated
+        self::connect(name);//required in case this is called before ORM is instantiated
         return self::_db[name];
     }
 
@@ -262,14 +267,14 @@ class Db
      * 本方法在Aimo\Model中调用，并根据called class 实例化模型类
      *
      */
-    public function setEntity(string klass,array! primary) -> <Db>
+    public function setEntity(string! klass,array! primary) -> <Db>
     {
         let this->_entity  = klass;
         if (typeof primary == "array") {
             if count(primary) === 1 {
-                self::config("id_column", primary[0]);
+                self::config("primary", primary[0]);
             }else{
-                self::config("id_column", primary);
+                self::config("primary", primary);
             }
         }
         return this;
@@ -291,7 +296,7 @@ class Db
      */
     public static function query(string! query, parameters = [], name = "default")
     {
-        self::_setup_db(name);
+        self::connect(name);
         return self::_execute(query, parameters, name);
     }
 
@@ -356,7 +361,7 @@ class Db
      */
     public static function getQueryLog(string! name = "default")
     {
-        if (isset(self::_query_log[name])) {
+        if isset self::_query_log[name] {
             return self::_query_log[name];
         }
         return [];
@@ -386,7 +391,7 @@ class Db
      * @access public
      * @return Db
      */
-    public function alias(string! alias) -> <Query>
+    public function alias(string! alias) -> <Db>
     {
         let this->_table_alias = alias;
         return this;
@@ -410,9 +415,9 @@ class Db
      * </code>
      *
      * @access public
-     * @return <Query>
+     * @return <Db>
      */
-    public function fields() -> <Query>
+    public function fields() -> <Db>
     {
         var columns,alias,column,fields,aliass,field,parts;
         let columns = func_get_args();
@@ -465,7 +470,7 @@ class Db
     /**
      * 在SELECT查询前添加 DISTINCT 关键字
      */
-    public function distinct()-><Query>
+    public function distinct()-><Db>
     {
         let this->_distinct = true;
         return this;
@@ -500,16 +505,16 @@ class Db
     {
         var first_column,operator,second_column;
         if table_alias != null {
-            let table_alias = this->_quote_identifier(table_alias);
+            let table_alias = this->quoteId(table_alias);
             let table = table." ".table_alias;
         }
 
         let this->_values = array_merge(this->_values, parameters);
 
         if (typeof constraint == "array")  {
-            let first_column  = this->_quote_identifier(constraint[0]);
-            let operator      = this->_quote_identifier(constraint[1]);
-            let second_column = this->_quote_identifier(constraint[2]);
+            let first_column  = this->quoteId(constraint[0]);
+            let operator      = this->quoteId(constraint[1]);
+            let second_column = this->quoteId(constraint[2]);
             let constraint  = first_column." ".operator." ".second_column;
         }
 
@@ -546,7 +551,7 @@ class Db
                     if !is_numeric(k) {
                         if (typeof v=="array") {
                             if count(v) === 2 {
-                                this->_add_simple_where(k,v[0],v[1]);
+                                this->simpleWhere(k,v[0],v[1]);
                             }
                         } else {
                             this->whereEqual(k,v);
@@ -570,7 +575,7 @@ class Db
             if (typeof b == "string"){
                 let b = strtoupper(b);
                 if operators->index("_".b."_") {
-                    return this->_add_simple_where(a, b, c);
+                    return this->simpleWhere(a, b, c);
                 }
                 if strcasecmp(b,"in") === 0 {
                     return this->_add_where_placeholder(a, "IN", c);
@@ -592,12 +597,12 @@ class Db
      *</code>
      *
      * @access public
-     * @param string column_name 字段名
+     * @param string field 字段名
      * @param string|int|float value
      */
-    public function whereEqual(string! column_name, value=null)
+    public function whereEqual(field, value=null)
     {
-        return this->_add_simple_where(column_name, "=", value);
+        return this->simpleWhere(field, "=", value);
     }
 
     /**
@@ -608,12 +613,12 @@ class Db
      *</code>
      *
      * @access public
-     * @param string column_name 字段名
+     * @param string field 字段名
      * @param string|int|float value
      */
-    public function whereNotEqual(string! column_name, value=null)
+    public function whereNotEqual(field, value=null)
     {
-        return this->_add_simple_where(column_name, "!=", value);
+        return this->simpleWhere(field, "!=", value);
     }
 
     /**
@@ -624,14 +629,14 @@ class Db
      *</code>
      *
      * @access public
-     * @param string column_name 字段名
+     * @param string field 字段名
      * @param string|int|float value
      */
     public function whereIdIs(id)
     {
-        return is_array(this->_get_id_column_name()) ?
-            this->where(this->_get_compound_id_column_values(id), null) :
-            this->where(this->_get_id_column_name(), id);
+        return is_array(this->getPk()) ?
+            this->where(this->getPkValue(id), null) :
+            this->where(this->getPk(), id);
     }
 
     /**
@@ -657,7 +662,7 @@ class Db
                 } else {
                     let query[] = "AND";
                 }
-                let query[] = this->_quote_identifier(key);
+                let query[] = this->quoteId(key);
                 let data[] = item;
                 let query[] = op . " ?";
             }
@@ -675,9 +680,9 @@ class Db
      */
     public function whereIdIn(ids)
     {
-        return is_array(this->_get_id_column_name()) ?
-            this->whereAnyIs(this->_get_compound_id_column_values_array(ids)) :
-            this->whereIn(this->_get_id_column_name(), ids);
+        return is_array(this->getPk()) ?
+            this->whereAnyIs(this->getPkValues(ids)) :
+            this->whereIn(this->getPk(), ids);
     }
 
     /**
@@ -687,9 +692,9 @@ class Db
      * $data = Db::table('table')->whereLike('name','keyword%');
      * </code>
      */
-    public function whereLike(column_name, value=null)
+    public function whereLike(field, value=null)
     {
-        return this->_add_simple_where(column_name, "LIKE", value);
+        return this->simpleWhere(field, "LIKE", value);
     }
 
     /**
@@ -699,9 +704,9 @@ class Db
      * $data = Db::table('table')->whereNotLike('name','keyword%');
      * </code>
      */
-    public function whereNotLike(column_name, value=null)
+    public function whereNotLike(field, value=null)
     {
-        return this->_add_simple_where(column_name, "NOT LIKE", value);
+        return this->simpleWhere(field, "NOT LIKE", value);
     }
 
     /**
@@ -711,9 +716,9 @@ class Db
      * $data = Db::table('table')->whereGt('score',60);
      * </code>
      */
-    public function whereGt(column_name, value=null)
+    public function whereGt(field, value=null)
     {
-        return this->_add_simple_where(column_name, ">", value);
+        return this->simpleWhere(field, ">", value);
     }
 
     /**
@@ -723,9 +728,9 @@ class Db
      * $data = Db::table('table')->whereLt('score',60);
      * </code>
      */
-    public function whereLt(column_name, value=null)
+    public function whereLt(field, value=null)
     {
-        return this->_add_simple_where(column_name, "<", value);
+        return this->simpleWhere(field, "<", value);
     }
 
     /**
@@ -735,9 +740,9 @@ class Db
      * $data = Db::table('table')->whereGte('score',60);
      * </code>
      */
-    public function whereGte(column_name, value=null)
+    public function whereGte(field, value=null)
     {
-        return this->_add_simple_where(column_name, ">=", value);
+        return this->simpleWhere(field, ">=", value);
     }
 
     /**
@@ -747,9 +752,9 @@ class Db
      * $data = Db::table('table')->whereLte('score',60);
      * </code>
      */
-    public function whereLte(column_name, value=null)
+    public function whereLte(field, value=null)
     {
-        return this->_add_simple_where(column_name, "<=", value);
+        return this->simpleWhere(field, "<=", value);
     }
 
     /**
@@ -759,9 +764,9 @@ class Db
      * $data = Db::table('table')->whereIn('field',['a','b','c']);
      * </code>
      */
-    public function whereIn(column_name, values)
+    public function whereIn(field, values)
     {
-        return this->_add_where_placeholder(column_name, "IN", values);
+        return this->_add_where_placeholder(field, "IN", values);
     }
 
     /**
@@ -771,9 +776,9 @@ class Db
      * $data = Db::table('table')->whereNotIn('field',['a','b','c']);
      * </code>
      */
-    public function whereNotIn(column_name, values)
+    public function whereNotIn(field, values)
     {
-        return this->_add_where_placeholder(column_name, "NOT IN", values);
+        return this->_add_where_placeholder(field, "NOT IN", values);
     }
 
     /**
@@ -783,9 +788,9 @@ class Db
      * $data = Db::table('table')->whereIsNull('field');
      * </code>
      */
-    public function whereIsNull(column_name)
+    public function whereIsNull(field)
     {
-        return this->_add_where_no_value(column_name, "IS NULL");
+        return this->_add_where_no_value(field, "IS NULL");
     }
 
     /**
@@ -795,9 +800,9 @@ class Db
      * $data = Db::table('table')->whereNotNull('field');
      * </code>
      */
-    public function whereNotNull(column_name)
+    public function whereNotNull(field)
     {
-        return this->_add_where_no_value(column_name, "IS NOT NULL");
+        return this->_add_where_no_value(field, "IS NOT NULL");
     }
 
     /**
@@ -815,6 +820,28 @@ class Db
     }
 
     /**
+     * 排序
+     *
+     *<code>
+     * Db::name('user')->order('uid','DESC')->select();
+     * //Quote idenfider your self
+     * Db::name('user')->order('`uid` asc,`gid` DESC')->select();
+     *</code>
+     *
+     *@access public
+     *@param string field 字段名
+     */
+    public function order(string! order,string! type = "")
+    {
+        if empty type {
+            let this->_order_by[] = order;
+        } else {
+            this->_add_order_by(order ,type);
+        }
+        return this;
+    }
+
+    /**
      * 倒序排列
      *
      *<code>
@@ -822,11 +849,11 @@ class Db
      *</code>
      *
      *@access public
-     *@param string column_name 字段名
+     *@param string field 字段名
      */
-    public function orderByDesc(string! column_name) -> <Db>
+    public function orderByDesc(field) -> <Db>
     {
-        return this->_add_order_by(column_name, "DESC");
+        return this->_add_order_by(field, "DESC");
     }
 
     /**
@@ -837,11 +864,11 @@ class Db
      *</code>
      *
      *@access public
-     *@param string column_name 字段名
+     *@param string field 字段名
      */
-    public function orderByAsc(string! column_name) -> <Db>
+    public function orderByAsc(field) -> <Db>
     {
-        return this->_add_order_by(column_name, "ASC");
+        return this->_add_order_by(field, "ASC");
     }
 
     /**
@@ -868,12 +895,12 @@ class Db
      *</code>
      *
      *@access public
-     *@param string column_name 字段名
+     *@param string field 字段名
      */
-    public function groupBy(string! column_name) -> <Db>
+    public function groupBy(field) -> <Db>
     {
-        let column_name = this->_quote_identifier(column_name);
-        let this->_group_by[] = column_name;
+        let field = this->quoteId(field);
+        let this->_group_by[] = field;
         return this;
     }
 
@@ -899,29 +926,29 @@ class Db
      * added, and these will be ANDed together when the final query
      * is built.
      *
-     * If you use an array in $column_name, a new clause will be
+     * If you use an array in $field, a new clause will be
      * added for each element. In this case, $value is ignored.
      */
-    public function having(column_name, value=null)
+    public function having(field, value=null)
     {
-        return this->havingEqual(column_name, value);
+        return this->havingEqual(field, value);
     }
 
     /**
      * More explicitly named version of for the having() method.
      * Can be used if preferred.
      */
-    public function havingEqual(column_name, value=null)
+    public function havingEqual(field, value=null)
     {
-        return this->_add_simple_having(column_name, "=", value);
+        return this->simpleHaving(field, "=", value);
     }
 
     /**
      * Add a HAVING column != value clause to your query.
      */
-    public function havingNotEqual(column_name, value=null)
+    public function havingNotEqual(field, value=null)
     {
-        return this->_add_simple_having(column_name, "!=", value);
+        return this->simpleHaving(field, "!=", value);
     }
 
     /**
@@ -932,89 +959,89 @@ class Db
      */
     public function havingIdIs(id)
     {
-        return is_array(this->_get_id_column_name()) ?
-            this->having(this->_get_compound_id_column_values(id), null) :
-            this->having(this->_get_id_column_name(), id);
+        return is_array(this->getPk()) ?
+            this->having(this->getPkValue(id), null) :
+            this->having(this->getPk(), id);
     }
 
     /**
      * Add a HAVING ... LIKE clause to your query.
      */
-    public function havingLike(column_name, value=null)
+    public function havingLike(field, value=null)
     {
-        return this->_add_simple_having(column_name, "LIKE", value);
+        return this->simpleHaving(field, "LIKE", value);
     }
 
     /**
      * Add where HAVING ... NOT LIKE clause to your query.
      */
-    public function havingNotLike(column_name, value=null)
+    public function havingNotLike(field, value=null)
     {
-        return this->_add_simple_having(column_name, "NOT LIKE", value);
+        return this->simpleHaving(field, "NOT LIKE", value);
     }
 
     /**
      * Add a HAVING ... > clause to your query
      */
-    public function havingGt(column_name, value=null)
+    public function havingGt(field, value=null)
     {
-        return this->_add_simple_having(column_name, ">", value);
+        return this->simpleHaving(field, ">", value);
     }
 
     /**
      * Add a HAVING ... < clause to your query
      */
-    public function havingLt(column_name, value=null)
+    public function havingLt(field, value=null)
     {
-        return this->_add_simple_having(column_name, "<", value);
+        return this->simpleHaving(field, "<", value);
     }
 
     /**
      * Add a HAVING ... >= clause to your query
      */
-    public function havingGte(column_name, value=null)
+    public function havingGte(field, value=null)
     {
-        return this->_add_simple_having(column_name, ">=", value);
+        return this->simpleHaving(field, ">=", value);
     }
 
     /**
      * Add a HAVING ... <= clause to your query
      */
-    public function havingLte(column_name, value=null)
+    public function havingLte(field, value=null)
     {
-        return this->_add_simple_having(column_name, "<=", value);
+        return this->simpleHaving(field, "<=", value);
     }
 
     /**
      * Add a HAVING ... IN clause to your query
      */
-    public function havingIn(column_name, values=null)
+    public function havingIn(field, values=null)
     {
-        return this->_add_having_placeholder(column_name, "IN", values);
+        return this->_add_having_placeholder(field, "IN", values);
     }
 
     /**
      * Add a HAVING ... NOT IN clause to your query
      */
-    public function havingNotIn(column_name, values=null)
+    public function havingNotIn(field, values=null)
     {
-        return this->_add_having_placeholder(column_name, "NOT IN", values);
+        return this->_add_having_placeholder(field, "NOT IN", values);
     }
 
     /**
      * Add a HAVING column IS NULL clause to your query
      */
-    public function havingNull(column_name)
+    public function havingNull(field)
     {
-        return this->_add_having_no_value(column_name, "IS NULL");
+        return this->_add_having_no_value(field, "IS NULL");
     }
 
     /**
      * Add a HAVING column IS NOT NULL clause to your query
      */
-    public function havingNotNull(column_name)
+    public function havingNotNull(field)
     {
-        return this->_add_having_no_value(column_name, "IS NOT NULL");
+        return this->_add_having_no_value(field, "IS NOT NULL");
     }
 
     /**
@@ -1033,7 +1060,7 @@ class Db
     public function limit(limit,offset=null) -> <Db>
     {
         let this->_limit = limit;
-        if is_null(offset) {
+        if (typeof offset == "null") {
             return this;
         } else {
             return this->offset(offset);
@@ -1086,13 +1113,13 @@ class Db
         }
         this->limit(1);
         if this->_entity == null {
-            let rows = this->_run();
+            let rows = this->run();
             if empty rows {
                 return false;
             }
             return rows[0];
         }else{
-            let rows = this->_run_by_model();
+            let rows = this->runForModel();
             if rows->rowCount() > 0 {
                 return rows->{fun}(\PDO::FETCH_CLASS, this->_entity);
             } else {
@@ -1116,9 +1143,9 @@ class Db
     public function select()
     {
         if this->_entity == null {
-            return this->_run();
+            return this->run();
         }else{
-            return this->_run_by_model();
+            return this->runForModel();
         }
     }
 
@@ -1135,7 +1162,7 @@ class Db
      */
     public function count(column = "*")
     {
-        return this->_call_aggregate_db_function("COUNT", column);
+        return this->aggregate("COUNT", column);
     }
 
     /**
@@ -1150,7 +1177,7 @@ class Db
      */
     public function max(column)
     {
-        return this->_call_aggregate_db_function("MAX", column);
+        return this->aggregate("MAX", column);
     }
 
     /**
@@ -1165,7 +1192,7 @@ class Db
      */
     public function min(column)
     {
-        return this->_call_aggregate_db_function("MIN", column);
+        return this->aggregate("MIN", column);
     }
 
     /**
@@ -1180,7 +1207,7 @@ class Db
      */
     public function avg(column)
     {
-        return this->_call_aggregate_db_function("AVG", column);
+        return this->aggregate("AVG", column);
     }
 
     /**
@@ -1195,7 +1222,7 @@ class Db
      */
     public function sum(column)
     {
-        return this->_call_aggregate_db_function("SUM", column);
+        return this->aggregate("SUM", column);
     }
 
     /**
@@ -1273,7 +1300,7 @@ class Db
         var query;
         let query = this->_join_if_not_empty(" ", [
             "DELETE FROM",
-            this->_quote_identifier(this->_table_name),
+            this->quoteId(this->_table_name),
             this->_build_where()
         ]);
         return self::_execute(query, this->_values, this->_name);
@@ -1350,11 +1377,11 @@ class Db
      * @access protected
      * @param string $name Which connection to use
      */
-    protected static function _setup_db(string! name = "default") -> void
+    protected static function connect(string! name = "default") -> void
     {
         if !isset self::_db[name] ||
             !is_object(self::_db[name]) {
-            self::_setup_db_config(name);
+            self::initConfig(name);
             var db,e;
             try {
                 let db = new \PDO(
@@ -1377,7 +1404,7 @@ class Db
     * @access protected
     * @param string $name Which connection to use
     */
-    protected static function _setup_db_config(string! name) -> void
+    protected static function initConfig(string! name) -> void
     {
         var config;
         if !isset self::_config[name] {
@@ -1395,27 +1422,32 @@ class Db
      * @access protected
      * @param string $name Which connection to use
      */
-    protected static function _setup_identifier_quote_character(string! name) -> void
+    protected static function setQuote(string! name) -> void
     {
-        if is_null(self::_config[name]["identifier_quote_character"]) {
-            let self::_config[name]["identifier_quote_character"] =
-                self::_detect_identifier_quote_character(name);
+        if is_null(self::_config[name]["quote"]) {
+            let self::_config[name]["quote"] =
+                self::detectQuoteChar(name);
         }
     }
 
     /**
      * 设置查询条数限制(Limit in mysql,TOP in MSSql)
-     * 如果通过 Db::config("limit_clause_style", "top"),进行了设置，那么本函数将不起作用
+     * 如果通过 Db::config("limit_style", "top"),进行了设置，那么本函数将不起作用
      *
      * @access public
      * @param string $name Which connection to use
      */
-    protected static function _setup_limit_clause_style(string! name) -> void
+    protected static function setLimitStyle(string! name) -> void
     {
-        if is_null(self::_config[name]["limit_clause_style"]) {
-            let self::_config[name]["limit_clause_style"] =
-                self::_detect_limit_clause_style(name);
+        if is_null(self::_config[name]["limit_style"]) {
+            let self::_config[name]["limit_style"] =
+                self::getLimitStyle(name);
         }
+    }
+
+    private static function getPdoDriver(string! name)->string
+    {
+        return (string) self::getDb(name)->getAttribute(\PDO::ATTR_DRIVER_NAME);
     }
 
     /**
@@ -1425,9 +1457,11 @@ class Db
      * @param string $name Which connection to use
      * @return string
      */
-    protected static function _detect_identifier_quote_character(string! name)
+    protected static function detectQuoteChar(string! name)
     {
-        switch self::getDb(name)->getAttribute(\PDO::ATTR_DRIVER_NAME) {
+        string driver;
+        let driver = (string) self::getPdoDriver(name);
+        switch driver {
             case "pgsql":
             case "sqlsrv":
             case "dblib":
@@ -1450,11 +1484,11 @@ class Db
      * @param string $name Which connection to use
      * @return string Limit clause style keyword/constant
      */
-    protected static function _detect_limit_clause_style(string! name)->string
+    protected static function getLimitStyle(string! name)->string
     {
         var driver;
         string drivers = "_sqlsrv_dblib_mssql_";
-        let driver = self::getDb(name)->getAttribute(\PDO::ATTR_DRIVER_NAME);
+        let driver = self::getPdoDriver(name);
         return drivers->index("_".driver."_") ? "top" : "limit";
     }
 
@@ -1524,25 +1558,16 @@ class Db
         if empty parameters {
             let bound_query = query;
         } else {
-            // Escape the parameters
             let parameters = array_map([self::getDb(name), "quote"], parameters);
-
             if array_values(parameters) === parameters {
-                // ? placeholders
-                // Avoid %format collision for vsprintf
                 let query = str_replace("%", "%%", query);
-
-                // Replace placeholders in the query for vsprintf
                 if false !== strpos(query, "\"") || false !== strpos(query, "\"") {
                     let query = Helper::str_replace_outside_quotes("?", "%s", query);
                 } else {
                     let query = str_replace("?", "%s", query);
                 }
-
-                // Replace the question marks in the query with the parameters
                 let bound_query = vsprintf(query, parameters);
             } else {
-
                 for key,val in parameters {
                     let query = str_replace(key, val, query);
                 }
@@ -1550,7 +1575,7 @@ class Db
             }
         }
         let self::_last_query = bound_query;
-        let self::_query_log[name][] = bound_query;
+        let self::_query_log[name][] = "[".query_time."] ".bound_query;
 
         if is_callable(self::_config[name]["logger"]) {
             call_user_func_array(self::_config[name]["logger"],[bound_query, query_time]);
@@ -1567,19 +1592,19 @@ class Db
      * @param string $column The column to execute the aggregate query against
      * @return int
      */
-    protected function _call_aggregate_db_function(sql_function, column)
+    protected function aggregate(func, column)
     {
-        var alias,result_columns,result,v,return_value = 0;
-        let alias = strtolower(sql_function);
-        let sql_function = strtoupper(sql_function);
+        var alias,fields,result,v,return_value = 0;
+        let alias = strtolower(func);
+        let func  = strtoupper(func);
         if "*" != column {
-            let column = this->_quote_identifier(column);
+            let column = this->quoteId(column);
         }
-        let result_columns = this->_result_columns;
-        let this->_result_columns = [];
-        this->fieldExpr(sql_function."(".column.")", alias);
+        let fields = this->_fields;
+        let this->_fields = [];
+        this->fieldExpr(func."(".column.")", alias);
         let result = this->find();
-        let this->_result_columns = result_columns;
+        let this->_fields = fields;
         if result !== false {
             let v = result[alias];
             if !empty v {
@@ -1602,15 +1627,15 @@ class Db
      */
     protected function _add_result_column(expr, alias=null)
     {
-        if !is_null(alias) {
-            let expr .= " AS " . this->_quote_identifier(alias);
+        if (typeof alias != "null") {
+            let expr .= " AS " . this->quoteId(alias);
         }
 
-        if !empty this->_using_default_result_columns {
-            let this->_result_columns = [expr];
-            let this->_using_default_result_columns = false;
+        if !empty this->_using_default_fields {
+            let this->_fields = [expr];
+            let this->_using_default_fields = false;
         } else {
-            let this->_result_columns[] = expr;
+            let this->_fields[] = expr;
         }
         return this;
     }
@@ -1620,9 +1645,9 @@ class Db
      * query. This defaults to "*". The second optional argument is
      * the alias to return the column as.
      */
-    protected function field(column, alias=null)
+    protected function field(string! column, alias=null)
     {
-        let column = this->_quote_identifier(column);
+        let column = this->quoteId(column);
         return this->_add_result_column(column, alias);
     }
 
@@ -1630,7 +1655,7 @@ class Db
      * 查询表达式字段
      * @access protected
      */
-    protected function fieldExpr(expr, alias=null)
+    protected function fieldExpr(string! expr, alias=null)
     {
         return this->_add_result_column(expr, alias);
     }
@@ -1639,9 +1664,9 @@ class Db
      * 清理单个字段
      * @access protected
      */
-    protected function trimField(string! field)
+    protected function trimField(string! field)->string
     {
-        return trim(field," \t\n\r\0\x0B`'\"[]");
+        return (string) trim(field," \t\n\r\0\x0B`'\"[]");
     }
 
     /**
@@ -1673,18 +1698,18 @@ class Db
         let join_operator = trim(join_operator." JOIN");
         let prefix = this->getConfig("prefix");
         let prefix = (typeof prefix == "string") ? prefix : "";
-        let table  = this->_quote_identifier(prefix.table);
+        let table  = this->quoteId(prefix.table);
 
         // Add table alias if present
         if table_alias != null {
-            let table_alias = this->_quote_identifier(table_alias);
+            let table_alias = this->quoteId(table_alias);
             let table .= " ".table_alias;
         }
         // Build the constraint
         if (typeof constraint == "array") {
-            let first_column  = this->_quote_identifier(constraint[0]);
-            let operator      = this->_quote_identifier(constraint[1]);
-            let second_column = this->_quote_identifier(constraint[2]);
+            let first_column  = this->quoteId(constraint[0]);
+            let operator      = this->quoteId(constraint[1]);
+            let second_column = this->quoteId(constraint[2]);
             let constraint    = first_column." ".operator." ".second_column;
         }
         let this->_join_sources[] = join_operator." ".table." ON ".constraint;
@@ -1702,24 +1727,24 @@ class Db
     /**
      * Internal method to add a HAVING condition to the query
      */
-    protected function _add_simple_having(column_name, separator, value)
+    protected function simpleHaving(field, separator, value)
     {
-        return this->_add_simple_condition("having", column_name, separator, value);
+        return this->_add_simple_condition("having", field, separator, value);
     }
 
     /**
      * Internal method to add a HAVING clause with multiple values (like IN and NOT IN)
      */
-    protected function _add_having_placeholder(column_name, separator, values)
+    protected function _add_having_placeholder(field, separator, values)
     {
         var data,key,val,column,placeholders;
-        if (typeof column_name != "array") {
-            let data = [column_name : values];
+        if (typeof field != "array") {
+            let data = [field : values];
         } else {
-            let data = column_name;
+            let data = field;
         }
         for key,val in data {
-            let column = this->_quote_identifier(key);
+            let column = this->quoteId(key);
             let placeholders = this->_create_placeholders(val);
             this->_add_having(column." ".separator." (".placeholders.")", val);
         }
@@ -1729,12 +1754,12 @@ class Db
     /**
      * Internal method to add a HAVING clause with no parameters(like IS NULL and IS NOT NULL)
      */
-    protected function _add_having_no_value(column_name, operator)
+    protected function _add_having_no_value(field, operator)
     {
         var conditions,column;
-        let conditions = (typeof column_name=="array") ? column_name : [column_name];
+        let conditions = (typeof field=="array") ? field : [field];
         for column in conditions {
-            let column = this->_quote_identifier(column);
+            let column = this->quoteId(column);
             this->_add_having(column." ".operator);
         }
         return this;
@@ -1751,24 +1776,24 @@ class Db
     /**
      * Internal method to add a WHERE condition to the query
      */
-    protected function _add_simple_where(column_name, separator, value)
+    protected function simpleWhere(field, separator, value)
     {
-        return this->_add_simple_condition("where", column_name, separator, value);
+        return this->_add_simple_condition("where", field, separator, value);
     }
 
     /**
      * Add a WHERE clause with multiple values (like IN and NOT IN)
      */
-    protected function _add_where_placeholder(column_name, separator, values)
+    protected function _add_where_placeholder(field, separator, values)
     {
         var data,key,val,placeholders,column;
-        if (typeof column_name != "array") {
-            let data = [column_name:values];
+        if (typeof field != "array") {
+            let data = [field:values];
         } else {
-            let data = column_name;
+            let data = field;
         }
         for key,val in data {
-            let column = this->_quote_identifier(key);
+            let column = this->quoteId(key);
             let placeholders = this->_create_placeholders(val);
             this->_add_where(column." ".separator." (".placeholders.")", val);
         }
@@ -1778,12 +1803,12 @@ class Db
     /**
      * Add a WHERE clause with no parameters(like IS NULL and IS NOT NULL)
      */
-    protected function _add_where_no_value(column_name, operator)
+    protected function _add_where_no_value(field, operator)
     {
         var conditions,column;
-        let conditions = (typeof column_name=="array") ? column_name : [column_name];
+        let conditions = (typeof field=="array") ? field : [field];
         for column in conditions {
-            let column = this->_quote_identifier(column);
+            let column = this->quoteId(column);
             this->_add_where(column." ".operator);
         }
         return this;
@@ -1813,11 +1838,11 @@ class Db
     /**
      * 内部方法处理where条件和having条件
      */
-    protected function _add_simple_condition(type, column_name, separator, value)
+    protected function _add_simple_condition(type, field, separator, value)
     {
         array multiple;
         var key,val,table;
-        let multiple = (typeof column_name == "array") ? column_name : [column_name : value];
+        let multiple = (typeof field == "array") ? field : [field : value];
         for key,val in multiple {
             if count(this->_join_sources) > 0 && strpos(key, ".") === false {
                 let table = this->_table_name;
@@ -1826,7 +1851,7 @@ class Db
                 }
                 let key = table.".".key;
             }
-            let key = this->_quote_identifier(key);
+            let key = this->quoteId(key);
             this->_add_condition(type, key." ".separator." ?", val);
         }
         return this;
@@ -1858,11 +1883,11 @@ class Db
      * If the key contains a column that does not exist in the given array,
      * a null value will be returned for it.
      */
-    protected function _get_compound_id_column_values(value)
+    protected function getPkValue(value)
     {
         array filtered = [];
         var key;
-        for key in this->_get_id_column_name() {
+        for key in this->getPk() {
             let filtered[key] = isset value[key] ? value[key] : null;
         }
         return filtered;
@@ -1872,25 +1897,23 @@ class Db
      * Helper method that filters an array containing compound column/value
      * arrays.
      */
-    protected function _get_compound_id_column_values_array(values)
+    protected function getPkValues(values)
     {
         array filtered = [];
         var value;
         for value in values {
-            let filtered[] = this->_get_compound_id_column_values(value);
+            let filtered[] = this->getPkValue(value);
         }
         return filtered;
     }
 
-
-
     /**
      * 内部排序辅助方法
      */
-    protected function _add_order_by(column_name, ordering) -> <Db>
+    protected function _add_order_by(field, ordering) -> <Db>
     {
-        let column_name = this->_quote_identifier(column_name);
-        let this->_order_by[] = column_name." ".ordering;
+        let field = this->quoteId(field);
+        let this->_order_by[] = field." ".ordering;
         return this;
     }
 
@@ -1926,22 +1949,18 @@ class Db
      */
     protected function _build_select_start()
     {
-        var fragment = "SELECT ",result_columns;
-        let result_columns = implode(", ", this->_result_columns);
-
+        var fragment = "SELECT ",columns;
+        let columns  = implode(", ", this->_fields);
         if !is_null(this->_limit) &&
-            self::_config[this->_name]["limit_clause_style"] === "top" {
+            self::_config[this->_name]["limit_style"] === "top" {
             let fragment .= "TOP ".this->_limit." ";
         }
-
         if !empty this->_distinct {
-            let result_columns = "DISTINCT " . result_columns;
+            let columns = "DISTINCT " . columns;
         }
-
-        let fragment .= result_columns." FROM " . this->_quote_identifier(this->_table_name);
-
+        let fragment .= columns." FROM " . this->quoteId(this->_table_name);
         if !is_null(this->_table_alias) {
-            let fragment .= " " . this->_quote_identifier(this->_table_alias);
+            let fragment .= " " . this->quoteId(this->_table_alias);
         }
         return fragment;
     }
@@ -2033,8 +2052,8 @@ class Db
     {
         string fragment = "";
         if !is_null(this->_limit) &&
-            self::_config[this->_name]["limit_clause_style"] == "limit" {
-            if self::getDb(this->_name)->getAttribute(\PDO::ATTR_DRIVER_NAME) == "firebird" {
+            self::_config[this->_name]["limit_style"] == "limit" {
+            if self::getPdoDriver($this->_name) == "firebird" {
                 let fragment = "ROWS";
             } else {
                 let fragment = "LIMIT";
@@ -2050,8 +2069,8 @@ class Db
     protected function _build_offset() -> string
     {
         string clause = "OFFSET";
-        if !is_null(this->_offset) {
-            if self::getDb(this->_name)->getAttribute(\PDO::ATTR_DRIVER_NAME) == "firebird" {
+        if (typeof this->_offset != "null") {
+            if self::getPdoDriver(this->_name) == "firebird" {
                 let clause = "TO";
             }
             return clause." " . this->_offset;
@@ -2065,17 +2084,17 @@ class Db
      */
     protected function _join_if_not_empty(glue, pieces)
     {
-        array filtered_pieces = [];
+        array rs = [];
         var piece;
         for piece in pieces {
             if (typeof piece == "string") {
                 let piece = trim(piece);
             }
             if !empty piece {
-                let filtered_pieces[] = piece;
+                let rs[] = piece;
             }
         }
-        return implode(glue, filtered_pieces);
+        return implode(glue, rs);
     }
 
     /**
@@ -2083,11 +2102,11 @@ class Db
      * (table names, column names etc). This method can
      * also deal with dot-separated identifiers eg table.column
      */
-    protected function _quote_one_identifier(identifier)
+    protected function quoteOne(identifier)
     {
         var parts;
         let parts = explode(".", identifier);
-        let parts = array_map([this, "_quote_identifier_part"], parts);
+        let parts = array_map([this, "quoteIdPart"], parts);
         return implode(".", parts);
     }
 
@@ -2097,14 +2116,14 @@ class Db
      * multiple identifiers. This method can also deal with
      * dot-separated identifiers eg table.column
      */
-    public function _quote_identifier(identifier)
+    public function quoteId(identifier)
     {
         var result;
         if (typeof identifier == "array")  {
-            let result = array_map([this, "_quote_one_identifier"], identifier);
+            let result = array_map([this, "quoteOne"], identifier);
             return implode(", ", result);
         } else {
-            return this->_quote_one_identifier(identifier);
+            return this->quoteOne(identifier);
         }
     }
 
@@ -2113,26 +2132,21 @@ class Db
      * part of an identifier, using the identifier quote
      * character specified in the config (or autodetected).
      */
-    public function _quote_identifier_part(part)->string
+    public function quoteIdPart(part)->string
     {
-        var quote_character;
+        string quote;
         if part === "*" {
             return part;
         }
-        let quote_character = self::_config[this->_name]["identifier_quote_character"];
-        // double up any identifier quotes to escape them
-        return quote_character .
-               str_replace(quote_character,
-                           quote_character . quote_character,
-                           part
-               ) . quote_character;
+        let quote = (string) self::_config[this->_name]["quote"];
+        return quote.str_replace(quote, quote.quote, part).quote;
     }
 
     /**
      * Execute the SELECT query that has been built up by chaining methods
      * on this class. Return an array of rows as associative arrays.
      */
-    protected function _run()
+    protected function run()
     {
         var query,statement,rows,row;
         string fun = "fetch";
@@ -2148,8 +2162,8 @@ class Db
             let rows[]=row;
         }
         let this->_values = [];
-        let this->_result_columns = ["*"];
-        let this->_using_default_result_columns = true;
+        let this->_fields = ["*"];
+        let this->_using_default_fields = true;
         return rows;
     }
 
@@ -2157,7 +2171,7 @@ class Db
      * Execute the SELECT query that has been built up by chaining methods
      * on this class. Return an array of rows as associative arrays.
      */
-    protected function _run_by_model() -> <\PDOStatement>|array
+    protected function runForModel() -> <\PDOStatement>|array
     {
         var query,statement,row,result;
         string fun = "fetch";
@@ -2166,8 +2180,8 @@ class Db
         let statement = self::getLastStatement();
         statement->setFetchMode(\PDO::FETCH_CLASS, this->_entity);
         let this->_values = [];
-        let this->_result_columns = ["*"];
-        let this->_using_default_result_columns = true;
+        let this->_fields = ["*"];
+        let this->_using_default_fields = true;
         let this->_entity = null;
         if this->_as_array {
             let this->_as_array = false;
@@ -2189,15 +2203,15 @@ class Db
      * Return the name of the column in the database table which contains
      * the primary key ID of the row.
      */
-    protected function _get_id_column_name()
+    protected function getPk()
     {
-        if !is_null(this->_instance_id_column) {
-            return this->_instance_id_column;
+        if !is_null(this->_instance_pk) {
+            return this->_instance_pk;
         }
-        if isset self::_config[this->_name]["id_column_overrides"][this->_table_name] {
-            return self::_config[this->_name]["id_column_overrides"][this->_table_name];
+        if isset self::_config[this->_name]["primary_map"][this->_table_name] {
+            return self::_config[this->_name]["primary_map"][this->_table_name];
         }
-        return self::_config[this->_name]["id_column"];
+        return self::_config[this->_name]["primary"];
     }
 
     /**
@@ -2206,44 +2220,45 @@ class Db
     protected function _build_update(array! data)
     {
         array query = [];
-        var table,key,value,where;
-        array field_list = [];
-        let table = this->_quote_identifier(this->_table_name);
+        string table;
+        var key,value,where;
+        array fields = [];
+        let table = (string) this->quoteId(this->_table_name);
         let query[] = "UPDATE ".table." SET";
         for key,value in data {
             if !isset this->_expr_fields[key] {
                 let value = "?";
             }
-            let key = this->_quote_identifier(key);
-            let field_list[] = key." = ".value;
+            let key = this->quoteId(key);
+            let fields[] = key." = ".value;
         }
-        let query[] = implode(", ", field_list);
+        let query[] = implode(", ", fields);
         let where = this->_build_where();
         if empty where {
             throw "Update on NO WHERE conditions";
         }
         let query[]= where;
-        return implode(" ", query);
+        return query->join(" ");
     }
 
     /**
      * Build an INSERT query
      */
-    protected function _build_insert(array! data)
+    protected function _build_insert(array! data)->string
     {
         array query = [];
-        var field_list,placeholders;
+        var fields,holders;
         let query[] = "INSERT INTO";
-        let query[] = this->_quote_identifier(this->_table_name);
-        let field_list = array_map([this, "_quote_identifier"], array_keys(data));
-        let query[] = "(" . implode(", ", field_list) . ")";
+        let query[] = this->quoteId(this->_table_name);
+        let fields  = array_map([this, "quoteId"], array_keys(data));
+        let query[] = "(" . implode(", ", fields) . ")";
         let query[] = "VALUES";
-        let placeholders = this->_create_placeholders(data);
-        let query[] = "(".placeholders.")";
-        if self::getDb(this->_name)->getAttribute(\PDO::ATTR_DRIVER_NAME) == "pgsql" {
-            let query[] = "RETURNING " . this->_quote_identifier(this->_get_id_column_name());
+        let holders = this->_create_placeholders(data);
+        let query[] = "(".holders.")";
+        if self::getPdoDriver(this->_name) == "pgsql" {
+            let query[] = "RETURNING " . this->quoteId(this->getPk());
         }
-        return implode(" ", query);
+        return query->join(" ");
     }
 
 }

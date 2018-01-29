@@ -260,7 +260,7 @@ class Model
      * 模型验证
      *
      *<code>
-     * //本验证参考了ThinkPHP5的形式
+     * //本验证参考了ThinkPHP5 以及 Laravel 的形式
      * //支持的验证规则：
      * $validateRules = [
      *     'passwd'  => 'require',
