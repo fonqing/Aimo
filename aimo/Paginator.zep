@@ -117,10 +117,10 @@ class Paginator
      * Constructor
      *
      * <code>
-     * pageSize = 20;
-     * totalRecords = 376;
-     * pager = new Aimo\Paginator($pageSize, $totalRecords);
-     * pagehtml = pager->getPageHtml();
+     * $pageSize = 20;
+     * $totalRecords = 376;
+     * $pager = new Aimo\Paginator($pageSize, $totalRecords);
+     * $pagehtml = $pager->getPageHtml();
      * </code>
      *
      * @param int pageSize Count per page
@@ -142,8 +142,8 @@ class Paginator
      * Set config variable
      *
      * <code>
-     * pager->config('prevText','Previous');
-     * pager->config('wrapTpl','<div class="pagination">%INNER%</div>');
+     * $pager->config('prevText','Previous');
+     * $pager->config('wrapTpl','<div class="pagination">%INNER%</div>');
      * </code>
      */
     public function config(string! name,var value)->void
@@ -157,7 +157,7 @@ class Paginator
      * More config to set
      *
      * <code>
-     * pager->init([
+     * $pager->init([
      *    'prevText'    => 'Previous',
      *    'adjacentNum' => 3,
      *    'wrapTpl'     => '<div class="pagination">%INNER%</div>'
@@ -216,7 +216,7 @@ class Paginator
     }
 
     /**
-     * 首页
+     * Parse the first page
      */
     private function firstPage()->void
     {
@@ -236,7 +236,7 @@ class Paginator
     }
 
     /**
-     * 尾页
+     * Parse the last page
      */
     private function lastPage()->void
     {
@@ -256,7 +256,7 @@ class Paginator
     }
 
     /**
-     * 上一页
+     * Parse the previous page
      */
     private function prevPage()->void
     {
@@ -276,7 +276,7 @@ class Paginator
     }
 
     /**
-     * 下一页
+     * Parse the next page
      */
     private function nextPage()->void
     {
@@ -295,6 +295,9 @@ class Paginator
         }
     }
 
+    /**
+     * Parse the pagination infomation block
+     */
     private function headBlock()->void
     {
         let this->html = this->html.self::format(this->infoTpl, [
@@ -306,7 +309,7 @@ class Paginator
     }
 
     /**
-     * 第一块  第一个省略号前的那块
+     * Parse the first block
      */
     private function firstBlock()->void
     {
@@ -325,7 +328,7 @@ class Paginator
     }
 
     /**
-     * 第二块  两个省略号中间的那块
+     * Parse the middle part
      */
     private function middleBlock()->void
     {
@@ -351,8 +354,7 @@ class Paginator
     }
 
     /**
-     * Render last block
-     *
+     * Render last part
      */
     private function lastBlock()->void
     {
@@ -373,7 +375,7 @@ class Paginator
     }
 
     /**
-     * 生成分页HTML代码
+     * Build page HTML code
      */
     public function getPageHtml()->string
     {
