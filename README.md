@@ -1,8 +1,9 @@
 # Aimo Framework
 A lightweight PHP framework written in Zephir and build as C-extension.
 ### Why
-Phalcon is powerfull and flexible,But the `Volt` is a stereotyped View Engine.Some times,when you want to call customer functions in view file is soooooooo hard.   
-Yaf is not rich enough.There is NO `Object Relational Mapping` features and also NO database layer,And the View Engine is too simple.   
+Phalcon is powerfull and flexible,But the `Volt` is a stereotyped `View Engine`.Some times,when you want to call customer functions in view is soooooooo difficult.And the `Validation` component is difficult to use too.   
+Yaf is not rich enough.There is NO `ORM` features and also NO database layer,And the View Engine is too simple.   
+
 Now, In the dll directory,There are only dll extensions for php 7.0.   
 The framework is being written, please wait for the release...
 
@@ -51,7 +52,7 @@ Application::init(Config::get('application'))->run();
 ```
 ### Rewrite rules
 
-Implement your Rewrite rules for you web server,Aimo support two kind of url mode like below:    
+Implement your Rewrite rules for you web server as most other framework do,Aimo support two kind of url mode like below:    
 `index.php/module/controller/action/param/value/param1/value1.html`   
 Or    
 `index.php?_url_=/module/controller/action/param/value/param1/value1.html`
