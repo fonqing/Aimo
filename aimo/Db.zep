@@ -265,7 +265,9 @@ class Db
      * 绑定模型到查询出的数据
      *
      * 本方法在Aimo\Model中调用，并根据called class 实例化模型类
-     *
+     * @param string $klass
+     * @param array $primary
+     * @return Db
      */
     public function setEntity(string! klass,array! primary) -> <Db>
     {
@@ -322,6 +324,7 @@ class Db
      *
      * @access public
      * @return string
+     * @return mixed
      */
     public function getLastSql()
     {
@@ -338,7 +341,7 @@ class Db
      *
      * @access public
      * @param null|string $name Which connection to use
-     * @return string
+     * @return mixed
      */
     public static function getLastQuery(name = null)
     {
@@ -357,7 +360,9 @@ class Db
      * specified connection up to now.
      * Only works if the "logging" config option is
      * set to true. Otherwise, returned array will be empty.
+     *
      * @param string $name Which connection to use
+     * @return mixed
      */
     public static function getQueryLog(string! name = "default")
     {
@@ -374,7 +379,7 @@ class Db
      * Db::getConnectionNames();
      *</code>
      *
-     * @return array
+     * @return mixed
      */
     public static function getConnectionNames()
     {
@@ -415,7 +420,7 @@ class Db
      * </code>
      *
      * @access public
-     * @return <Db>
+     * @return Db
      */
     public function fields() -> <Db>
     {
@@ -469,6 +474,8 @@ class Db
 
     /**
      * 在SELECT查询前添加 DISTINCT 关键字
+     *
+     * @return Db
      */
     public function distinct()-><Db>
     {
@@ -487,8 +494,9 @@ class Db
      * @param string table 表名
      * @param string|array ON条件
      * @param string joinType 链接方式，支持 LEFT,RIGHT,INNER,FULL
+     * @return Db
      */
-    public function join(string! table,var constraint,joinType="LEFT", table_alias=null)
+    public function join(string! table,var constraint,joinType="LEFT", table_alias=null)-><Db>
     {
         string types = "_LEFT_RIGHT_INNER_FULL_";
         let joinType = strtoupper(joinType);
@@ -500,8 +508,10 @@ class Db
 
     /**
      * Add a RAW JOIN source to the query
+     * 
+     * @return Db
      */
-    public function rawJoin(table, constraint, table_alias = null, parameters = [])
+    public function rawJoin(table, constraint, table_alias = null, parameters = [])-><Db>
     {
         var first_column,operator,second_column;
         if table_alias != null {
@@ -538,8 +548,9 @@ class Db
      * ])->select();
      * </code>
      * @access public
+     * @return Db
      */
-    public function where(a,b=null,c=null)
+    public function where(a,b=null,c=null)-><Db>
     {
         var k,v;
         string operators;
@@ -599,8 +610,9 @@ class Db
      * @access public
      * @param string field 字段名
      * @param string|int|float value
+     * @return Db
      */
-    public function whereEqual(field, value=null)
+    public function whereEqual(field, value=null)-><Db>
     {
         return this->simpleWhere(field, "=", value);
     }
@@ -615,8 +627,9 @@ class Db
      * @access public
      * @param string field 字段名
      * @param string|int|float value
+     * @return Db
      */
-    public function whereNotEqual(field, value=null)
+    public function whereNotEqual(field, value=null)-><Db>
     {
         return this->simpleWhere(field, "!=", value);
     }
@@ -631,8 +644,9 @@ class Db
      * @access public
      * @param string field 字段名
      * @param string|int|float value
+     * @return Db
      */
-    public function whereIdIs(id)
+    public function whereIdIs(id)-><Db>
     {
         return is_array(this->getPk()) ?
             this->where(this->getPkValue(id), null) :
@@ -641,8 +655,10 @@ class Db
 
     /**
      * 任意条件命中
+     *
+     * @return Db
      */
-    public function whereAnyIs(values, operator="=")
+    public function whereAnyIs(values, operator="=")-><Db>
     {
         array data = [];
         array query = ["(("];
@@ -677,8 +693,11 @@ class Db
      * <code>
      * $data = Db::table('table')->whereIdIn(['uid'=>3,'tagid'=>5]);
      * </code>
+     *
+     * @param mixed 
+     * @return Db
      */
-    public function whereIdIn(ids)
+    public function whereIdIn(ids)-><Db>
     {
         return is_array(this->getPk()) ?
             this->whereAnyIs(this->getPkValues(ids)) :
@@ -691,8 +710,10 @@ class Db
      * <code>
      * $data = Db::table('table')->whereLike('name','keyword%');
      * </code>
+     *
+     * @return Db
      */
-    public function whereLike(field, value=null)
+    public function whereLike(field, value=null)-><Db>
     {
         return this->simpleWhere(field, "LIKE", value);
     }
@@ -703,8 +724,10 @@ class Db
      * <code>
      * $data = Db::table('table')->whereNotLike('name','keyword%');
      * </code>
+     *
+     * @return Db
      */
-    public function whereNotLike(field, value=null)
+    public function whereNotLike(field, value=null)-><Db>
     {
         return this->simpleWhere(field, "NOT LIKE", value);
     }
@@ -715,8 +738,10 @@ class Db
      * <code>
      * $data = Db::table('table')->whereGt('score',60);
      * </code>
+     *
+     * @return Db
      */
-    public function whereGt(field, value=null)
+    public function whereGt(field, value=null)-><Db>
     {
         return this->simpleWhere(field, ">", value);
     }
@@ -727,8 +752,10 @@ class Db
      **<code>
      * $data = Db::table('table')->whereLt('score',60);
      * </code>
+     *
+     * @return Db
      */
-    public function whereLt(field, value=null)
+    public function whereLt(field, value=null)-><Db>
     {
         return this->simpleWhere(field, "<", value);
     }
@@ -739,8 +766,10 @@ class Db
      * <code>
      * $data = Db::table('table')->whereGte('score',60);
      * </code>
+     *
+     * @return Db
      */
-    public function whereGte(field, value=null)
+    public function whereGte(field, value=null)-><Db>
     {
         return this->simpleWhere(field, ">=", value);
     }
@@ -751,8 +780,10 @@ class Db
      * <code>
      * $data = Db::table('table')->whereLte('score',60);
      * </code>
+     *
+     * @return Db
      */
-    public function whereLte(field, value=null)
+    public function whereLte(field, value=null)-><Db>
     {
         return this->simpleWhere(field, "<=", value);
     }
@@ -763,8 +794,10 @@ class Db
      * <code>
      * $data = Db::table('table')->whereIn('field',['a','b','c']);
      * </code>
+     *
+     * @return Db
      */
-    public function whereIn(field, values)
+    public function whereIn(field, values)-><Db>
     {
         return this->_add_where_placeholder(field, "IN", values);
     }
@@ -775,8 +808,10 @@ class Db
      * <code>
      * $data = Db::table('table')->whereNotIn('field',['a','b','c']);
      * </code>
+     *
+     * @return Db
      */
-    public function whereNotIn(field, values)
+    public function whereNotIn(field, values)-><Db>
     {
         return this->_add_where_placeholder(field, "NOT IN", values);
     }
@@ -787,8 +822,10 @@ class Db
      * <code>
      * $data = Db::table('table')->whereIsNull('field');
      * </code>
+     *
+     * @return Db
      */
-    public function whereIsNull(field)
+    public function whereIsNull(field)-><Db>
     {
         return this->_add_where_no_value(field, "IS NULL");
     }
@@ -799,8 +836,10 @@ class Db
      * <code>
      * $data = Db::table('table')->whereNotNull('field');
      * </code>
+     *
+     * @return Db
      */
-    public function whereNotNull(field)
+    public function whereNotNull(field)-><Db>
     {
         return this->_add_where_no_value(field, "IS NOT NULL");
     }
@@ -813,8 +852,10 @@ class Db
      * <code>
      * $data = Db::table('table')->whereRaw('field1 = ? and field2 <> ?',['value1','value2']);
      * </code>
+     *
+     * @return Db
      */
-    public function whereRaw(clause, parameters=[])
+    public function whereRaw(clause, parameters=[])-><Db>
     {
         return this->_add_where(clause, parameters);
     }
@@ -828,10 +869,11 @@ class Db
      * Db::name('user')->order('`uid` asc,`gid` DESC')->select();
      *</code>
      *
-     *@access public
-     *@param string field 字段名
+     * @access public
+     * @param string field 字段名
+     * @return Db
      */
-    public function order(string! order,string! type = "")
+    public function order(string! order,string! type = "")-><Db>
     {
         if empty type {
             let this->_order_by[] = order;
@@ -848,8 +890,9 @@ class Db
      * Db::name('user')->orderByDesc('uid')->select();
      *</code>
      *
-     *@access public
-     *@param string field 字段名
+     * @access public
+     * @param string field 字段名
+     * @return Db
      */
     public function orderByDesc(field) -> <Db>
     {
@@ -863,8 +906,9 @@ class Db
      * Db::name('user')->orderByAsc('uid')->select();
      *</code>
      *
-     *@access public
-     *@param string field 字段名
+     * @access public
+     * @param string field 字段名
+     * @param Db
      */
     public function orderByAsc(field) -> <Db>
     {
@@ -878,8 +922,9 @@ class Db
      * Db::name('user')->orderByExpr('RAND()')->select();//MySQL RAND()
      *</code>
      *
-     *@access public
-     *@param string clause 表达式
+     * @access public
+     * @param string clause 表达式
+     * @return Db
      */
     public function orderByExpr(string! clause) -> <Db>
     {
@@ -894,8 +939,9 @@ class Db
      * Db::name('user')->groupBy('groupid')->select();
      *</code>
      *
-     *@access public
-     *@param string field 字段名
+     * @access public
+     * @param string field 字段名
+     * @return Db
      */
     public function groupBy(field) -> <Db>
     {
@@ -911,8 +957,9 @@ class Db
      * Db::name('user')->groupBy('groupid')->select();
      *</code>
      *
-     *@access public
-     *@param string expr 表达式
+     * @access public
+     * @param string expr 表达式
+     * @return Db
      */
     public function groupByExpr(string! expr) -> <Db>
     {
@@ -928,8 +975,9 @@ class Db
      *
      * If you use an array in $field, a new clause will be
      * added for each element. In this case, $value is ignored.
+     * @return Db
      */
-    public function having(field, value=null)
+    public function having(field, value=null)-><Db>
     {
         return this->havingEqual(field, value);
     }
@@ -937,16 +985,18 @@ class Db
     /**
      * More explicitly named version of for the having() method.
      * Can be used if preferred.
+     * @return Db
      */
-    public function havingEqual(field, value=null)
+    public function havingEqual(field, value=null)-><Db>
     {
         return this->simpleHaving(field, "=", value);
     }
 
     /**
      * Add a HAVING column != value clause to your query.
+     * @return Db
      */
-    public function havingNotEqual(field, value=null)
+    public function havingNotEqual(field, value=null)-><Db>
     {
         return this->simpleHaving(field, "!=", value);
     }
@@ -956,8 +1006,9 @@ class Db
      *
      * If primary key is compound, only the columns that
      * belong to they key will be used for the query
+     * @return Db
      */
-    public function havingIdIs(id)
+    public function havingIdIs(id)-><Db>
     {
         return is_array(this->getPk()) ?
             this->having(this->getPkValue(id), null) :
@@ -966,80 +1017,90 @@ class Db
 
     /**
      * Add a HAVING ... LIKE clause to your query.
+     * @return Db
      */
-    public function havingLike(field, value=null)
+    public function havingLike(field, value=null)-><Db>
     {
         return this->simpleHaving(field, "LIKE", value);
     }
 
     /**
      * Add where HAVING ... NOT LIKE clause to your query.
+     * @return Db
      */
-    public function havingNotLike(field, value=null)
+    public function havingNotLike(field, value=null)-><Db>
     {
         return this->simpleHaving(field, "NOT LIKE", value);
     }
 
     /**
      * Add a HAVING ... > clause to your query
+     * @return Db
      */
-    public function havingGt(field, value=null)
+    public function havingGt(field, value=null)-><Db>
     {
         return this->simpleHaving(field, ">", value);
     }
 
     /**
      * Add a HAVING ... < clause to your query
+     * @return Db
      */
-    public function havingLt(field, value=null)
+    public function havingLt(field, value=null)-><Db>
     {
         return this->simpleHaving(field, "<", value);
     }
 
     /**
      * Add a HAVING ... >= clause to your query
+     * @return Db
      */
-    public function havingGte(field, value=null)
+    public function havingGte(field, value=null)-><Db>
     {
         return this->simpleHaving(field, ">=", value);
     }
 
     /**
      * Add a HAVING ... <= clause to your query
+     * @return Db
      */
-    public function havingLte(field, value=null)
+    public function havingLte(field, value=null)-><Db>
     {
         return this->simpleHaving(field, "<=", value);
     }
 
     /**
      * Add a HAVING ... IN clause to your query
+     * @return Db
      */
-    public function havingIn(field, values=null)
+    public function havingIn(field, values=null)-><Db>
     {
         return this->_add_having_placeholder(field, "IN", values);
     }
 
     /**
      * Add a HAVING ... NOT IN clause to your query
+     * @return Db
      */
-    public function havingNotIn(field, values=null)
+    public function havingNotIn(field, values=null)-><Db>
     {
         return this->_add_having_placeholder(field, "NOT IN", values);
     }
 
     /**
      * Add a HAVING column IS NULL clause to your query
+     * @return Db
      */
-    public function havingNull(field)
+    public function havingNull(field)-><Db>
     {
         return this->_add_having_no_value(field, "IS NULL");
     }
 
     /**
      * Add a HAVING column IS NOT NULL clause to your query
+     * @return Db
      */
-    public function havingNotNull(field)
+    public function havingNotNull(field)-><Db>
     {
         return this->_add_having_no_value(field, "IS NOT NULL");
     }
@@ -1048,14 +1109,16 @@ class Db
      * Add a raw HAVING clause to the query. The clause should
      * contain question mark placeholders, which will be bound
      * to the parameters supplied in the second argument.
+     * @return Db
      */
-    public function havingRaw(clause, parameters=[])
+    public function havingRaw(clause, parameters=[])-><Db>
     {
         return this->_add_having(clause, parameters);
     }
 
     /**
      * Add a LIMIT to the query
+     * @return Db
      */
     public function limit(limit,offset=null) -> <Db>
     {
@@ -1069,6 +1132,7 @@ class Db
 
     /**
      * Add an OFFSET to the query
+     * @return Db
      */
     public function offset(offset) -> <Db>
     {
@@ -1085,6 +1149,7 @@ class Db
      * </code>
      *
      * @access public
+     * @return Db
      */
     public function asArray()-><Db>
     {
@@ -1102,7 +1167,7 @@ class Db
      *
      * @access public
      * @param integer|null
-     * @return mixd
+     * @return mixed
      */
     public function find(id=null)
     {
@@ -1138,7 +1203,7 @@ class Db
      *print_r($users);
      *</code>
      * @access public
-     * @return array
+     * @return mixed
      */
     public function select()
     {
@@ -1159,6 +1224,7 @@ class Db
      *
      * @access public
      * @param string
+     * @return mixed
      */
     public function count(column = "*")
     {
@@ -1174,6 +1240,7 @@ class Db
      *
      * @access public
      * @param string
+     * @return mixed
      */
     public function max(column)
     {
@@ -1189,6 +1256,7 @@ class Db
      *
      * @access public
      * @param string
+     * @return mixed
      */
     public function min(column)
     {
@@ -1204,6 +1272,7 @@ class Db
      *
      * @access public
      * @param string
+     * @return mixed
      */
     public function avg(column)
     {
@@ -1219,6 +1288,7 @@ class Db
      *
      * @access public
      * @param string
+     * @return mixed
      */
     public function sum(column)
     {
@@ -1234,6 +1304,8 @@ class Db
      *    'content' => 'content'
      *]);
      *</code>
+     * @param array $data
+     * @return mixed
      */
     public function insert(array! data)
     {
@@ -1254,6 +1326,8 @@ class Db
      *    'content' => 'content'
      *]);
      *</code>
+     * @param array $data
+     * @return mixed
      */
     public function insertGetId(array! data)
     {
@@ -1276,6 +1350,8 @@ class Db
      *    'content' => 'content'
      *]);
      *</code>
+     * @param array data
+     * @return mixed
      */
     public function update(array! data)
     {
@@ -1294,6 +1370,7 @@ class Db
      *<code>
      *Db::name('news')->where('newsid',5)->delete());
      *</code>
+     * @return mixed
      */
     public function delete()
     {
@@ -1313,10 +1390,11 @@ class Db
      *Db::beginTransaction();
      *Db::beginTransaction('pdoName');//哪个pdo链接上执行
      *</code>
+     * @return bool
      */
     public static function beginTransaction(string! name = "default")
     {
-        self::getDb(name)->beginTransaction();
+        return self::getDb(name)->beginTransaction();
     }
 
     /**
@@ -1326,10 +1404,11 @@ class Db
      *Db::commit();
      *Db::commit('pdoName');//哪个pdo链接上提交
      *</code>
+     * @return bool
      */
     public static function commit(string! name = "default")
     {
-        self::getDb(name)->commit();
+        return self::getDb(name)->commit();
     }
 
     /**
@@ -1339,10 +1418,11 @@ class Db
      *Db::rollBack();
      *Db::rollBack('pdoName');//哪个pdo链接上回滚
      *</code>
+     * @return bool
      */
     public static function rollBack(string! name = "default")
     {
-        self::getDb(name)->rollBack();
+        return self::getDb(name)->rollBack();
     }
 
     /**
@@ -1355,7 +1435,7 @@ class Db
      *], 'pdoName');
      *</code>
      */
-    public static function transaction(array! sqls,string! name = "default")
+    public static function transaction(array! sqls,string! name = "default")->void
     {
         var sql,db,e;
         let db = self::getDb(name);
@@ -1457,7 +1537,7 @@ class Db
      * @param string $name Which connection to use
      * @return string
      */
-    protected static function detectQuoteChar(string! name)
+    protected static function detectQuoteChar(string! name)->string
     {
         string driver;
         let driver = (string) self::getPdoDriver(name);
@@ -1590,7 +1670,7 @@ class Db
      * @access protected
      * @param string $sql_function The aggregate function to call eg. MIN, COUNT, etc
      * @param string $column The column to execute the aggregate query against
-     * @return int
+     * @return int|float
      */
     protected function aggregate(func, column)
     {
@@ -1625,7 +1705,7 @@ class Db
      * of columns returned by the SELECT query. The second optional
      * argument is the alias to return the expression as.
      */
-    protected function _add_result_column(expr, alias=null)
+    protected function _add_result_column(expr, alias=null)-><Db>
     {
         if (typeof alias != "null") {
             let expr .= " AS " . this->quoteId(alias);
@@ -1923,15 +2003,10 @@ class Db
      */
     protected function _build_select()
     {
-        // If the query is raw, just set the $this->_values to be
-        // the raw query parameters and return the raw query
         if !empty this->_is_raw_query {
             let this->_values = this->_raw_parameters;
             return this->_raw_query;
         }
-
-        // Build and return the full SELECT statement by concatenating
-        // the results of calling each separate builder method.
         return this->_join_if_not_empty(" ", [
             this->_build_select_start(),
             this->_build_join(),
@@ -1951,7 +2026,7 @@ class Db
     {
         var fragment = "SELECT ",columns;
         let columns  = implode(", ", this->_fields);
-        if !is_null(this->_limit) &&
+        if (typeof this->_limit != "null") &&
             self::_config[this->_name]["limit_style"] === "top" {
             let fragment .= "TOP ".this->_limit." ";
         }
@@ -1959,7 +2034,7 @@ class Db
             let columns = "DISTINCT " . columns;
         }
         let fragment .= columns." FROM " . this->quoteId(this->_table_name);
-        if !is_null(this->_table_alias) {
+        if (typeof this->_table_alias != "null") {
             let fragment .= " " . this->quoteId(this->_table_alias);
         }
         return fragment;
@@ -1973,7 +2048,7 @@ class Db
         if count(this->_join_sources) === 0 {
             return "";
         }
-        return join(" ", this->_join_sources);
+        return implode(" ", this->_join_sources);
     }
 
     /**
@@ -2000,7 +2075,7 @@ class Db
         if count(this->_group_by) === 0 {
             return "";
         }
-        return "GROUP BY " . join(", ", this->_group_by);
+        return "GROUP BY " . implode(", ", this->_group_by);
     }
 
     /**
