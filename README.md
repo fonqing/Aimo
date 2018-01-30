@@ -17,23 +17,20 @@ The framework is being written, please wait for the release...
 ### Application structure
 Recommended directory structure is as follows：
 ```
-- .htaccess // Rewrite rules for Apache
 + public //Application WEB ROOT
   | - index.php // Application Entrance
-  | + css
-  | + js
-  | + img
+  | + static contents
 + config
   | - config.php // 
 + controller
-  | - Index.php //  Controller
+  | - IndexController.php //  Controller
 + model
   | - User.php // Model
 + view    
   | - index   
      | - index.html //View file
 + runtime //runtime cache etc.
-+ vendor
++ vendor //composer dir
   ... Other
 ```
 ### WEB ROOT
