@@ -225,9 +225,13 @@ class Model
     /**
      * 获取模型数据
      */
-    public function toArray()
+    public function toArray()->array
     {
-        return this->_data;
+        if (typeof this->_data=="array") && !empty this->_data {
+            return (array) this->_data;
+        }else{
+            return [];
+        }
     }
 
     /**
@@ -669,7 +673,7 @@ class Model
     }
 
     /**
-     * 软删除
+     * 软删除 soft delete
      *
      *<code>
      *$user = User::get(6);
