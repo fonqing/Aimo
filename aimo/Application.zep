@@ -111,7 +111,7 @@ class Application {
         return this;
     }
 
-    public function route(string name="default")
+    public function route(string name="default")->void
     {
         var pathinfo,url_suffix,len;
         let url_suffix = isset this->_config["url_suffix"] ? this->_config["url_suffix"] : "";
@@ -191,7 +191,7 @@ class Application {
     /**
      * 调度
      */
-    private function dispacher()
+    private function dispacher()->void
     {
         Event::trigger("before_dispatch", [this]);
         var klass,action,controller,reflection,method,params,type,name,count;
@@ -245,7 +245,7 @@ class Application {
      *
      * @return sting
      */
-    private function getController(string! ctl)
+    private function getController(string! ctl)->string
     {
         var klass,name;
         let name = this->_config["namespace"];
@@ -254,7 +254,7 @@ class Application {
         } else {
             let klass = name."\\controller\\".ctl;
         }
-        return klass;
+        return (string) klass;
     }
 
     /**

@@ -439,44 +439,54 @@ class Request {
     /**
      * Data filters
      */
-    public function f_text(var str)
+    public function f_text(var str)->string
     {
-        return filter_var(str, FILTER_SANITIZE_SPECIAL_CHARS);
+        return (string) filter_var(str, FILTER_SANITIZE_SPECIAL_CHARS);
     }
 
-    public function f_int(var val)
+    public function f_int(var val)->long
     {
-        return filter_var(val, FILTER_SANITIZE_NUMBER_INT);
+        return (long) filter_var(val, FILTER_SANITIZE_NUMBER_INT);
     }
 
-    public function f_float(var val)
+    public function f_float(var val)->double
     {
-        return filter_var(val, FILTER_SANITIZE_NUMBER_FLOAT);
+        return (double) filter_var(val, FILTER_SANITIZE_NUMBER_FLOAT);
     }
 
-    public function f_url(var val)
+    public function f_url(var val)->string
     {
-        return filter_var(val, FILTER_SANITIZE_URL);
+        return (string) filter_var(val, FILTER_SANITIZE_URL);
     }
 
-    public function f_email(var val)
+    public function f_email(var val)->string
     {
-        return filter_var(val, FILTER_SANITIZE_EMAIL);
+        return (string) filter_var(val, FILTER_SANITIZE_EMAIL);
     }
 
-    public function f_alpha(var str)
+    public function f_alpha(var str)->string
     {
-        return preg_replace("/[^a-z]+/i", "", str);
+        return (string) preg_replace("/[^a-z]+/i", "", str);
     }
 
-    public function f_alphanum(var str)
+    public function f_alphanum(var str)->string
     {
-        return preg_replace("/[^a-z0-9]+/i", "", str);
+        return (string) preg_replace("/[^a-z0-9]+/i", "", str);
     }
 
-    public function f_number(var str)
+    public function f_number(var str)->string
     {
-        return preg_replace("/[^0-9\.\-\+]+/i", "", str);
+        return (string) preg_replace("/[^0-9\.\-\+]+/i", "", str);
+    }
+
+    public function f_array(var str)->array
+    {
+        return (array) str;
+    }
+
+    public function f_bool(var str)->boolean
+    {
+        return (boolean) str;
     }
 
 }
