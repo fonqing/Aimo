@@ -410,8 +410,7 @@
             <span class="method-name"><a href="#method-details-f_text">f_text</a></span>(<span class="param-data-type">variable</span> <span class="variable param-name">$str</span>)
             <span class="method-return">
                 &nbsp;<strong>:</strong>&nbsp;
-                                    void
-                            </span>
+                                    string                            </span>
         </div>
                     <div class="method-doc">
                 <div class="summary-text">
@@ -428,8 +427,7 @@
             <span class="method-name"><a href="#method-details-f_int">f_int</a></span>(<span class="param-data-type">variable</span> <span class="variable param-name">$val</span>)
             <span class="method-return">
                 &nbsp;<strong>:</strong>&nbsp;
-                                    void
-                            </span>
+                                    long                            </span>
         </div>
             </div>
 </li>
@@ -442,8 +440,7 @@
             <span class="method-name"><a href="#method-details-f_float">f_float</a></span>(<span class="param-data-type">variable</span> <span class="variable param-name">$val</span>)
             <span class="method-return">
                 &nbsp;<strong>:</strong>&nbsp;
-                                    void
-                            </span>
+                                    double                            </span>
         </div>
             </div>
 </li>
@@ -456,8 +453,7 @@
             <span class="method-name"><a href="#method-details-f_url">f_url</a></span>(<span class="param-data-type">variable</span> <span class="variable param-name">$val</span>)
             <span class="method-return">
                 &nbsp;<strong>:</strong>&nbsp;
-                                    void
-                            </span>
+                                    string                            </span>
         </div>
             </div>
 </li>
@@ -470,8 +466,7 @@
             <span class="method-name"><a href="#method-details-f_email">f_email</a></span>(<span class="param-data-type">variable</span> <span class="variable param-name">$val</span>)
             <span class="method-return">
                 &nbsp;<strong>:</strong>&nbsp;
-                                    void
-                            </span>
+                                    string                            </span>
         </div>
             </div>
 </li>
@@ -484,8 +479,7 @@
             <span class="method-name"><a href="#method-details-f_alpha">f_alpha</a></span>(<span class="param-data-type">variable</span> <span class="variable param-name">$str</span>)
             <span class="method-return">
                 &nbsp;<strong>:</strong>&nbsp;
-                                    void
-                            </span>
+                                    string                            </span>
         </div>
             </div>
 </li>
@@ -498,8 +492,7 @@
             <span class="method-name"><a href="#method-details-f_alphanum">f_alphanum</a></span>(<span class="param-data-type">variable</span> <span class="variable param-name">$str</span>)
             <span class="method-return">
                 &nbsp;<strong>:</strong>&nbsp;
-                                    void
-                            </span>
+                                    string                            </span>
         </div>
             </div>
 </li>
@@ -512,8 +505,33 @@
             <span class="method-name"><a href="#method-details-f_number">f_number</a></span>(<span class="param-data-type">variable</span> <span class="variable param-name">$str</span>)
             <span class="method-return">
                 &nbsp;<strong>:</strong>&nbsp;
-                                    void
-                            </span>
+                                    string                            </span>
+        </div>
+            </div>
+</li>
+
+    
+        
+<li class="class-method clearfix">
+    <div class="method-summary">
+        <div class="method-signature">
+            <span class="method-name"><a href="#method-details-f_array">f_array</a></span>(<span class="param-data-type">variable</span> <span class="variable param-name">$str</span>)
+            <span class="method-return">
+                &nbsp;<strong>:</strong>&nbsp;
+                                    array                            </span>
+        </div>
+            </div>
+</li>
+
+    
+        
+<li class="class-method clearfix">
+    <div class="method-summary">
+        <div class="method-signature">
+            <span class="method-name"><a href="#method-details-f_bool">f_bool</a></span>(<span class="param-data-type">variable</span> <span class="variable param-name">$str</span>)
+            <span class="method-return">
+                &nbsp;<strong>:</strong>&nbsp;
+                                    bool                            </span>
         </div>
             </div>
 </li>
@@ -822,6 +840,12 @@
 
      var_dump($request->get('aphnum','','alphanum'));//a-zA-Z0-9
 
+     var_dump($request->get('clothesSize','',function($value){
+
+         return preg_replace('/[^MXL0-9]+/i','',$value);
+
+     }));
+
      </code>                    </div>
                             </div>
         </div>
@@ -861,6 +885,12 @@
      var_dump($request->post('chars','','alpha'));//a-zA-Z
 
      var_dump($request->post('aphnum','','alphanum'));//a-zA-Z0-9
+
+     var_dump($request->post('clothesSize','',function($value){
+
+         return preg_replace('/[^MXL0-9]+/i','',$value);
+
+     }));
 
      </code>                    </div>
                             </div>
@@ -902,6 +932,12 @@
 
      var_dump($request->request('aphnum','','alphanum'));//a-zA-Z0-9
 
+     var_dump($request->request('clothesSize','',function($value){
+
+         return preg_replace('/[^MXL0-9]+/i','',$value);
+
+     }));
+
      </code>                    </div>
                             </div>
         </div>
@@ -941,6 +977,12 @@
      var_dump($request->param('chars','','alpha'));//a-zA-Z
 
      var_dump($request->param('aphnum','','alphanum'));//a-zA-Z0-9
+
+     var_dump($request->param('clothesSize','',function($value){
+
+         return preg_replace('/[^MXL0-9]+/i','',$value);
+
+     }));
 
      </code>                    </div>
                             </div>
@@ -1253,6 +1295,38 @@
             <div class="method-signature">
                                     <span class="visibility-public keyword">public</span>
                                 <span class="keyword">function</span>&nbsp;<span class="method-name">f_number</span>(<span class="param-data-type">variable</span> <span class="variable param-name">$str</span>)
+            </div>
+            <div class="method-doc">
+                            </div>
+        </div>
+    </div>
+</li>
+
+    
+        
+<li class="class-method clearfix">
+    <div class="hidden-anchor" id="method-details-f_array"></div>
+    <div class="method-details">
+        <div class="method-details-details">
+            <div class="method-signature">
+                                    <span class="visibility-public keyword">public</span>
+                                <span class="keyword">function</span>&nbsp;<span class="method-name">f_array</span>(<span class="param-data-type">variable</span> <span class="variable param-name">$str</span>)
+            </div>
+            <div class="method-doc">
+                            </div>
+        </div>
+    </div>
+</li>
+
+    
+        
+<li class="class-method clearfix">
+    <div class="hidden-anchor" id="method-details-f_bool"></div>
+    <div class="method-details">
+        <div class="method-details-details">
+            <div class="method-signature">
+                                    <span class="visibility-public keyword">public</span>
+                                <span class="keyword">function</span>&nbsp;<span class="method-name">f_bool</span>(<span class="param-data-type">variable</span> <span class="variable param-name">$str</span>)
             </div>
             <div class="method-doc">
                             </div>

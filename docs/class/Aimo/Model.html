@@ -207,8 +207,7 @@
             <span class="method-name"><a href="#method-details-toArray">toArray</a></span>()
             <span class="method-return">
                 &nbsp;<strong>:</strong>&nbsp;
-                                    void
-                            </span>
+                                    array                            </span>
         </div>
                     <div class="method-doc">
                 <div class="summary-text">
@@ -810,9 +809,13 @@
 
          'mobile'  => 'unique', //数据表中不允许重复
 
-         'field10' => 'in:1,2,3', // 'in:a,b,c'
+         'field10' => 'require|in:1,2,3',
 
-         'field11' => 'notin:1,2,3', //a-z
+         'arr10' => ['require',['in' => [1,2,3]]],
+
+         'field11' => 'notin:1,2,3',
+
+         'arr11' => [['notin' => [1,2,3]]],
 
          'full'    => 'between:1,100', //a-z
 
@@ -833,6 +836,14 @@
          'repass'  => 'confirm:passwd',//与当前验证中的passwd字段比较是否相等
 
          'phone'   => 'regex:^0\d{2,3}\-\d{7,8}$',//固话正则表达式
+
+         //其他形式
+
+         'allowedage' => 'require|int|between:16,99',
+
+         'allowedage2' => ['require','int',['between'=>[16,99]]],//与上一句等效
+
+         'characters'  => ['require',['regex'=>'^[a-z0-9:|\,\']+$']]
 
      ];
 
@@ -1016,7 +1027,7 @@
                                     <div class="summary">
                                             </div>
                     <div class="description">
-                        软删除
+                        软删除 soft delete
 
      
 

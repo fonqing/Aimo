@@ -7,22 +7,22 @@
     <title>
                     Aimo PHP Framework API Documentation
             </title>
-    <link rel="stylesheet" type="text/css" href="../../asset/static/prettify.css" />
+    <link rel="stylesheet" type="text/css" href="../../../asset/static/prettify.css" />
 
-<script src="../../asset/static/prettify.js"></script>
-<script src="../../asset/api_definition.js"></script>
+<script src="../../../asset/static/prettify.js"></script>
+<script src="../../../asset/api_definition.js"></script>
 
 
-                        <link rel="stylesheet" type="text/css" href="../../asset/static/prettify.css" />
-                    <link rel="stylesheet" type="text/css" href="../../asset/static/zephir-theme.css" />
+                        <link rel="stylesheet" type="text/css" href="../../../asset/static/prettify.css" />
+                    <link rel="stylesheet" type="text/css" href="../../../asset/static/zephir-theme.css" />
             
     
 
-                        <script src="../../asset/static/prettify.js"></script>
-                                    <script src="../../asset/api_definition.js"></script>
-                    <script src="../../asset/static/jquery.min.js"></script>
-                    <script src="../../asset/static/zephir-doc.js"></script>
-                <script>var ZepCurrentPath = '../../'</script>
+                        <script src="../../../asset/static/prettify.js"></script>
+                                    <script src="../../../asset/api_definition.js"></script>
+                    <script src="../../../asset/static/jquery.min.js"></script>
+                    <script src="../../../asset/static/zephir-doc.js"></script>
+                <script>var ZepCurrentPath = '../../../'</script>
     </head>
  <body onload="prettyPrint()">
         <div id="top-bar">
@@ -47,10 +47,10 @@
     
     <ul>
         
-        <li><a href="../../index.html">Home</a></li>
+        <li><a href="../../../index.html">Home</a></li>
         
-                <li><a href="../../classes.html">Classes</a></li>
-                <li><a >Aimo\Application</a></li>
+                <li><a href="../../../classes.html">Classes</a></li>
+                <li><a >Aimo\Db\ResultSet</a></li>
                 
     </ul>
     
@@ -59,7 +59,7 @@
     
     
     <div class="access-buttons">
-        <a class="zep-button" href="../../source/Aimo/Application.html">Source</a>
+        <a class="zep-button" href="../../../source/Aimo/Db/ResultSet.html">Source</a>
 
             </div>
     
@@ -68,9 +68,12 @@
         <span class="class-type">Class</span>
         
                 <span class="namespace-piece">
-            <a href="../../namespace/Aimo.html">Aimo</a>
+            <a href="../../../namespace/Aimo.html">Aimo</a>
         </span>
-                <h1 class="class-name">Application</h1>
+                <span class="namespace-piece">
+            <a href="../../../namespace/Aimo/Db.html">Db</a>
+        </span>
+                <h1 class="class-name">ResultSet</h1>
     </div>
 
 </div>
@@ -84,7 +87,7 @@
 <li class="class-method clearfix">
     <div class="method-summary">
         <div class="method-signature">
-            <span class="method-name"><a href="#method-details-setParams">setParams</a></span>(<span class="param-data-type">array</span> <span class="variable param-name">$params</span>)
+            <span class="method-name"><a href="#method-details-__construct">__construct</a></span>(<span class="param-data-type">array</span> <span class="variable param-name">$results</span>)
             <span class="method-return">
                 &nbsp;<strong>:</strong>&nbsp;
                                     void
@@ -102,24 +105,7 @@
 <li class="class-method clearfix">
     <div class="method-summary">
         <div class="method-signature">
-            <span class="method-name"><a href="#method-details-getParams">getParams</a></span>()
-            <span class="method-return">
-                &nbsp;<strong>:</strong>&nbsp;
-                                    array                            </span>
-        </div>
-                    <div class="method-doc">
-                <div class="summary-text">
-                                    </div>
-            </div>
-            </div>
-</li>
-
-    
-        
-<li class="class-method clearfix">
-    <div class="method-summary">
-        <div class="method-signature">
-            <span class="method-name"><a href="#method-details-setModuleName">setModuleName</a></span>(<span class="param-data-type">string</span> <span class="variable param-name">$moduleName</span>)
+            <span class="method-name"><a href="#method-details-set_results">set_results</a></span>(<span class="param-data-type">array</span> <span class="variable param-name">$results</span>)
             <span class="method-return">
                 &nbsp;<strong>:</strong>&nbsp;
                                     void
@@ -137,24 +123,7 @@
 <li class="class-method clearfix">
     <div class="method-summary">
         <div class="method-signature">
-            <span class="method-name"><a href="#method-details-getModuleName">getModuleName</a></span>()
-            <span class="method-return">
-                &nbsp;<strong>:</strong>&nbsp;
-                                    string                            </span>
-        </div>
-                    <div class="method-doc">
-                <div class="summary-text">
-                                    </div>
-            </div>
-            </div>
-</li>
-
-    
-        
-<li class="class-method clearfix">
-    <div class="method-summary">
-        <div class="method-signature">
-            <span class="method-name"><a href="#method-details-setControllerName">setControllerName</a></span>(<span class="param-data-type">string</span> <span class="variable param-name">$controllerName</span>)
+            <span class="method-name"><a href="#method-details-get_results">get_results</a></span>()
             <span class="method-return">
                 &nbsp;<strong>:</strong>&nbsp;
                                     void
@@ -172,24 +141,7 @@
 <li class="class-method clearfix">
     <div class="method-summary">
         <div class="method-signature">
-            <span class="method-name"><a href="#method-details-getControllerName">getControllerName</a></span>()
-            <span class="method-return">
-                &nbsp;<strong>:</strong>&nbsp;
-                                    string                            </span>
-        </div>
-                    <div class="method-doc">
-                <div class="summary-text">
-                                    </div>
-            </div>
-            </div>
-</li>
-
-    
-        
-<li class="class-method clearfix">
-    <div class="method-summary">
-        <div class="method-signature">
-            <span class="method-name"><a href="#method-details-setActionName">setActionName</a></span>(<span class="param-data-type">string</span> <span class="variable param-name">$actionName</span>)
+            <span class="method-name"><a href="#method-details-as_array">as_array</a></span>()
             <span class="method-return">
                 &nbsp;<strong>:</strong>&nbsp;
                                     void
@@ -207,89 +159,7 @@
 <li class="class-method clearfix">
     <div class="method-summary">
         <div class="method-signature">
-            <span class="method-name"><a href="#method-details-getActionName">getActionName</a></span>()
-            <span class="method-return">
-                &nbsp;<strong>:</strong>&nbsp;
-                                    string                            </span>
-        </div>
-                    <div class="method-doc">
-                <div class="summary-text">
-                                    </div>
-            </div>
-            </div>
-</li>
-
-    
-        
-<li class="class-method clearfix">
-    <div class="method-summary">
-        <div class="method-signature">
-            <span class="method-name"><a href="#method-details-init">init</a></span>(<span class="param-data-type">array</span> <span class="variable param-name">$config</span>)
-            <span class="method-return">
-                &nbsp;<strong>:</strong>&nbsp;
-                                    <a href='../../class/Aimo/Application.html'>Aimo\Application</a>                            </span>
-        </div>
-                    <div class="method-doc">
-                <div class="summary-text">
-                                    </div>
-            </div>
-            </div>
-</li>
-
-    
-        
-<li class="class-method clearfix">
-    <div class="method-summary">
-        <div class="method-signature">
-            <span class="method-name"><a href="#method-details-loadConfig">loadConfig</a></span>(<span class="param-data-type">array</span> <span class="variable param-name">$config</span>)
-            <span class="method-return">
-                &nbsp;<strong>:</strong>&nbsp;
-                                    <a href='../../class/Aimo/Application.html'>Aimo\Application</a>                            </span>
-        </div>
-                    <div class="method-doc">
-                <div class="summary-text">
-                                    </div>
-            </div>
-            </div>
-</li>
-
-    
-        
-<li class="class-method clearfix">
-    <div class="method-summary">
-        <div class="method-signature">
-            <span class="method-name"><a href="#method-details-setRouter">setRouter</a></span>(<span class="param-data-type">string</span> <span class="variable param-name">$name</span>, <span class="param-data-type">callable</span> <span class="variable param-name">$func</span>)
-            <span class="method-return">
-                &nbsp;<strong>:</strong>&nbsp;
-                                    <a href='../../class/Aimo/Application.html'>Aimo\Application</a>                            </span>
-        </div>
-                    <div class="method-doc">
-                <div class="summary-text">
-                                    </div>
-            </div>
-            </div>
-</li>
-
-    
-        
-<li class="class-method clearfix">
-    <div class="method-summary">
-        <div class="method-signature">
-            <span class="method-name"><a href="#method-details-route">route</a></span>(<span class="param-data-type">string</span> <span class="variable param-name">$name</span>)
-            <span class="method-return">
-                &nbsp;<strong>:</strong>&nbsp;
-                                    void
-                            </span>
-        </div>
-            </div>
-</li>
-
-    
-        
-<li class="class-method clearfix">
-    <div class="method-summary">
-        <div class="method-signature">
-            <span class="method-name"><a href="#method-details-dispacher">dispacher</a></span>()
+            <span class="method-name"><a href="#method-details-count">count</a></span>()
             <span class="method-return">
                 &nbsp;<strong>:</strong>&nbsp;
                                     void
@@ -307,24 +177,7 @@
 <li class="class-method clearfix">
     <div class="method-summary">
         <div class="method-signature">
-            <span class="method-name"><a href="#method-details-getController">getController</a></span>(<span class="param-data-type">string</span> <span class="variable param-name">$ctl</span>)
-            <span class="method-return">
-                &nbsp;<strong>:</strong>&nbsp;
-                                    string                            </span>
-        </div>
-                    <div class="method-doc">
-                <div class="summary-text">
-                                    </div>
-            </div>
-            </div>
-</li>
-
-    
-        
-<li class="class-method clearfix">
-    <div class="method-summary">
-        <div class="method-signature">
-            <span class="method-name"><a href="#method-details-run">run</a></span>()
+            <span class="method-name"><a href="#method-details-getIterator">getIterator</a></span>()
             <span class="method-return">
                 &nbsp;<strong>:</strong>&nbsp;
                                     void
@@ -342,7 +195,132 @@
 <li class="class-method clearfix">
     <div class="method-summary">
         <div class="method-signature">
-            <span class="method-name"><a href="#method-details-zephir_init_properties_Aimo_Application">zephir_init_properties_Aimo_Application</a></span>()
+            <span class="method-name"><a href="#method-details-offsetExists">offsetExists</a></span>(<span class="param-data-type">variable</span> <span class="variable param-name">$offset</span>)
+            <span class="method-return">
+                &nbsp;<strong>:</strong>&nbsp;
+                                    void
+                            </span>
+        </div>
+                    <div class="method-doc">
+                <div class="summary-text">
+                                    </div>
+            </div>
+            </div>
+</li>
+
+    
+        
+<li class="class-method clearfix">
+    <div class="method-summary">
+        <div class="method-signature">
+            <span class="method-name"><a href="#method-details-offsetGet">offsetGet</a></span>(<span class="param-data-type">variable</span> <span class="variable param-name">$offset</span>)
+            <span class="method-return">
+                &nbsp;<strong>:</strong>&nbsp;
+                                    void
+                            </span>
+        </div>
+                    <div class="method-doc">
+                <div class="summary-text">
+                                    </div>
+            </div>
+            </div>
+</li>
+
+    
+        
+<li class="class-method clearfix">
+    <div class="method-summary">
+        <div class="method-signature">
+            <span class="method-name"><a href="#method-details-offsetSet">offsetSet</a></span>(<span class="param-data-type">variable</span> <span class="variable param-name">$offset</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$value</span>)
+            <span class="method-return">
+                &nbsp;<strong>:</strong>&nbsp;
+                                    void
+                            </span>
+        </div>
+                    <div class="method-doc">
+                <div class="summary-text">
+                                    </div>
+            </div>
+            </div>
+</li>
+
+    
+        
+<li class="class-method clearfix">
+    <div class="method-summary">
+        <div class="method-signature">
+            <span class="method-name"><a href="#method-details-offsetUnset">offsetUnset</a></span>(<span class="param-data-type">variable</span> <span class="variable param-name">$offset</span>)
+            <span class="method-return">
+                &nbsp;<strong>:</strong>&nbsp;
+                                    void
+                            </span>
+        </div>
+                    <div class="method-doc">
+                <div class="summary-text">
+                                    </div>
+            </div>
+            </div>
+</li>
+
+    
+        
+<li class="class-method clearfix">
+    <div class="method-summary">
+        <div class="method-signature">
+            <span class="method-name"><a href="#method-details-serialize">serialize</a></span>()
+            <span class="method-return">
+                &nbsp;<strong>:</strong>&nbsp;
+                                    void
+                            </span>
+        </div>
+                    <div class="method-doc">
+                <div class="summary-text">
+                                    </div>
+            </div>
+            </div>
+</li>
+
+    
+        
+<li class="class-method clearfix">
+    <div class="method-summary">
+        <div class="method-signature">
+            <span class="method-name"><a href="#method-details-unserialize">unserialize</a></span>(<span class="param-data-type">variable</span> <span class="variable param-name">$serialized</span>)
+            <span class="method-return">
+                &nbsp;<strong>:</strong>&nbsp;
+                                    void
+                            </span>
+        </div>
+                    <div class="method-doc">
+                <div class="summary-text">
+                                    </div>
+            </div>
+            </div>
+</li>
+
+    
+        
+<li class="class-method clearfix">
+    <div class="method-summary">
+        <div class="method-signature">
+            <span class="method-name"><a href="#method-details-__call">__call</a></span>(<span class="param-data-type">variable</span> <span class="variable param-name">$method</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$params</span>)
+            <span class="method-return">
+                &nbsp;<strong>:</strong>&nbsp;
+                                    <a href='../../../class/Aimo/Db/ResuleSet.html'>Aimo\Db\ResuleSet</a>                            </span>
+        </div>
+                    <div class="method-doc">
+                <div class="summary-text">
+                                    </div>
+            </div>
+            </div>
+</li>
+
+    
+        
+<li class="class-method clearfix">
+    <div class="method-summary">
+        <div class="method-signature">
+            <span class="method-name"><a href="#method-details-zephir_init_properties_Aimo_Db_ResultSet">zephir_init_properties_Aimo_Db_ResultSet</a></span>()
             <span class="method-return">
                 &nbsp;<strong>:</strong>&nbsp;
                                     void
@@ -359,18 +337,18 @@
     
         
 <li class="class-method clearfix">
-    <div class="hidden-anchor" id="method-details-setParams"></div>
+    <div class="hidden-anchor" id="method-details-__construct"></div>
     <div class="method-details">
         <div class="method-details-details">
             <div class="method-signature">
                                     <span class="visibility-public keyword">public</span>
-                                <span class="keyword">function</span>&nbsp;<span class="method-name">setParams</span>(<span class="param-data-type">array</span> <span class="variable param-name">$params</span>)
+                                <span class="keyword">function</span>&nbsp;<span class="method-name">__construct</span>(<span class="param-data-type">array</span> <span class="variable param-name">$results</span>)
             </div>
             <div class="method-doc">
                                     <div class="summary">
                                             </div>
                     <div class="description">
-                                            </div>
+                        Optionally set the contents of the result set by passing in array                    </div>
                             </div>
         </div>
     </div>
@@ -379,18 +357,18 @@
     
         
 <li class="class-method clearfix">
-    <div class="hidden-anchor" id="method-details-getParams"></div>
+    <div class="hidden-anchor" id="method-details-set_results"></div>
     <div class="method-details">
         <div class="method-details-details">
             <div class="method-signature">
                                     <span class="visibility-public keyword">public</span>
-                                <span class="keyword">function</span>&nbsp;<span class="method-name">getParams</span>()
+                                <span class="keyword">function</span>&nbsp;<span class="method-name">set_results</span>(<span class="param-data-type">array</span> <span class="variable param-name">$results</span>)
             </div>
             <div class="method-doc">
                                     <div class="summary">
                                             </div>
                     <div class="description">
-                                            </div>
+                        Set the contents of the result set by passing in array                    </div>
                             </div>
         </div>
     </div>
@@ -399,18 +377,18 @@
     
         
 <li class="class-method clearfix">
-    <div class="hidden-anchor" id="method-details-setModuleName"></div>
+    <div class="hidden-anchor" id="method-details-get_results"></div>
     <div class="method-details">
         <div class="method-details-details">
             <div class="method-signature">
                                     <span class="visibility-public keyword">public</span>
-                                <span class="keyword">function</span>&nbsp;<span class="method-name">setModuleName</span>(<span class="param-data-type">string</span> <span class="variable param-name">$moduleName</span>)
+                                <span class="keyword">function</span>&nbsp;<span class="method-name">get_results</span>()
             </div>
             <div class="method-doc">
                                     <div class="summary">
                                             </div>
                     <div class="description">
-                                            </div>
+                        Get the current result set as an array                    </div>
                             </div>
         </div>
     </div>
@@ -419,18 +397,18 @@
     
         
 <li class="class-method clearfix">
-    <div class="hidden-anchor" id="method-details-getModuleName"></div>
+    <div class="hidden-anchor" id="method-details-as_array"></div>
     <div class="method-details">
         <div class="method-details-details">
             <div class="method-signature">
                                     <span class="visibility-public keyword">public</span>
-                                <span class="keyword">function</span>&nbsp;<span class="method-name">getModuleName</span>()
+                                <span class="keyword">function</span>&nbsp;<span class="method-name">as_array</span>()
             </div>
             <div class="method-doc">
                                     <div class="summary">
                                             </div>
                     <div class="description">
-                                            </div>
+                        Get the current result set as an array                    </div>
                             </div>
         </div>
     </div>
@@ -439,18 +417,18 @@
     
         
 <li class="class-method clearfix">
-    <div class="hidden-anchor" id="method-details-setControllerName"></div>
+    <div class="hidden-anchor" id="method-details-count"></div>
     <div class="method-details">
         <div class="method-details-details">
             <div class="method-signature">
                                     <span class="visibility-public keyword">public</span>
-                                <span class="keyword">function</span>&nbsp;<span class="method-name">setControllerName</span>(<span class="param-data-type">string</span> <span class="variable param-name">$controllerName</span>)
+                                <span class="keyword">function</span>&nbsp;<span class="method-name">count</span>()
             </div>
             <div class="method-doc">
                                     <div class="summary">
                                             </div>
                     <div class="description">
-                                            </div>
+                        Get the number of records in the result set                    </div>
                             </div>
         </div>
     </div>
@@ -459,18 +437,20 @@
     
         
 <li class="class-method clearfix">
-    <div class="hidden-anchor" id="method-details-getControllerName"></div>
+    <div class="hidden-anchor" id="method-details-getIterator"></div>
     <div class="method-details">
         <div class="method-details-details">
             <div class="method-signature">
                                     <span class="visibility-public keyword">public</span>
-                                <span class="keyword">function</span>&nbsp;<span class="method-name">getControllerName</span>()
+                                <span class="keyword">function</span>&nbsp;<span class="method-name">getIterator</span>()
             </div>
             <div class="method-doc">
                                     <div class="summary">
                                             </div>
                     <div class="description">
-                                            </div>
+                        Get an iterator for this object. In this case it supports foreaching
+
+         over the result set.                    </div>
                             </div>
         </div>
     </div>
@@ -479,18 +459,18 @@
     
         
 <li class="class-method clearfix">
-    <div class="hidden-anchor" id="method-details-setActionName"></div>
+    <div class="hidden-anchor" id="method-details-offsetExists"></div>
     <div class="method-details">
         <div class="method-details-details">
             <div class="method-signature">
                                     <span class="visibility-public keyword">public</span>
-                                <span class="keyword">function</span>&nbsp;<span class="method-name">setActionName</span>(<span class="param-data-type">string</span> <span class="variable param-name">$actionName</span>)
+                                <span class="keyword">function</span>&nbsp;<span class="method-name">offsetExists</span>(<span class="param-data-type">variable</span> <span class="variable param-name">$offset</span>)
             </div>
             <div class="method-doc">
                                     <div class="summary">
                                             </div>
                     <div class="description">
-                                            </div>
+                        ArrayAccess                    </div>
                             </div>
         </div>
     </div>
@@ -499,18 +479,18 @@
     
         
 <li class="class-method clearfix">
-    <div class="hidden-anchor" id="method-details-getActionName"></div>
+    <div class="hidden-anchor" id="method-details-offsetGet"></div>
     <div class="method-details">
         <div class="method-details-details">
             <div class="method-signature">
                                     <span class="visibility-public keyword">public</span>
-                                <span class="keyword">function</span>&nbsp;<span class="method-name">getActionName</span>()
+                                <span class="keyword">function</span>&nbsp;<span class="method-name">offsetGet</span>(<span class="param-data-type">variable</span> <span class="variable param-name">$offset</span>)
             </div>
             <div class="method-doc">
                                     <div class="summary">
                                             </div>
                     <div class="description">
-                                            </div>
+                        ArrayAccess                    </div>
                             </div>
         </div>
     </div>
@@ -519,29 +499,18 @@
     
         
 <li class="class-method clearfix">
-    <div class="hidden-anchor" id="method-details-init"></div>
+    <div class="hidden-anchor" id="method-details-offsetSet"></div>
     <div class="method-details">
         <div class="method-details-details">
             <div class="method-signature">
                                     <span class="visibility-public keyword">public</span>
-                                    <span class="visibility-static keyword">static</span>
-                                <span class="keyword">function</span>&nbsp;<span class="method-name">init</span>(<span class="param-data-type">array</span> <span class="variable param-name">$config</span>)
+                                <span class="keyword">function</span>&nbsp;<span class="method-name">offsetSet</span>(<span class="param-data-type">variable</span> <span class="variable param-name">$offset</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$value</span>)
             </div>
             <div class="method-doc">
                                     <div class="summary">
                                             </div>
                     <div class="description">
-                        初始化应用
-
-     
-
-     <code>
-
-     use Aimo\Application;
-
-     Application::init(Config::get('app'))->run();
-
-     </code>                    </div>
+                        ArrayAccess                    </div>
                             </div>
         </div>
     </div>
@@ -550,28 +519,18 @@
     
         
 <li class="class-method clearfix">
-    <div class="hidden-anchor" id="method-details-loadConfig"></div>
+    <div class="hidden-anchor" id="method-details-offsetUnset"></div>
     <div class="method-details">
         <div class="method-details-details">
             <div class="method-signature">
                                     <span class="visibility-public keyword">public</span>
-                                <span class="keyword">function</span>&nbsp;<span class="method-name">loadConfig</span>(<span class="param-data-type">array</span> <span class="variable param-name">$config</span>)
+                                <span class="keyword">function</span>&nbsp;<span class="method-name">offsetUnset</span>(<span class="param-data-type">variable</span> <span class="variable param-name">$offset</span>)
             </div>
             <div class="method-doc">
                                     <div class="summary">
                                             </div>
                     <div class="description">
-                        载入应用配置
-
-     
-
-     <code>
-
-     use Aimo\Application;
-
-     Application::init(Config::get('app'))->loadConfig(Config::get('otherConfig'))->run();
-
-     </code>                    </div>
+                        ArrayAccess                    </div>
                             </div>
         </div>
     </div>
@@ -580,46 +539,18 @@
     
         
 <li class="class-method clearfix">
-    <div class="hidden-anchor" id="method-details-setRouter"></div>
+    <div class="hidden-anchor" id="method-details-serialize"></div>
     <div class="method-details">
         <div class="method-details-details">
             <div class="method-signature">
                                     <span class="visibility-public keyword">public</span>
-                                <span class="keyword">function</span>&nbsp;<span class="method-name">setRouter</span>(<span class="param-data-type">string</span> <span class="variable param-name">$name</span>, <span class="param-data-type">callable</span> <span class="variable param-name">$func</span>)
+                                <span class="keyword">function</span>&nbsp;<span class="method-name">serialize</span>()
             </div>
             <div class="method-doc">
                                     <div class="summary">
                                             </div>
                     <div class="description">
-                        委托路由解析回调
-
-     
-
-     <code>
-
-     use Aimo\Application;
-
-     Application::init(Config::get('app'))->setRouter(function($pathinfo){
-
-        //your code here
-
-        //must return
-
-        return [
-
-            'moduleName'=>'',
-
-            'controllerName'=>'',
-
-            'actionName'=>'',
-
-            'params'=> array_merge($_GET,$_POST),
-
-        ];
-
-     })->run();
-
-     </code>                    </div>
+                        Serializable                    </div>
                             </div>
         </div>
     </div>
@@ -628,34 +559,18 @@
     
         
 <li class="class-method clearfix">
-    <div class="hidden-anchor" id="method-details-route"></div>
+    <div class="hidden-anchor" id="method-details-unserialize"></div>
     <div class="method-details">
         <div class="method-details-details">
             <div class="method-signature">
                                     <span class="visibility-public keyword">public</span>
-                                <span class="keyword">function</span>&nbsp;<span class="method-name">route</span>(<span class="param-data-type">string</span> <span class="variable param-name">$name</span>)
-            </div>
-            <div class="method-doc">
-                            </div>
-        </div>
-    </div>
-</li>
-
-    
-        
-<li class="class-method clearfix">
-    <div class="hidden-anchor" id="method-details-dispacher"></div>
-    <div class="method-details">
-        <div class="method-details-details">
-            <div class="method-signature">
-                                    <span class="visibility-private keyword">private</span>
-                                <span class="keyword">function</span>&nbsp;<span class="method-name">dispacher</span>()
+                                <span class="keyword">function</span>&nbsp;<span class="method-name">unserialize</span>(<span class="param-data-type">variable</span> <span class="variable param-name">$serialized</span>)
             </div>
             <div class="method-doc">
                                     <div class="summary">
                                             </div>
                     <div class="description">
-                        调度                    </div>
+                        Serializable                    </div>
                             </div>
         </div>
     </div>
@@ -664,38 +579,22 @@
     
         
 <li class="class-method clearfix">
-    <div class="hidden-anchor" id="method-details-getController"></div>
-    <div class="method-details">
-        <div class="method-details-details">
-            <div class="method-signature">
-                                    <span class="visibility-private keyword">private</span>
-                                <span class="keyword">function</span>&nbsp;<span class="method-name">getController</span>(<span class="param-data-type">string</span> <span class="variable param-name">$ctl</span>)
-            </div>
-            <div class="method-doc">
-                                    <div class="summary">
-                                            </div>
-                    <div class="description">
-                        获取控制器                    </div>
-                            </div>
-        </div>
-    </div>
-</li>
-
-    
-        
-<li class="class-method clearfix">
-    <div class="hidden-anchor" id="method-details-run"></div>
+    <div class="hidden-anchor" id="method-details-__call"></div>
     <div class="method-details">
         <div class="method-details-details">
             <div class="method-signature">
                                     <span class="visibility-public keyword">public</span>
-                                <span class="keyword">function</span>&nbsp;<span class="method-name">run</span>()
+                                <span class="keyword">function</span>&nbsp;<span class="method-name">__call</span>(<span class="param-data-type">variable</span> <span class="variable param-name">$method</span>, <span class="param-data-type">variable</span> <span class="variable param-name">$params</span>)
             </div>
             <div class="method-doc">
                                     <div class="summary">
                                             </div>
                     <div class="description">
-                        启动运行                    </div>
+                        Call a method on all models in a result set. This allows for method
+
+         chaining such as setting a property on all models in a result set or
+
+         any other batch operation across models.                    </div>
                             </div>
         </div>
     </div>
@@ -704,12 +603,12 @@
     
         
 <li class="class-method clearfix">
-    <div class="hidden-anchor" id="method-details-zephir_init_properties_Aimo_Application"></div>
+    <div class="hidden-anchor" id="method-details-zephir_init_properties_Aimo_Db_ResultSet"></div>
     <div class="method-details">
         <div class="method-details-details">
             <div class="method-signature">
                                     <span class="visibility-internal keyword">internal</span>
-                                <span class="keyword">function</span>&nbsp;<span class="method-name">zephir_init_properties_Aimo_Application</span>()
+                                <span class="keyword">function</span>&nbsp;<span class="method-name">zephir_init_properties_Aimo_Db_ResultSet</span>()
             </div>
             <div class="method-doc">
                             </div>
