@@ -168,7 +168,7 @@ class Request {
      * var_dump($request->post('float',0.0,'float'));
      * var_dump($request->post('chars','','alpha'));//a-zA-Z
      * var_dump($request->post('aphnum','','alphanum'));//a-zA-Z0-9
-     * var_dump($request->get('clothesSize','',function($value){
+     * var_dump($request->post('clothesSize','',function($value){
      *     return preg_replace('/[^MXL0-9]+/i','',$value);
      * }));
      * </code>
@@ -211,7 +211,7 @@ class Request {
      * var_dump($request->request('float',0.0,'float'));
      * var_dump($request->request('chars','','alpha'));//a-zA-Z
      * var_dump($request->request('aphnum','','alphanum'));//a-zA-Z0-9
-     * var_dump($request->get('clothesSize','',function($value){
+     * var_dump($request->request('clothesSize','',function($value){
      *     return preg_replace('/[^MXL0-9]+/i','',$value);
      * }));
      * </code>
@@ -254,7 +254,7 @@ class Request {
      * var_dump($request->param('float',0.0,'float'));
      * var_dump($request->param('chars','','alpha'));//a-zA-Z
      * var_dump($request->param('aphnum','','alphanum'));//a-zA-Z0-9
-     * var_dump($request->get('clothesSize','',function($value){
+     * var_dump($request->param('clothesSize','',function($value){
      *     return preg_replace('/[^MXL0-9]+/i','',$value);
      * }));
      * </code>
