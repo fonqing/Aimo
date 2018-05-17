@@ -219,7 +219,6 @@ class View {
         let content = preg_replace( "/".db."([A-Z_\x7f-\xff][A-Z0-9_\x7f-\xff]*)".de."/s", "<?php echo \\1;?>", content );
         let content = preg_replace_callback( "/".db."".self::_namespace.":(\w+)\s+([^>]+)".de."/i","\\Aimo\\View::tag", content );
         let content = preg_replace( "/".db."\/".self::_namespace."".de."/i", "<?php } ?>", content );
-        //let content = "<?php defined('InAimo') or exit('Access Denied!');?>\r\n".content;
         return content;
     }
 

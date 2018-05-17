@@ -65,11 +65,7 @@ class Html {
         if empty tagName {
             throw "TagName can't empty";
         }
-        if empty args {
-            throw "Html::".tagName." params required";
-        }
         string single = ",input,hr,br,img,";
-        //string special  = "";
         if single->index(",".tagName.",") {
             let args[]= "";
             let args[]= true;
