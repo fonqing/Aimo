@@ -23,10 +23,10 @@ class Event
      *
      * @param array 事件数组
      */
-    public static function register(array! events)
+    public static function register(array! events)->void
     {
-        var eName,func;
-        for eName,func in events {
+        var eName, func;
+        for eName, func in events {
             if !empty func {
                 self::on(eName, func);
             }
@@ -73,6 +73,6 @@ class Event
                 return call_user_func_array(handler, args);
             }
         }
-        return "$AIMO$";
+        throw "Event handler must be callable";
     }
 }

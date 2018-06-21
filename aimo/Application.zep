@@ -14,8 +14,14 @@ class Application {
      */
     public static _instance;
 
+    /**
+     * @var array Application config
+     */
     protected _config  = [];
 
+    /**
+     * @var array
+     */
     protected _routers = [];
     /**
      * @var array
@@ -113,10 +119,10 @@ class Application {
 
     public function route(string name="default")->void
     {
-        var pathinfo,url_suffix,len;
+        var pathinfo, url_suffix, len;
         let url_suffix = isset this->_config["url_suffix"] ? this->_config["url_suffix"] : "";
         let len = strlen(url_suffix);
-        let pathinfo   = isset _SERVER["PATH_INFO"] ? _SERVER["PATH_INFO"] : "";
+        let pathinfo  = isset _SERVER["PATH_INFO"] ? _SERVER["PATH_INFO"] : "";
         if empty pathinfo {
             let pathinfo = isset _GET["_url_"] ? _GET["_url_"] : "";
         }
