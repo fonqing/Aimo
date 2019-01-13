@@ -1,6 +1,7 @@
 /ext
 /config.json
 /.temp
+/.zephir
 /compile.log
 /compile-errors.log
 /doc
