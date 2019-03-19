@@ -646,64 +646,9 @@ class Model
         return this->validate();
     }
 
-    /**
-     * 模型查询入口
-     *
-     * <code php>
-     * User::where("uid=1");
-     * User::where("uid",1);
-     * User::where("uid=?",[1]);
-     * User::where("uid","=",1);
-     * User::where("uid","IN",[1,4]);
-     * User::where(["uid"=>1,"status"=>1]);
-     * User::where(["uid"=>1,"status"=>["<>",1]]);
-     * User::where("status",1)->orderByDesc('sort')->groupBy('guid')->select();
-     * </code>
-     */
-    public static function where(a,b=null,c=null)
+    public function where(var a,var n=null,var c=null)
     {
-        var model,table,instance,pks;
-        let model = get_called_class();
-        if strpos(model, "\\") === false {
-            let table = model;
-        }else{
-            let table = substr(strrchr(model, "\\"), 1);
-        }
-        let instance  = new {model}();
-        let pks       = (array) instance->getPk();
-        return Db::name(table)->setEntity(model, pks)->where(a,b,c);
-    }
 
-    /**
-     * 获取单条信息
-     *
-     *<code>
-     *$user = User::get(6);
-     *echo $user->username;
-     *</code>
-     *
-     * @access public
-     * @parma integer|string id
-     * @return Model
-     */
-    public static function get(id)
-    {
-        var model,table,instance,pks;
-        let model = get_called_class();
-        if strpos(model, "\\") === false {
-            let table = model;
-        }else{
-            let table = substr(strrchr(model, "\\"), 1);
-        }
-        let instance  = new {model}();
-        let pks       = (array) instance->getPk();
-        if empty pks {
-            throw "Model Primary not defined.Can't use Model::get method";
-        }
-        if count(pks) > 1 {
-            throw "Model Multiple Primary not supported yet.";
-        }
-        return Db::name(table)->setEntity(model,pks)->where(pks[0],id)->find();
     }
 
     /**
@@ -717,30 +662,11 @@ class Model
      *</code>
      *
      * @access public
-     * @return Model
+     * @return void
      */
     public function save()
     {
-        var model,table,id,pks,pk;
-        let model = get_called_class();
-        if strpos(model, "\\") === false {
-            let table = model;
-        }else{
-            let table = substr(strrchr(model, "\\"), 1);
-        }
-        let pks = (array) this->getPk();
-        if this->isValid() {
-            if count(pks)===1 {
-                let id = Db::name(table)->insertGetId(this->_data);
-                let pk = pks[0];
-                let this->_data[pk] = id;
-                return true;
-            }else{
-                return Db::name(table)->insert(this->_data);
-            }
-        } else {
-            return false;
-        }
+        
     }
 
     /**
@@ -756,33 +682,7 @@ class Model
      */
     public function update()
     {
-        array cond = [];
-        var model,table,k,pks;
-        let model = get_called_class();
-        if strpos(model, "\\") === false {
-            let table = model;
-        }else{
-            let table = substr(strrchr(model, "\\"), 1);
-        }
-        let pks  = (array) this->getPk();
-        if empty pks {
-            throw "Model Primary not defined.Can't use Model::update method";
-        }
-        for k in pks {
-            if isset this->_data[k] {
-                let cond[k]=this->_data[k];
-                unset this->_data[k];
-            }
-        }
-        if empty cond {
-            throw "Model data error,No primary value given";
-        }
-
-        if this->isValid() {
-            return Db::name(table)->where(cond)->update(this->_dirty);
-        }else{
-            return false;
-        }
+        
     }
 
     /**
@@ -797,23 +697,7 @@ class Model
      */
     public function delete(string! field="status",value=-1)
     {
-        array cond = [];
-        var model,table,k,pks;
-        let model  = get_called_class();
-        if strpos(model, "\\") === false {
-            let table = model;
-        }else{
-            let table = substr(strrchr(model, "\\"), 1);
-        }
-        let pks = (array) this->getPk();
-        if empty pks {
-            throw "Model Primary not defined.Can't use Model::delete method";
-        }
-        for k in pks {
-            let cond[k]=this->_data[k];
-        }
-        let this->_data[field]=value;
-        return Db::name(table)->where(cond)->update([field:value]);
+        
     }
 
     /**
@@ -828,27 +712,6 @@ class Model
      */
     public function destroy()
     {
-        var model,table,k,rs,pks,returnValue;
-        array cond = [];
-        let model  = get_called_class();
-        if strpos(model, "\\") === false {
-            let table = model;
-        }else{
-            let table = substr(strrchr(model, "\\"), 1);
-        }
-        let pks = (array) this->getPk();
-        if empty pks {
-            throw "Model Primary not defined.Can't use Model::destroy method";
-        }
-        for k in pks {
-            let cond[k]=this->_data[k];
-        }
-        let returnValue = Event::trigger("beforeDestroy",[this->_data,this]);
-        if returnValue === false {
-            return false;
-        }
-        let rs = Db::name(table)->where(cond)->delete();
-        Event::trigger("afterDestroy",[this->_data,this]);
-        return rs;
+        
     }
 }
