@@ -25,7 +25,7 @@ class Html {
         let tagName = (string) strtolower(tagName);
         let tagName = (string) preg_replace("/[^a-z1-6]+/", "", tagName);
         let attrs   = self::renderAttributes(attributes);
-        return ( selfCloseTags.index(','.tagName.',') === false ) ?
+        return ( strpos(selfCloseTags,",".tagName.",") === false ) ?
             "<".tagName.attrs.">".inner."</".tagName.">" :
             "<".tagName.attrs." />";
     }
