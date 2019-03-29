@@ -20,16 +20,14 @@ class Html {
     public static function tag(string! tagName, array! attributes, string! inner = "") -> string
     {
         var attrs = "";
-        array selfCloseTags = [
-            "meta":true, "base":true, "br":true, "img":true, "input":true, "param":true,
-            "link":true, "area":true, "hr":true, "col":true, "frame":true, "embed":true
-        ];
+        string selfCloseTags = ",meta,base,br,img,input,param,link,area,hr,col,frame,embed,";
         let tagName = (string) trim(tagName);
         let tagName = (string) strtolower(tagName);
+        let tagName = (string) preg_replace("/[^a-z1-6]+/", "", tagName);
         let attrs   = self::renderAttributes(attributes);
-        return (isset selfCloseTags[tagName]) ?
-            "<".tagName.attrs." />" :
-            "<".tagName.attrs.">".inner."</".tagName.">";
+        return ( selfCloseTags.index(','.tagName.',') === false ) ?
+            "<".tagName.attrs.">".inner."</".tagName.">" :
+            "<".tagName.attrs." />";
     }
 
     /**
@@ -64,23 +62,14 @@ class Html {
      */
     public static function __callStatic(tagName, args)
     {
-        var c;
-        let c = count(args),
-            tagName = preg_replace("/[^a-z1-6]+/","",strtolower(tagName));
+        int c;
+        let c = (int) count(args),
+            tagName = preg_replace("/[^a-z1-6]+/", "", strtolower(tagName));
         if empty tagName {
-            throw "TagName can't empty";
-        }
-        string single = ",input,hr,br,img,";
-        if single->index(",".tagName.",") {
-            let args[]= "";
-            let args[]= true;
-        }else{
-            if c < 2 {
-                throw "Html::".tagName." need two params";
-            }
+            throw "TagName can't be empty";
         }
         array_unshift(args, tagName);
-        return call_user_func_array("Aimo\\Html::tag",args);
+        return call_user_func_array("Aimo\\Html::tag", args);
     }
 
 }
