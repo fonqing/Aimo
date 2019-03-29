@@ -9,22 +9,29 @@ class Html {
      * <code>
      * echo Html::tag('a',['href'=>'#','class'=>'anchor'],'文字');
      * //Will output : <a href="#" class="anchor">文字</a>
-     * echo Html::tag('input',['type'=>'text','name'=>'name'], '', true);
+     * echo Html::tag('input',['type'=>'text','name'=>'name']);
      * /Will output : <input type="text" name="name" />
      * </code>
      *
      * @param string tagName
      * @param array attributes
      * @param string inner inner text
-     * @param boolean selfClose
      */
-    public static function tag(string! tagName, array! attributes, string! inner = "", boolean selfClose = false) -> string
+    public static function tag(string! tagName, array! attributes, string! inner = "") -> string
     {
-        var attr;
-        let attr = self::renderAttributes(attributes);
+        string attrs   = "";
+        bool selfClose = false;
+        array selfCloseTags = [
+            "meta":true, "base":true, "br":true, "img":true, "input":true, "param":true,
+            "link":true, "area":true, "hr":true, "col":true, "frame":true, "embed":true
+        ];
+        
+        let tagName = strtolower(tagName);
+        let attrs   = self::renderAttributes(attributes);
+        let selfClose = isset selfCloseTags[tagName] ? true : false;
         return selfClose ?
-            "<".tagName.attr." />" :
-            "<".tagName.attr.">".inner."</".tagName.">";
+            "<".tagName.attrs." />" :
+            "<".tagName.attrs.">".inner."</".tagName.">";
     }
 
     /**
