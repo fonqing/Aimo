@@ -62,12 +62,7 @@ class Html {
      */
     public static function __callStatic(tagName, args)
     {
-        int c;
-        let c = (int) count(args),
-            tagName = preg_replace("/[^a-z1-6]+/", "", strtolower(tagName));
-        if empty tagName {
-            throw "TagName can't be empty";
-        }
+        let tagName = preg_replace("/[^a-z1-6]+/", "", strtolower(tagName));
         array_unshift(args, tagName);
         return call_user_func_array("Aimo\\Html::tag", args);
     }
