@@ -20,16 +20,13 @@ class Html {
     public static function tag(string! tagName, array! attributes, string! inner = "") -> string
     {
         string attrs   = "";
-        bool selfClose = false;
         array selfCloseTags = [
             "meta":true, "base":true, "br":true, "img":true, "input":true, "param":true,
             "link":true, "area":true, "hr":true, "col":true, "frame":true, "embed":true
         ];
-        
         let tagName = strtolower(tagName);
         let attrs   = self::renderAttributes(attributes);
-        let selfClose = isset selfCloseTags[tagName] ? true : false;
-        return selfClose ?
+        return (isset selfCloseTags[tagName]) ?
             "<".tagName.attrs." />" :
             "<".tagName.attrs.">".inner."</".tagName.">";
     }
