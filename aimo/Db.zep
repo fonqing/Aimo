@@ -1,4 +1,27 @@
 namespace Aimo;
+/**
+ * Mysql Library via PDO
+ *
+ * Support manage more databases
+ * Support R/W split structure
+ * Support many Master databases and many salves
+ *
+ * <code>
+ * $config = [
+ *   'dsn' => 'mysql:host=localhost;dbname=cinsocrm;port=63306',
+ *   'username' => 'root',
+ *   'password' => '',
+ *   'options'  => [
+ *       PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8mb4\''
+ *   ]
+ * ];
+ * $sql = "SELECT * FROM `user` WHERE `uid`=?";
+ * Db::init($config);
+ * Db::getInstance()->fetchRow($sql,[3]);
+ * //Or
+ * Db::getInstance('otherdb',$config)->fetchRow($sql,[3]);
+ * </code>
+ */
 class Db
 {
     /**
@@ -23,7 +46,7 @@ class Db
      /**
       * @var string
       */
-      private static _prefix = "";
+     private static _prefix = "";
 
      private where = "";
      private fields = "";
@@ -33,6 +56,7 @@ class Db
  
      /**
       * Db constructor.
+      *
       * @param string name
       * @param array config
       */
@@ -44,6 +68,18 @@ class Db
      }
  
      /**
+      * Initialize config
+      *
+      * <code>
+      * Db::init([
+      *   'dsn' => 'mysql:host=localhost;dbname=cinsocrm;port=63306',
+      *   'username' => 'root',
+      *   'password' => 'sa',
+      *   'options'  => [
+      *       PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8mb4\''
+      *   ]
+      * ]);
+      * </code>
       * @param array config
       * @param string name
       */
@@ -56,13 +92,36 @@ class Db
      }
  
      /**
-      * 获取Db实例
+      * Get the database instance
       *
+      * Support One or many database instance
+      *
+      * <code>
+      * $db2 = Db::getInstance('mydb', [
+      *   'dsn' => 'mysql:host=localhost;dbname=cinsocrm;port=63306',
+      *   'username' => 'root',
+      *   'password' => 'sa',
+      *   'options'  => [
+      *       PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8mb4\''
+      *   ]
+      * ]);
+      * //or
+      * $config = [
+      *   'dsn' => 'mysql:host=localhost;dbname=cinsocrm;port=63306',
+      *   'username' => 'root',
+      *   'password' => '',
+      *   'options'  => [
+      *       PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8mb4\''
+      *   ]
+      * ];
+      * Db::init($config);
+      * $db = Db::getInstance();
+      * </code>
       * @param name
       * @param config
       * @return Db
       */
-     public static function getInstance(string! name, array config = [])-><Db>
+     public static function getInstance(string! name = "default", array config = [])-><Db>
      {
          if !empty config  {
             self::init(config, name);
@@ -74,7 +133,11 @@ class Db
      }
  
      /**
-      * 简写
+      * Simple way to get database instance 
+      *
+      * <code>
+      * $user = Db::name('user')->where('uid=3')->find();
+      * </code>
       *
       * @param string table
       * @param string name
@@ -88,10 +151,12 @@ class Db
      }
  
      /**
+      * Connect to MySQL Server via PDO
+      *
       * @param array config
       * @return \PDO
       */
-     public function connect(array config)
+     protected function connect(array config)
      {
          var e;
          try {
@@ -100,7 +165,10 @@ class Db
              die("Connection failed: " . e->getMessage());
          }
      }
- 
+     
+     /**
+      * Get the real table name
+      */
      private function getTableName()->string
      {
         var prefix;
@@ -112,11 +180,16 @@ class Db
      }
  
      /**
-      * 获取写链接
+      * Get write connection
+      *
+      * <code>
+      * $db = Db::getInstance();
+      * $connection = $db->getWriteConnection();
+      * </code>
       *
       * @param string name
       * @param array config
-      * @return Pdo
+      * @return PDO
       * @throws Exception
       */
      public function getWriteConnection(string! name = "default",array config = [])
@@ -143,11 +216,16 @@ class Db
      }
  
      /**
-      * 获取读链接
+      * Get the read connection
+      *
+      * <code>
+      * $db = Db::getInstance();
+      * $connection = $db->getReadConnection();
+      * </code>
       *
       * @param string name
       * @param array config
-      * @return Pdo
+      * @return PDO
       * @throws Exception
       */
      public function getReadConnection(string! name = "default",array config = [])
@@ -175,7 +253,7 @@ class Db
      }
 
      /**
-      *
+      * Get connection via SQL Statement
       */
      public function getConnection(string! sql)
      {
@@ -192,7 +270,13 @@ class Db
      }
 
      /**
-      * 查询一个字段值
+      * Query a table field
+      *
+      * <code>
+      * $db = Db::getInstance();
+      * $sql = "SELECT `cellphone` FROM `user` WHERE `uid`=?";
+      * $cellphone = $db->fetchOne($sql, [3]);
+      * </code>
       *
       * @param string sql
       * @param array params
@@ -214,7 +298,13 @@ class Db
      }
  
      /**
-      * 查询一行
+      * Query and return a row
+      *
+      * <code>
+      * $db = Db::getInstance();
+      * $sql = "SELECT * FROM `user` WHERE `uid`=?";
+      * $user = $db->fetchRow($sql, [3]);
+      * </code>
       *
       * @param string sql
       * @param array params
@@ -236,7 +326,16 @@ class Db
      }
  
      /**
-      * 查询一列
+      * Query and return a columns
+      *
+      * <code>
+      * $db = Db::getInstance();
+      * $sql = "SELECT `uid` FROM `user` WHERE `mobile`=?";
+      * $uids = $db->fetchCols($sql, ['1233234']);
+      * //array [1,2,3,4]
+      * $uids = $db->fetchCols($sql, ['1233234'], ',');
+      * //string 1,2,3,4
+      * </code>
       *
       * @param string sql
       * @param array params
@@ -264,7 +363,28 @@ class Db
      }
  
      /**
-      * 查询键值对
+      * Query two or more field as a assocation array
+      *
+      * <code>
+      * $db   = Db::getInstance();
+      * $sql  = "SELECT `uid`,`truename` FROM `user` WHERE `gender`=?";
+      * $uids = $db->fetchAssoc($sql, ['Male']);
+      * //array ['2'=>'Jack','4'=>'John']
+      * $sql  = "SELECT `uid`,`truename`,`avatar` FROM `user` WHERE `gender`=?";
+      * $uids = $db->fetchAssoc($sql, ['Male']);
+      * //result [
+        // '2' => [
+        //    'uid' => 2,
+        //    'truename'=>'Jack',
+        //    'avatar'=>'avatar.jpg'
+        //  ],
+        // '4' => [
+        //    'uid' => 4,
+        //    'truename'=>'John',
+        //    'avatar'=>'avatar.png'
+        //  ]
+        //]
+      * </code>
       *
       * @param string sql
       * @param array params
@@ -307,8 +427,13 @@ class Db
      }
  
      /**
-      * 查询所有符合条件的
+      * Query all row by SQL Statement
       *
+      * <code>
+      * $db = Db::getInstance();
+      * $sql = "SELECT * FROM `user` WHERE `score`>? LIMIT 100";
+      * $users = $db->fetchAll($sql, [0]);
+      * </code>
       * @param string sql
       * @param array params
       * @return array
@@ -355,6 +480,18 @@ class Db
          let this->limit = "";
      }
 
+     /**
+      * Simple way to get database instance 
+      *
+      * <code>
+      * $user = Db::name('user')->where('uid=3')->getField();
+      * </code>
+      *
+      * @param string table
+      * @param string name
+      * @param array config
+      * @return Db
+      */
      public function getField()
      {
          string sql;
@@ -365,6 +502,15 @@ class Db
          return data;
      }
 
+     /**
+      * Simple way to get many rows 
+      *
+      * <code>
+      * $user = Db::name('user')->where('score>0')->select();
+      * </code>
+      *
+      * @return array
+      */
      public function select()
      {
          string sql;
@@ -375,7 +521,16 @@ class Db
          this->clearSql();
          return data;
      }
-
+    
+     /**
+      * Simple way to get one rows 
+      *
+      * <code>
+      * $user = Db::name('user')->field('truename,cellphone')->where('uid=2')->find();
+      * </code>
+      *
+      * @return array
+      */
      public function find()
      {
          string sql;
@@ -387,24 +542,76 @@ class Db
          return data;
      }
 
+     /**
+      * Set fields to fetch
+      *
+      * <code>
+      * $user = Db::name('user')->field('truename,cellphone')->where('uid=2')->find();
+      * </code>
+      *
+      * @return array
+      */
      public function fields(string! fields)-><Db>
      {
          let this->fields = fields;
          return this;
      }
 
+     /**
+      * where condition 
+      *
+      * <code>
+      * $user = Db::name('user')->field('truename,cellphone')->where('uid=2')->find();
+      * </code>
+      *
+      * @return array
+      */
      public function where(string! where)-><Db>
      {
          let this->where = where;
          return this;
      }
 
+     /**
+      * Order by implement
+      *
+      * <code>
+      * $user = Db::name('user')->field('uid,truename,score')->where('`status`=1')->order('score DESC')->select();
+      * </code>
+      *
+      * @return array
+      */
+      public function order(string! order)-><Db>
+      {
+          let this->orderBy = order;
+          return this;
+      }
+
+     /**
+      * Group by implement
+      *
+      * <code>
+      * $user = Db::name('user')->field('level,COUNT(1)')->where('`status`=1')->group('level')->getField();
+      * </code>
+      *
+      * @return array
+      */
      public function group(string! group)-><Db>
      {
          let this->groupBy = group;
          return this;
      }
 
+     /**
+      * Simple way to get many rows 
+      *
+      * <code>
+      * $user = Db::name('user')->where('score>0')->limit('10')->select();
+      * $user = Db::name('user')->where('score>0')->limit('5,10')->select();
+      * </code>
+      *
+      * @return array
+      */
      public function limit(string limit)-><Db>
      {
          let this->limit = (string) limit;
