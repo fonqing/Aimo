@@ -306,7 +306,7 @@ class Model
             return true;
         }
         if !isset this->validateRules["rules"] {
-            throw "模型定义了验证器，但缺少验证规则";
+            throw "error";
         }
         var messages,operate,key,value,validateFields,field,pks;
         var ruleString,rules,rule,v,c,kk,sc,tmp,vk;
@@ -316,7 +316,7 @@ class Model
         let operate  = "update";
         let pks = this->getPk();
         if empty pks {
-            throw "模型无主键，无法确定新增还是更新";
+            throw "error";
         }
         for key in pks {
             let value = "";
