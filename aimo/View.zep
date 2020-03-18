@@ -387,7 +387,7 @@ class View {
 
         let str.= " $".op."_tag = \\Aimo\\Tags::get('" . op . "'); ";
         let str.= " if (method_exists($" . op . "_tag, '" . action . "')) {";
-        let str.= " $" . name . " = $" . op . "_tag->" . action . "(" . self::arr_to_html ( datas ) . ");";
+        let str.= " $" . name . " = $" . op . "_tag->" . action . "(" . var_export( datas,true) . ");";
 
         return "<?php " .str . "?>";
     }
@@ -399,28 +399,5 @@ class View {
     {
         return "<?php } ?>";
     }
-    
-    /**
-     * 转换数据为HTML代码
-     *
-     * @param array data 数组
-     */
-    private static function arr_to_html(array data)->string
-    {
-        string str;
-        var key,val;
-        let str = "[";
-        for key,val in data {
-            if is_array( val ) {
-                let str .= "'".key."'=>" . self::arr_to_html ( val ) . ",";
-            } else {
-                if strpos(val, '$' ) === 0 {
-                    let str .= "'".key."'=>".val.",";
-                } else {
-                    let str .= "'".key."'=>'".addslashes( val ) . "',";
-                }
-            }
-        }
-        return str."]";
-    }
+ 
 }
