@@ -101,19 +101,18 @@ class Config {
      * @param string name 设置项名称
      * @return mixed
      */
-    public static function get(string! name, default)
+    public static function get(string! name, def = null)
     {
-        var configs;
+        var configs,parts,part;
         let name = name->trim(".");
         if name->index(".") !== false {
-            var parts,k1,k2;
             let parts = explode(".",name);
             let configs = self::_data;
             for part in parts {
                 if isset configs[part] {
                     let configs = configs[part];
                 } else {
-                    return is_null(default) ? null : default;
+                    return is_null(def) ? null : def;
                 }
             }
             return configs;
@@ -121,7 +120,7 @@ class Config {
             if isset self::_data[name] {
                 return self::_data[name];
             } else {
-                return is_null(default) ? null : default;
+                return is_null(def) ? null : def;
             }
         }
         return null;
@@ -131,7 +130,7 @@ class Config {
      * Get a config item if exists and Execute the callback function
      *
      * <code>
-     * Config::fetch('name', function($value){
+     * Config::got('name', function($value){
      *      echo "`name` exists and value is {$value} ";
      * });
      * </code>
@@ -141,7 +140,7 @@ class Config {
      * 
      * @return mixed
      */
-    public static function fetch(string! name, callable callback)
+    public static function got(string! name, callback)
     {
         var value;
         let value = self::get(name);

@@ -22,12 +22,12 @@
                                     <script src="../../asset/api_definition.js"></script>
                     <script src="../../asset/static/jquery.min.js"></script>
                     <script src="../../asset/static/zephir-doc.js"></script>
-                <script>var ZepCurrentPath = '../../'</script>
+                <script type="application/javascript">let ZepCurrentPath = '../../'</script>
     </head>
  <body onload="prettyPrint()">
         <div id="top-bar">
             <div id="top-left">
-                                    Aimo PHP Framework Documentation <span class="version">v0.6.0</span>
+                                    Aimo PHP Framework Documentation <span class="version">v0.6.5</span>
                             </div>
             <div id="top-right">
             </div>
@@ -64,19 +64,19 @@
             </div>
     
     <div class="class-full-name">
-        
         <span class="class-type">Class</span>
         
                 <span class="namespace-piece">
             <a href="../../namespace/Aimo.html">Aimo</a>
         </span>
-                <h1 class="class-name">Html</h1>
+        
+        <h1 class="class-name">Html</h1>
     </div>
     
 </div>
 
-
-<pre class="zephir-source-file prettyprint linenums">namespace Aimo;
+<pre class="zephir-source-file prettyprint linenums">
+    namespace Aimo;
 
 class Html {
     /**
@@ -87,22 +87,25 @@ class Html {
      * <code>
      * echo Html::tag('a',['href'=>'#','class'=>'anchor'],'文字');
      * //Will output : <a href="#" class="anchor">文字</a>
-     * echo Html::tag('input',['type'=>'text','name'=>'name'], '', true);
+     * echo Html::tag('input',['type'=>'text','name'=>'name']);
      * /Will output : <input type="text" name="name" />
      * </code>
      *
      * @param string tagName
      * @param array attributes
      * @param string inner inner text
-     * @param boolean selfClose
      */
-    public static function tag(string! tagName, array! attributes, string! inner = "", boolean selfClose = false) -> string
+    public static function tag(string! tagName, array! attributes, string! inner = "") -> string
     {
-        var attr;
-        let attr = self::renderAttributes(attributes);
-        return selfClose ?
-            "<".tagName.attr." />" :
-            "<".tagName.attr.">".inner."</".tagName.">";
+        var attrs = "";
+        string selfCloseTags = ",meta,base,br,img,input,param,link,area,hr,col,frame,embed,";
+        let tagName = (string) trim(tagName);
+        let tagName = (string) strtolower(tagName);
+        let tagName = (string) preg_replace("/[^a-z1-6]+/", "", tagName);
+        let attrs   = self::renderAttributes(attributes);
+        return ( strpos(selfCloseTags,",".tagName.",") === false ) ?
+            "<".tagName.attrs.">".inner."</".tagName.">" :
+            "<".tagName.attrs." />";
     }
 
     /**
@@ -137,31 +140,14 @@ class Html {
      */
     public static function __callStatic(tagName, args)
     {
-        var c;
-        let c = count(args),
-            tagName = preg_replace("/[^a-z1-6]+/","",strtolower(tagName));
-        if empty tagName {
-            throw "TagName can't empty";
-        }
-        if empty args {
-            throw "Html::".tagName." params required";
-        }
-        string single = ",input,hr,br,img,";
-        //string special  = "";
-        if single->index(",".tagName.",") {
-            let args[]= "";
-            let args[]= true;
-        }else{
-            if c < 2 {
-                throw "Html::".tagName." need two params";
-            }
-        }
+        let tagName = preg_replace("/[^a-z1-6]+/", "", strtolower(tagName));
         array_unshift(args, tagName);
-        return call_user_func_array("Aimo\\Html::tag",args);
+        return call_user_func_array("Aimo\\Html::tag", args);
     }
 
 }
-</pre>                </div>
+</pre>
+                </div>
             </div>
         </div>
     </body>
