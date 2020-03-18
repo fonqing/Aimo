@@ -54,8 +54,8 @@
     },
     "namespace": "aimo",
     "name": "Aimo PHP Framework",
-    "description": "An PHP framework written in Zephir",
-    "author": "Eric,<fonqing@gmail.com>",
+    "description": "An light weight PHP framework written in Zephir",
+    "author": "Eric Wong,<fonqing@gmail.com>",
     "version": "0.6.5",
     "verbose": false,
     "requires": {

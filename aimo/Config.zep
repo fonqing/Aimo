@@ -38,7 +38,7 @@ class Config {
     }
     
     /**
-	 * Load configuration from a file
+     * Load configuration from a file
      * 
      * Support php file and ini file
      * 
@@ -48,13 +48,13 @@ class Config {
      * $config = Config::load('config.ini');
      * </code>
      * 
-	 * @param string $file  Configuration file
+     * @param string $file  Configuration file
      * @return array
-	 */
-	public static function load(string! file)//->array
-	{
+     */
+    public static function load(string! file)//->array
+    {
         var ext,data;
-		if file_exists(file) {
+        if file_exists(file) {
             let ext = strtolower(pathinfo(file, PATHINFO_EXTENSION));
             if "php" == ext {
                 let data = require(file);
@@ -66,13 +66,13 @@ class Config {
             if !is_array(data) {
                 return [];
             }
-			if !empty(data) {
-				let self::_data = data;
-				return data;
-			}
-		}
-		return [];
-	}
+            if !empty(data) {
+                let self::_data = data;
+                return data;
+            }
+        }
+        return [];
+    }
 
     /**
      * 存储设置
