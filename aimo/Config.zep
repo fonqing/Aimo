@@ -34,11 +34,45 @@ class Config {
      */
     public static function init(array! config)->void
     {
-        var k,v;
-        for k,v in config {
-            self::set(k, v);
-        }
+        let self::_data = config;
     }
+    
+    /**
+	 * Load configuration from a file
+     * 
+     * Support php file and ini file
+     * 
+     * <code>
+     * $config = Config::load('config.php');
+     * //or
+     * $config = Config::load('config.ini');
+     * </code>
+     * 
+	 * @param string $file  Configuration file
+     * @return array
+	 */
+	public static function load(string! file)//->array
+	{
+        var ext,data;
+		if file_exists(file) {
+            let ext = strtolower(pathinfo(file, PATHINFO_EXTENSION));
+            if "php" == ext {
+                let data = require(file);
+            } elseif "ini" == ext {
+                let data = parse_ini_file(file, true);
+            }else{
+                let data = [];
+            }
+            if !is_array(data) {
+                return [];
+            }
+			if !empty(data) {
+				let self::_data = data;
+				return data;
+			}
+		}
+		return [];
+	}
 
     /**
      * 存储设置
@@ -61,34 +95,59 @@ class Config {
      *
      * <code>
      * $dbConfig   = Config::get('db');
-     * $dbUsername = Config::get('db.username');
+     * $dbUsername = Config::get('db.username','default');
      * </code>
      *
      * @param string name 设置项名称
      * @return mixed
      */
-    public static function get(string! name)
+    public static function get(string! name, default)
     {
+        var configs;
         let name = name->trim(".");
         if name->index(".") !== false {
             var parts,k1,k2;
             let parts = explode(".",name);
-            let k1    = isset parts[0] ? parts[0] : "";
-            let k2    = isset parts[1] ? parts[1] : "";
-            if empty k1 || empty k2 {
-                return null;
-            }
-            if isset self::_data[k1] {
-                if isset self::_data[k1][k2] {
-                    return self::_data[k1][k2];
+            let configs = self::_data;
+            for part in parts {
+                if isset configs[part] {
+                    let configs = configs[part];
+                } else {
+                    return is_null(default) ? null : default;
                 }
             }
+            return configs;
         } else {
             if isset self::_data[name] {
                 return self::_data[name];
+            } else {
+                return is_null(default) ? null : default;
             }
         }
         return null;
+    }
+    
+     /**
+     * Get a config item if exists and Execute the callback function
+     *
+     * <code>
+     * Config::fetch('name', function($value){
+     *      echo "`name` exists and value is {$value} ";
+     * });
+     * </code>
+     *
+     * @param string $name
+     * @param callable $callback
+     * 
+     * @return mixed
+     */
+    public static function fetch(string! name, callable callback)
+    {
+        var value;
+        let value = self::get(name);
+        if !is_null(value) {
+            return call_user_func(callback, value);
+        }
     }
 
     /**
